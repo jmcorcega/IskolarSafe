@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:iskolarsafe/theme.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const IskolarSafeApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class IskolarSafeApp extends StatelessWidget {
+  const IskolarSafeApp({super.key});
 
   // This widget is the root of your application.
   @override
