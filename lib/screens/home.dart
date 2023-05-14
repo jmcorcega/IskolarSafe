@@ -43,7 +43,7 @@ class _HomeState extends State<Home> {
               label: 'My Entries',
             ),
             NavigationDestination(
-              icon: Icon(Symbols.block_rounded),
+              icon: Icon(Symbols.quick_reference_all_rounded),
               label: 'Logs',
             ),
             NavigationDestination(
