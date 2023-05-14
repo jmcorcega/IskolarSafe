@@ -15,7 +15,7 @@ class IskolarSafeApp extends StatelessWidget {
     return MaterialApp(
       title: 'IskolarSafe',
       theme: IskolarSafeTheme.lightTheme,
-      darkTheme: IskolarSafeTheme.darkTheme,
+      // darkTheme: IskolarSafeTheme.darkTheme,
       initialRoute: "/",
       routes: IskolarSafeRoutes.routes,
       onGenerateRoute: (settings) =>
