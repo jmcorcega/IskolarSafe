@@ -13,6 +13,7 @@ class IskolarSafeApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'IskolarSafe',
       theme: IskolarSafeTheme.lightTheme,
       // darkTheme: IskolarSafeTheme.darkTheme,
