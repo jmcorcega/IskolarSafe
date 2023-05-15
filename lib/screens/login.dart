@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:iskolarsafe/screens/login/signup.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Login extends StatefulWidget {
@@ -82,7 +83,7 @@ class _LoginState extends State<Login> {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 18.0),
+                              const SizedBox(height: 20.0),
                               TextFormField(
                                 controller: passwordController,
                                 obscureText: true,
@@ -148,9 +149,7 @@ class _LoginState extends State<Login> {
                       OutlinedButton.icon(
                         style:
                             OutlinedButton.styleFrom(minimumSize: _buttonSize),
-                        onPressed: () {
-                          //Navigator.pushNamed(context, LoginViaEmail.routeName);
-                        },
+                        onPressed: () {},
                         icon: const Icon(
                           Bootstrap.google,
                           size: 18.0,
@@ -161,7 +160,9 @@ class _LoginState extends State<Login> {
                       TextButton.icon(
                         style: TextButton.styleFrom(
                             minimumSize: const Size(280.0, 40.0)),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, SignUp.routeName);
+                        },
                         icon: const Icon(Symbols.person_add_rounded),
                         label: const Text("Don't have an account yet?"),
                       ),
