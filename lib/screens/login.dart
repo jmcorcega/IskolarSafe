@@ -60,51 +60,77 @@ class _LoginState extends State<Login> {
                             .apply(fontSizeDelta: -8),
                       ),
                       const SizedBox(height: 48.0),
+                      FilledButton.icon(
+                        style:
+                            OutlinedButton.styleFrom(minimumSize: _buttonSize),
+                        onPressed: () {},
+                        icon: const Icon(
+                          Bootstrap.google,
+                          size: 18.0,
+                        ),
+                        label: const Text("Log in via Google"),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          const SizedBox(height: 48.0),
+                          const Expanded(child: Divider()),
+                          const SizedBox(width: 14.0),
+                          Text(
+                            "OR",
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                          const SizedBox(width: 14.0),
+                          const Expanded(child: Divider()),
+                          const SizedBox(height: 48.0),
+                        ],
+                      ),
                       Form(
-                          key: _formKey,
-                          child: Column(
-                            children: [
-                              TextFormField(
-                                controller: emailController,
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Symbols.email_rounded),
-                                  border: OutlineInputBorder(),
-                                  labelText: "Email",
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Email is required.';
-                                  } else if (!EmailValidator.validate(value)) {
-                                    return 'Email is invalid.';
-                                  } else if (_loginErr) {
-                                    return 'Email may be incorrect.';
-                                  }
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: emailController,
+                              decoration: const InputDecoration(
+                                prefixIcon: Icon(Symbols.email_rounded),
+                                border: OutlineInputBorder(),
+                                labelText: "Email",
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Email is required.';
+                                } else if (!EmailValidator.validate(value)) {
+                                  return 'Email is invalid.';
+                                } else if (_loginErr) {
+                                  return 'Email may be incorrect.';
+                                }
 
-                                  return null;
-                                },
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 20.0),
+                            TextFormField(
+                              controller: passwordController,
+                              obscureText: true,
+                              decoration: const InputDecoration(
+                                prefixIcon: Icon(Symbols.key_rounded),
+                                border: OutlineInputBorder(),
+                                labelText: "Password",
                               ),
-                              const SizedBox(height: 20.0),
-                              TextFormField(
-                                controller: passwordController,
-                                obscureText: true,
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Symbols.key_rounded),
-                                  border: OutlineInputBorder(),
-                                  labelText: "Password",
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Password is required.';
-                                  } else if (value.length < 6) {
-                                    return 'Password must be at least 6 characters long.';
-                                  } else if (_loginErr) {
-                                    return 'Password may be incorrect.';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          )),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Password is required.';
+                                } else if (value.length < 6) {
+                                  return 'Password must be at least 6 characters long.';
+                                } else if (_loginErr) {
+                                  return 'Password may be incorrect.';
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 14.0),
                       TextButton(
                         style: TextButton.styleFrom(
@@ -113,8 +139,10 @@ class _LoginState extends State<Login> {
                         child: const Text("Forgot your password?"),
                       ),
                       const SizedBox(height: 14.0),
-                      FilledButton(
-                        style: FilledButton.styleFrom(minimumSize: _buttonSize),
+                      OutlinedButton.icon(
+                        style:
+                            OutlinedButton.styleFrom(minimumSize: _buttonSize),
+                        icon: const Icon(Symbols.login_rounded),
                         onPressed: _loadingButton
                             ? null
                             : () async {
@@ -138,23 +166,12 @@ class _LoginState extends State<Login> {
                                   _loadingButton = false;
                                 });
                               },
-                        child: _loadingButton
+                        label: _loadingButton
                             ? Transform.scale(
                                 scale: 0.5,
                                 child: const CircularProgressIndicator(),
                               )
                             : const Text('Log in via email'),
-                      ),
-                      const SizedBox(height: 14.0),
-                      OutlinedButton.icon(
-                        style:
-                            OutlinedButton.styleFrom(minimumSize: _buttonSize),
-                        onPressed: () {},
-                        icon: const Icon(
-                          Bootstrap.google,
-                          size: 18.0,
-                        ),
-                        label: const Text("Log in via Google"),
                       ),
                       const SizedBox(height: 48.0),
                       TextButton.icon(
@@ -164,7 +181,7 @@ class _LoginState extends State<Login> {
                           Navigator.pushNamed(context, SignUp.routeName);
                         },
                         icon: const Icon(Symbols.person_add_rounded),
-                        label: const Text("Don't have an account yet?"),
+                        label: const Text("Don't have an account? Sign up."),
                       ),
                     ],
                   )
