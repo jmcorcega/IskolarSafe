@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iskolarsafe/screens/login.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Entries extends StatefulWidget {
@@ -21,30 +22,34 @@ class _EntriesState extends State<Entries> {
         centerTitle: true,
         title: const Text("My Entries"),
         actions: [
-          IconButton(
-            onPressed: () {
-              showMenu(
-                  context: context,
-                  position: const RelativeRect.fromLTRB(100, 20, 0, 100),
-                  items: List.generate(_listIcons.length, (index) {
-                    return PopupMenuItem(
-                        value: index,
-                        onTap: () {},
-                        child: Wrap(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Icon(_listIcons[index]),
-                            ),
-                            Padding(
-                                padding: const EdgeInsets.only(left: 20),
-                                child: Text(_listStrings[index]))
-                          ],
-                        ));
-                  }));
-            },
-            icon: const Icon(Symbols.more_vert_rounded),
-          )
+          PopupMenuButton(
+              icon: const Icon(Symbols.more_vert_rounded),
+              onSelected: (result) {
+                switch (result) {
+                  case 0:
+                    // TODO: Should trigger logout
+                    Navigator.pushNamed(context, Login.routeName);
+                    break;
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return [
+                  PopupMenuItem(
+                    value: 0,
+                    child: Wrap(
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Icon(Symbols.logout_rounded),
+                        ),
+                        Padding(
+                            padding: EdgeInsets.only(left: 20),
+                            child: Text("Logout"))
+                      ],
+                    ),
+                  ),
+                ];
+              }),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
