@@ -85,13 +85,16 @@ class _SignUpState extends State<SignUp> {
                 onPressed: null,
                 icon: const Icon(Symbols.login_rounded, size: 28.0),
                 label: Text("Login Details",
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelLarge!
-                        .apply(fontSizeDelta: 4)),
+                    style: Theme.of(context).textTheme.labelLarge!.apply(
+                          fontSizeDelta: 4,
+                          color: Theme.of(context).colorScheme.primary,
+                        )),
                 style: ButtonStyle(
+                  padding: MaterialStateProperty.all(
+                    const EdgeInsets.symmetric(vertical: 12.0, horizontal: 0.0),
+                  ),
                   foregroundColor: MaterialStateProperty.all(
-                    Theme.of(context).colorScheme.onBackground,
+                    Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),
@@ -140,13 +143,16 @@ class _SignUpState extends State<SignUp> {
                 onPressed: null,
                 icon: const Icon(Symbols.face_rounded, size: 28.0),
                 label: Text("User Information",
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelLarge!
-                        .apply(fontSizeDelta: 4)),
+                    style: Theme.of(context).textTheme.labelLarge!.apply(
+                          fontSizeDelta: 4,
+                          color: Theme.of(context).colorScheme.primary,
+                        )),
                 style: ButtonStyle(
+                  padding: MaterialStateProperty.all(
+                    const EdgeInsets.symmetric(vertical: 12.0, horizontal: 0.0),
+                  ),
                   foregroundColor: MaterialStateProperty.all(
-                    Theme.of(context).colorScheme.onBackground,
+                    Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),
@@ -254,13 +260,16 @@ class _SignUpState extends State<SignUp> {
                 icon:
                     const Icon(Symbols.medical_information_rounded, size: 28.0),
                 label: Text("Health Information",
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelLarge!
-                        .apply(fontSizeDelta: 4)),
+                    style: Theme.of(context).textTheme.labelLarge!.apply(
+                          fontSizeDelta: 4,
+                          color: Theme.of(context).colorScheme.primary,
+                        )),
                 style: ButtonStyle(
+                  padding: MaterialStateProperty.all(
+                    const EdgeInsets.symmetric(vertical: 12.0, horizontal: 0.0),
+                  ),
                   foregroundColor: MaterialStateProperty.all(
-                    Theme.of(context).colorScheme.onBackground,
+                    Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),
