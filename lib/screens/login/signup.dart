@@ -76,7 +76,13 @@ class _SignUpState extends State<SignUp> {
               style: Theme.of(context).textTheme.titleLarge!.apply(
                     fontWeightDelta: 1,
                     fontSizeDelta: 4,
+                    heightDelta: 0.75,
                   ),
+            ),
+            Text(
+              "Keep yourself safe inside and outside the campus.",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.labelLarge,
             ),
             const SizedBox(height: 56.0),
             Container(
