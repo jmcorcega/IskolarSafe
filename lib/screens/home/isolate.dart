@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -13,24 +15,27 @@ class Isolate extends StatefulWidget {
 class _IsolateState extends State<Isolate> {
   List<IconData> _listIcons = [Symbols.login_rounded, Symbols.logout_rounded];
   List<String> _listStrings = ["My Account", "Logout"];
-  List<Map<dynamic, String>> _listNames = [
+  List<Map<dynamic, dynamic>> _listNames = [
     {
       "name": "May Laban",
       "studentNo": "20201234",
       "course": "BSCS",
-      "college": "CAS"
+      "college": "CAS",
+      "hasSymptoms": true
     },
     {
       "name": "Mang Juan",
       "studentNo": "20205678",
       "course": "BS Stat",
-      "college": "CAS"
+      "college": "CAS",
+      "hasSymptoms": false
     },
     {
       "name": "Maria Clara",
       "studentNo": "20202468",
       "course": "BSCE",
-      "college": "CEAT"
+      "college": "CEAT",
+      "hasSymptoms": true
     }
   ];
 
@@ -45,8 +50,8 @@ class _IsolateState extends State<Isolate> {
             Padding(
               padding: EdgeInsets.only(top: 10.0),
               child: Icon(
-                Symbols.sick,
-                color: Color(0xFF0CC078),
+                Symbols.coronavirus,
+                color: Color(0xFFFB6962),
                 size: 40.0,
               ),
             ),
@@ -54,7 +59,7 @@ class _IsolateState extends State<Isolate> {
               padding: EdgeInsets.only(left: 10.0, top: 10.0),
               child: Text("Under Monitoring",
                   style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Color(0xFF0CC078))),
+                      fontWeight: FontWeight.bold, color: Color(0xFFFB6962))),
             )
           ],
         ),
@@ -92,6 +97,7 @@ class _IsolateState extends State<Isolate> {
             itemBuilder: ((context, index) {
               return ListTile(
                 title: Text(_listNames[index]["name"]!),
+                subtitle: _getHealthStatus(_listNames[index]["hasSymptoms"]!),
                 trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                   IconButton(
                       onPressed: () {
@@ -150,6 +156,33 @@ class _IsolateState extends State<Isolate> {
             );
           }),
     );
+  }
+
+  Widget _getHealthStatus(bool status) {
+    String safe = "Safe for Work";
+    String symptoms = "Has Symptoms";
+    if (status) {
+      return Row(
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(right: 5.0),
+            child: Icon(Symbols.sick, color: Color(0xFFFB6962)),
+          ),
+          Text(symptoms),
+        ],
+      );
+    } else {
+      return Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 5.0),
+            child: const Icon(Symbols.health_and_safety_rounded,
+                color: Color(0xFF0CC078)),
+          ),
+          Text(safe),
+        ],
+      );
+    }
   }
 
   Widget _monitoringAlertDialog(String name) {
