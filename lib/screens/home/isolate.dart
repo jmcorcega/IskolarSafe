@@ -94,16 +94,29 @@ class _IsolateState extends State<Isolate> {
                 title: Text(_listNames[index]["name"]!),
                 trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) =>
+                                _monitoringAlertDialog(
+                                    _listNames[index]["name"]!));
+                      },
                       tooltip: "End Monitoring",
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.highlight_remove,
                         color: Color(0xFF58B4EE),
                       )),
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                            useSafeArea: false,
+                            context: context,
+                            builder: (BuildContext context) =>
+                                _quarantineAlertDialog(
+                                    _listNames[index]["name"]!));
+                      },
                       tooltip: "Move to Quarantine",
-                      icon: Icon(
+                      icon: const Icon(
                         Symbols.medical_mask,
                         color: Color(0xFFFB6962),
                       ))
@@ -136,6 +149,45 @@ class _IsolateState extends State<Isolate> {
               child: const ProfileModal(),
             );
           }),
+    );
+  }
+
+  Widget _monitoringAlertDialog(String name) {
+    return AlertDialog(
+      content: Text("Are you sure you want to end $name's monitoring?"),
+      actions: [
+        ElevatedButton(
+          onPressed: () {},
+          child: const Text("End Monitoring"),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text("Cancel"),
+        )
+      ],
+    );
+  }
+
+  Widget _quarantineAlertDialog(String name) {
+    return AlertDialog(
+      content: Text("Are you sure you want to move $name to quarantine?"),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10.0),
+          child: ElevatedButton(
+            onPressed: () {},
+            child: const Text("Move to Quarantine"),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text("Cancel"),
+        )
+      ],
     );
   }
 }
