@@ -96,7 +96,14 @@ class _IsolateState extends State<Isolate> {
             itemCount: _listNames.length,
             itemBuilder: ((context, index) {
               return ListTile(
-                title: Text(_listNames[index]["name"]!),
+                title: TextButton(
+                    onPressed: () {},
+                    child: Text(_listNames[index]["name"]!,
+                        style: TextStyle(fontSize: 17.0)),
+                    style: TextButton.styleFrom(
+                      alignment: Alignment.centerLeft,
+                      foregroundColor: Colors.black,
+                    )),
                 subtitle: _getHealthStatus(_listNames[index]["hasSymptoms"]!),
                 trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                   IconButton(
