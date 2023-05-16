@@ -13,12 +13,32 @@ class Isolate extends StatefulWidget {
 class _IsolateState extends State<Isolate> {
   List<IconData> _listIcons = [Symbols.login_rounded, Symbols.logout_rounded];
   List<String> _listStrings = ["My Account", "Logout"];
+  List<Map<dynamic, String>> _listNames = [
+    {
+      "name": "May Laban",
+      "studentNo": "20201234",
+      "course": "BSCS",
+      "college": "CAS"
+    },
+    {
+      "name": "Mang Juan",
+      "studentNo": "20205678",
+      "course": "BS Stat",
+      "college": "CAS"
+    },
+    {
+      "name": "Maria Clara",
+      "studentNo": "20202468",
+      "course": "BSCE",
+      "college": "CEAT"
+    }
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
+        // centerTitle: true,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
@@ -64,6 +84,32 @@ class _IsolateState extends State<Isolate> {
             icon: const Icon(Symbols.more_vert_rounded),
           )
         ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+        child: ListView.builder(
+            itemCount: _listNames.length,
+            itemBuilder: ((context, index) {
+              return ListTile(
+                title: Text(_listNames[index]["name"]!),
+                trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                  IconButton(
+                      onPressed: () {},
+                      tooltip: "End Monitoring",
+                      icon: Icon(
+                        Icons.highlight_remove,
+                        color: Color(0xFF58B4EE),
+                      )),
+                  IconButton(
+                      onPressed: () {},
+                      tooltip: "Move to Quarantine",
+                      icon: Icon(
+                        Symbols.medical_mask,
+                        color: Color(0xFFFB6962),
+                      ))
+                ]),
+              );
+            })),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
