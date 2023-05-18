@@ -52,7 +52,7 @@ class _LoginState extends State<Login> {
                     physics: const NeverScrollableScrollPhysics(),
                     children: [
                       Text(
-                        "Login to your account",
+                        "Log in to your account",
                         textAlign: TextAlign.center,
                         style: Theme.of(context)
                             .textTheme
@@ -195,9 +195,10 @@ class _LoginState extends State<Login> {
                 child: Column(
                   children: [
                     Text(
-                        textAlign: TextAlign.center,
-                        "By using IskolarSafe, you agree to the app's terms and conditions and privacy policy.",
-                        style: Theme.of(context).textTheme.labelSmall)
+                      textAlign: TextAlign.center,
+                      "By using IskolarSafe, you agree to the app's terms and conditions and privacy policy.",
+                      style: Theme.of(context).textTheme.labelSmall,
+                    )
                   ],
                 ),
               ),
