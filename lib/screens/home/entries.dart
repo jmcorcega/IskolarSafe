@@ -24,6 +24,24 @@ class _EntriesState extends State<Entries> {
           AppOptions(),
         ],
       ),
+      body: ListView(
+        children: [
+          ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
+            leading:
+                Icon(Symbols.health_and_safety_rounded, color: Colors.green),
+            title: Text("Date goes here"),
+            subtitle: Text(
+              "Safe for entry",
+              style: Theme.of(context)
+                  .textTheme
+                  .labelMedium!
+                  .apply(color: Colors.green),
+            ),
+            onTap: () {},
+          )
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           _showProfileModal(context);
