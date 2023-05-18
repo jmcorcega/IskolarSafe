@@ -1,0 +1,44 @@
+import 'package:flutter/material.dart';
+
+class AppBarHeader extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final bool hasAction;
+
+  const AppBarHeader(
+      {super.key,
+      required this.icon,
+      required this.title,
+      required this.hasAction});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        (hasAction)
+            ? const IconButton(
+                icon: CircleAvatar(
+                  radius: 14,
+                  backgroundColor: Colors.transparent,
+                ),
+                onPressed: null,
+              )
+            : const SizedBox(),
+        Icon(
+          icon,
+          size: 30.0,
+          color: Theme.of(context).colorScheme.onBackground,
+        ),
+        const SizedBox(width: 14.0),
+        Text(
+          title,
+          style: Theme.of(context).textTheme.titleMedium!.apply(
+                fontSizeDelta: 3,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
+        ),
+      ],
+    );
+  }
+}
