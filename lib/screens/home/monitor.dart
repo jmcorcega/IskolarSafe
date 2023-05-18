@@ -47,9 +47,7 @@ class _MonitorState extends State<Monitor> {
       appBar: AppBar(
         // centerTitle: true,
         title: AppBarHeader(
-            icon: Symbols.coronavirus_rounded,
-            title: "Under Monitoring",
-            hasAction: true),
+            icon: Symbols.coronavirus_rounded, title: "Under Monitoring"),
         actions: const [
           AppOptions(),
         ],

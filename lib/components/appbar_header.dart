@@ -4,17 +4,20 @@ class AppBarHeader extends StatelessWidget {
   final IconData icon;
   final String title;
   final bool hasAction;
+  final bool isCenter;
 
   const AppBarHeader(
       {super.key,
       required this.icon,
       required this.title,
-      required this.hasAction});
+      this.hasAction = true,
+      this.isCenter = true});
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment:
+          (isCenter) ? MainAxisAlignment.center : MainAxisAlignment.start,
       children: [
         (hasAction)
             ? const IconButton(

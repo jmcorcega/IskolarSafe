@@ -40,9 +40,7 @@ class _QuarantineState extends State<Quarantine> {
       appBar: AppBar(
         centerTitle: true,
         title: const AppBarHeader(
-            icon: Symbols.medical_mask_rounded,
-            title: "Under Quarantine",
-            hasAction: true),
+            icon: Symbols.medical_mask_rounded, title: "Under Quarantine"),
         actions: const [
           AppOptions(),
         ],
