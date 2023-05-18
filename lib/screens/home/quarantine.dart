@@ -51,17 +51,19 @@ class _QuarantineState extends State<Quarantine> {
         itemCount: _listNames.length,
         itemBuilder: ((context, index) {
           return ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
             leading: _getHealthStatus(_listNames[index]["hasSymptoms"]!),
             title: Text(_listNames[index]["name"]!),
             subtitle: Text(
               "Quarantined on: 18/05/2023 11:53am",
               style: Theme.of(context).textTheme.labelMedium,
             ),
-            trailing: Container(
-              margin: const EdgeInsets.symmetric(vertical: 12.0),
+            trailing: SizedBox(
+              width: 34.0,
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
                   shape: const CircleBorder(),
+                  padding: const EdgeInsets.all(0),
                 ),
                 onPressed: () {
                   showDialog(
@@ -70,7 +72,7 @@ class _QuarantineState extends State<Quarantine> {
                       builder: (BuildContext context) =>
                           _quarantineAlertDialog(_listNames[index]["name"]!));
                 },
-                child: const Icon(Icons.close, size: 20.0),
+                child: const Icon(Symbols.close),
               ),
             ),
             onTap: () {
