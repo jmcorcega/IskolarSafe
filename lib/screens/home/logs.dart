@@ -51,10 +51,11 @@ class _LogsState extends State<Logs> {
             height: 40,
             child: TextField(
             controller: _search,
+            textAlign: TextAlign.left,
             decoration: InputDecoration(
             prefixIcon: const Icon(Icons.search),
-            border: OutlineInputBorder(),
-            labelText: 'Search',
+            border: InputBorder.none,
+            hintText: 'Search logs...',
                    ),),
            )
           ],
@@ -105,7 +106,7 @@ class _LogsState extends State<Logs> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [ 
                       Padding(
-                        padding: const EdgeInsets.only(left: 5.0),
+                        padding: const EdgeInsets.only(left: 4.0),
                         child: Text(
                           _listNames[index]["name"]!,
                           style: TextStyle(fontSize: 17.0)),
@@ -117,8 +118,17 @@ class _LogsState extends State<Logs> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 3.0),
-                        child: Text("Quarantined on: " + "18/05/2023 11:53am", style: TextStyle(fontStyle: FontStyle.italic)),
+                        child: Text("Created pass on " + "18/05/2023 11:53am", style: TextStyle(fontStyle: FontStyle.italic)),
                       ),  
+                      Padding(
+                        padding: const EdgeInsets.only(left: 3.0),
+                        child: Text(_listNames[index]["college"], style: TextStyle(fontStyle: FontStyle.italic)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 3.0),
+                        child: Text(_listNames[index]["studentNo"], style: TextStyle(fontStyle: FontStyle.italic)),
+                      ),
+                      
                     ],
                   ),
                 ),
