@@ -1,10 +1,10 @@
-// NAME -> If clicked, show profile     
+// NAME -> If clicked, show profile
 // DATE QUARANTINED
 // Remove Quarantine -> When clicked, show pop up
 
-
-
 import 'package:flutter/material.dart';
+import 'package:iskolarsafe/components/app_options.dart';
+import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Quarantine extends StatefulWidget {
@@ -17,8 +17,6 @@ class Quarantine extends StatefulWidget {
 }
 
 class _QuarantineState extends State<Quarantine> {
-  List<IconData> _listIcons = [Symbols.login_rounded, Symbols.logout_rounded];
-  List<String> _listStrings = ["My Account", "Logout"];
   List<Map<dynamic, dynamic>> _listNames = [
     {
       "name": "Mang Juan",
@@ -40,111 +38,50 @@ class _QuarantineState extends State<Quarantine> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // centerTitle: true,
         centerTitle: true,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Icon(Symbols.medical_mask, color: Color(0xFFFB6962), size: 40),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0, top: 10.0),
-              child: Text("Quarantined", style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFFB6962))
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              showMenu(
-                  context: context,
-                  position: const RelativeRect.fromLTRB(100, 20, 0, 100),
-                  items: List.generate(_listIcons.length, (index) {
-                    return PopupMenuItem(
-                        value: index,
-                        onTap: () {},
-                        child: Wrap(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Icon(_listIcons[index]),
-                            ),
-                            Padding(
-                                padding: const EdgeInsets.only(left: 20),
-                                child: Text(_listStrings[index]))
-                          ],
-                        ));
-                  }));
-            },
-            icon: const Icon(Symbols.more_vert_rounded),
-          )
+        title: const AppBarHeader(
+            icon: Symbols.medical_mask_rounded,
+            title: "Under Quarantine",
+            hasAction: true),
+        actions: const [
+          AppOptions(),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 10.0),
-        child: ListView.builder(
-            itemCount: _listNames.length,
-            itemBuilder: ((context, index) {
-      
-              return GestureDetector(
-                onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MonitoringDetails(
-                                    mapDetails: _listNames[index])));
-                      },
-                child: ListTile(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [ 
-                      _getHealthStatus(_listNames[index]["hasSymptoms"]!),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5.0),
-                        child: Text(
-                          _listNames[index]["name"]!,
-                          style: TextStyle(fontSize: 17.0)),
-                      ),            
-                    ],
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 3.0),
-                        child: Text("Quarantined on: " + "18/05/2023 11:53am", style: TextStyle(fontStyle: FontStyle.italic)),
-                      ),  
-                    ],
-                  ),
-                  trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                    IconButton(
-                        onPressed: () {
-                          showDialog(
-                              useSafeArea: false,
-                              context: context,
-                              builder: (BuildContext context) =>
-                                  _quarantineAlertDialog(
-                                      _listNames[index]["name"]!));
-                        },
-                        tooltip: "End Quarantine",
-                        icon: const Icon(
-                          Icons.close,
-                          color: Color(0xFFFB6962),
-                        ))
-                  ]),
+      body: ListView.builder(
+        itemCount: _listNames.length,
+        itemBuilder: ((context, index) {
+          return ListTile(
+            leading: _getHealthStatus(_listNames[index]["hasSymptoms"]!),
+            title: Text(_listNames[index]["name"]!),
+            subtitle: Text(
+              "Quarantined on: 18/05/2023 11:53am",
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+            trailing: Container(
+              margin: const EdgeInsets.symmetric(vertical: 12.0),
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  shape: const CircleBorder(),
                 ),
-              );
-            })),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          _showProfileModal(context);
-        },
-        label: const Text("My Profile"),
-        icon: const Icon(Symbols.person_filled_rounded),
+                onPressed: () {
+                  showDialog(
+                      useSafeArea: false,
+                      context: context,
+                      builder: (BuildContext context) =>
+                          _quarantineAlertDialog(_listNames[index]["name"]!));
+                },
+                child: const Icon(Icons.close, size: 20.0),
+              ),
+            ),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          MonitoringDetails(mapDetails: _listNames[index])));
+            },
+          );
+        }),
       ),
     );
   }
@@ -168,12 +105,10 @@ class _QuarantineState extends State<Quarantine> {
   }
 
   Widget _getHealthStatus(bool status) {
-    String safe = "Safe for Work";
-    String symptoms = "Has Symptoms";
     if (status) {
-      return const Icon(Symbols.sick, color: Color(0xFFFB6962));
+      return const Icon(Symbols.sick, color: Colors.red);
     } else {
-      return const Icon(Symbols.health_and_safety_rounded, color: Color(0xFF0CC078));
+      return const Icon(Symbols.health_and_safety_rounded, color: Colors.green);
     }
   }
 
