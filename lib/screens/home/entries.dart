@@ -78,11 +78,44 @@ class ProfileModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(height: 64.0),
+
+        // TODO: QR goes here
         FlutterLogo(size: 150.0),
-        SizedBox(height: 18.0),
-        Text("User's Name", style: Theme.of(context).textTheme.titleLarge),
+
+        const SizedBox(height: 24.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              child: Text("U",
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary)),
+            ),
+            const SizedBox(width: 16.0),
+            Wrap(
+              direction: Axis.vertical,
+              children: [
+                Text(
+                  'John Doe',
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelLarge!
+                      .apply(fontSizeDelta: 2),
+                ),
+                Text('2020-012345',
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium!
+                        .apply(fontWeightDelta: -1)),
+              ],
+            ),
+          ],
+        ),
         TextButton.icon(
           onPressed: null,
           icon: const Icon(Symbols.check_circle_filled, size: 20.0),
@@ -93,11 +126,35 @@ class ProfileModal extends StatelessWidget {
                   )),
           style: ButtonStyle(
             padding: MaterialStateProperty.all(
-              const EdgeInsets.symmetric(vertical: 18.0, horizontal: 0.0),
+              const EdgeInsets.all(0.0),
             ),
             foregroundColor: MaterialStateProperty.all(
               Colors.green,
             ),
+          ),
+        ),
+
+        const SizedBox(height: 32.0),
+        SizedBox(
+          width: MediaQuery.of(context).size.width -
+              (MediaQuery.of(context).size.width * 0.1),
+          child: const AppBarHeader(
+            title: "Entry Information",
+            icon: Symbols.login_rounded,
+            hasAction: false,
+            isCenter: false,
+          ),
+        ),
+
+        const SizedBox(height: 32.0),
+        SizedBox(
+          width: MediaQuery.of(context).size.width -
+              (MediaQuery.of(context).size.width * 0.1),
+          child: const AppBarHeader(
+            title: "Medical Information",
+            icon: Symbols.medical_information_rounded,
+            hasAction: false,
+            isCenter: false,
           ),
         ),
       ],
