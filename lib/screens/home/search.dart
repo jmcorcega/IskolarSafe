@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:iskolarsafe/components/app_options.dart';
+import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'quarantine.dart';
 
@@ -106,69 +108,36 @@ class _SearchState extends State<Search> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Icon(Symbols.face, color: Color(0xFFFB6962), size: 40),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0, top: 10.0),
-              child: Text("Students",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Color(0xFFFB6962))),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              showMenu(
-                  context: context,
-                  position: const RelativeRect.fromLTRB(100, 20, 0, 100),
-                  items: List.generate(_listIcons.length, (index) {
-                    return PopupMenuItem(
-                        value: index,
-                        onTap: () {},
-                        child: Wrap(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Icon(_listIcons[index]),
-                            ),
-                            Padding(
-                                padding: const EdgeInsets.only(left: 20),
-                                child: Text(_listStrings[index]))
-                          ],
-                        ));
-                  }));
-            },
-            icon: const Icon(Symbols.more_vert_rounded),
-          )
-        ],
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding:
-                EdgeInsets.only(left: 15.0, right: 15.0, bottom: 10, top: 10),
-            child: Container(
-              height: 60,
-              child: TextField(
-                onChanged: (value) {
-                  // Handle text change
-                },
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(30.0))),
+        title: const AppBarHeader(icon: Symbols.face, title: "Students"),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(80),
+          child: AppBar(
+            toolbarHeight: 80,
+            title: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Center(
+                child: TextField(
+                  onSubmitted: (value) {
+                    setState(() {});
+                  },
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Symbols.search_rounded),
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(vertical: 16.0),
+                    hintText: "Search for students",
+                  ),
                 ),
               ),
             ),
           ),
-          Divider(height: 1, color: Colors.grey),
+        ),
+        actions: const [
+          AppOptions(),
+        ],
+      ),
+      body: Column(
+        children: [
           Expanded(
             child: ListView.builder(
                 itemCount: _listNames.length,

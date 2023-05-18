@@ -2,8 +2,9 @@
 // Action (diff color) Monitor Name
 // Date
 
-
 import 'package:flutter/material.dart';
+import 'package:iskolarsafe/components/app_options.dart';
+import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Logs extends StatefulWidget {
@@ -14,8 +15,8 @@ class Logs extends StatefulWidget {
   @override
   State<Logs> createState() => _LogsState();
 }
-class _LogsState extends State<Logs> {
 
+class _LogsState extends State<Logs> {
   TextEditingController _search = new TextEditingController();
 
   List<IconData> _listIcons = [Symbols.login_rounded, Symbols.logout_rounded];
@@ -41,50 +42,34 @@ class _LogsState extends State<Logs> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // centerTitle: true,
         centerTitle: true,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [ // add textfield here ok and then icon for search and then icon again for log out
-           SizedBox(
-            width: MediaQuery.of(context).size.width * 3/4,
-            height: 40,
-            child: TextField(
-            controller: _search,
-            textAlign: TextAlign.left,
-            decoration: InputDecoration(
-            prefixIcon: const Icon(Icons.search),
-            border: InputBorder.none,
-            hintText: 'Search logs...',
-                   ),),
-           )
-          ],
+        title: const AppBarHeader(
+            icon: Symbols.quick_reference_all_rounded, title: "Logs"),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(80),
+          child: AppBar(
+            toolbarHeight: 80,
+            title: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Center(
+                child: TextField(
+                  onSubmitted: (value) {
+                    setState(() {});
+                  },
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Symbols.search_rounded),
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(vertical: 16.0),
+                    hintText: "Search for logs",
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              showMenu(
-                  context: context,
-                  position: const RelativeRect.fromLTRB(100, 20, 0, 100),
-                  items: List.generate(_listIcons.length, (index) {
-                    return PopupMenuItem(
-                        value: index,
-                        onTap: () {},
-                        child: Wrap(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Icon(_listIcons[index]),
-                            ),
-                            Padding(
-                                padding: const EdgeInsets.only(left: 20),
-                                child: Text(_listStrings[index]))
-                          ],
-                        ));
-                  }));
-            },
-            icon: const Icon(Symbols.more_vert_rounded),
-          )
+        actions: const [
+          AppOptions(),
         ],
       ),
       body: Padding(
@@ -92,25 +77,23 @@ class _LogsState extends State<Logs> {
         child: ListView.builder(
             itemCount: _listNames.length,
             itemBuilder: ((context, index) {
-      
               return GestureDetector(
                 onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MonitoringDetails(
-                                    mapDetails: _listNames[index])));
-                      },
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MonitoringDetails(
+                              mapDetails: _listNames[index])));
+                },
                 child: ListTile(
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
-                    children: [ 
+                    children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 4.0),
-                        child: Text(
-                          _listNames[index]["name"]!,
-                          style: TextStyle(fontSize: 17.0)),
-                      ),            
+                        child: Text(_listNames[index]["name"]!,
+                            style: TextStyle(fontSize: 17.0)),
+                      ),
                     ],
                   ),
                   subtitle: Column(
@@ -118,17 +101,19 @@ class _LogsState extends State<Logs> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 3.0),
-                        child: Text("Created pass on " + "18/05/2023 11:53am", style: TextStyle(fontStyle: FontStyle.italic)),
-                      ),  
-                      Padding(
-                        padding: const EdgeInsets.only(left: 3.0),
-                        child: Text(_listNames[index]["college"], style: TextStyle(fontStyle: FontStyle.italic)),
+                        child: Text("Created pass on " + "18/05/2023 11:53am",
+                            style: TextStyle(fontStyle: FontStyle.italic)),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 3.0),
-                        child: Text(_listNames[index]["studentNo"], style: TextStyle(fontStyle: FontStyle.italic)),
+                        child: Text(_listNames[index]["college"],
+                            style: TextStyle(fontStyle: FontStyle.italic)),
                       ),
-                      
+                      Padding(
+                        padding: const EdgeInsets.only(left: 3.0),
+                        child: Text(_listNames[index]["studentNo"],
+                            style: TextStyle(fontStyle: FontStyle.italic)),
+                      ),
                     ],
                   ),
                 ),
