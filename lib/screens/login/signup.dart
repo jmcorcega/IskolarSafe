@@ -1,5 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 enum ConditionsList {
@@ -105,7 +106,31 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
             ),
-            const SizedBox(height: 12.0),
+            const SizedBox(height: 24.0),
+            FilledButton.icon(
+              style: OutlinedButton.styleFrom(minimumSize: _buttonSize),
+              onPressed: () {},
+              icon: const Icon(
+                Bootstrap.google,
+                size: 18.0,
+              ),
+              label: const Text("Sign up via Google"),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                const SizedBox(height: 48.0),
+                const Expanded(child: Divider()),
+                const SizedBox(width: 14.0),
+                Text(
+                  "OR",
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+                const SizedBox(width: 14.0),
+                const Expanded(child: Divider()),
+                const SizedBox(height: 48.0),
+              ],
+            ),
             TextFormField(
               controller: emailController,
               decoration: const InputDecoration(
