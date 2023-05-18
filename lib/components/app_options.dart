@@ -83,6 +83,7 @@ class AppOptions extends StatelessWidget {
                         children: [
                           const SizedBox(height: 4.0),
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               CircleAvatar(
                                 backgroundColor:
@@ -103,12 +104,17 @@ class AppOptions extends StatelessWidget {
                                       style: Theme.of(context)
                                           .textTheme
                                           .labelLarge!
-                                          .apply(fontWeightDelta: 1),
+                                          .apply(
+                                            fontSizeDelta: 2,
+                                          ),
                                     ),
                                     Text('johndoe@example.com',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .labelMedium),
+                                            .labelMedium!
+                                            .apply(
+                                              fontSizeDelta: -1,
+                                            )),
                                   ],
                                 ),
                               ),
