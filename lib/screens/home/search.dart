@@ -168,6 +168,7 @@ class _SearchState extends State<Search> {
               ),
             ),
           ),
+          Divider(height: 1, color: Colors.grey),
           Expanded(
             child: ListView.builder(
                 itemCount: _listNames.length,
