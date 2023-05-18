@@ -152,16 +152,19 @@ class _SearchState extends State<Search> {
         children: [
           Padding(
             padding:
-                EdgeInsets.only(left: 15.0, right: 15.0, bottom: 20, top: 20),
-            child: TextField(
-              onChanged: (value) {
-                // Handle text change
-              },
-              decoration: InputDecoration(
-                hintText: 'Search...',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(30.0))),
+                EdgeInsets.only(left: 15.0, right: 15.0, bottom: 10, top: 10),
+            child: Container(
+              height: 60,
+              child: TextField(
+                onChanged: (value) {
+                  // Handle text change
+                },
+                decoration: InputDecoration(
+                  hintText: 'Search...',
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30.0))),
+                ),
               ),
             ),
           ),
