@@ -113,7 +113,7 @@ class _QuarantineState extends State<Quarantine> {
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
+                      Padding( // This quarantined data is hardcoded, change this later on
                         padding: const EdgeInsets.only(left: 3.0),
                         child: Text("Quarantined on: " + "18/05/2023 11:53am", style: TextStyle(fontStyle: FontStyle.italic)),
                       ),  
@@ -179,20 +179,26 @@ class _QuarantineState extends State<Quarantine> {
 
   Widget _quarantineAlertDialog(String name) {
     return AlertDialog(
-      content: Text("Are you sure you want to move $name to quarantine?"),
+      content: Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+        child: Text("Are you sure you want to remove $name from quarantine?"),
+      ),
       actions: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 10.0),
-          child: ElevatedButton(
-            onPressed: () {},
-            child: const Text("Move to Quarantine"),
-          ),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text("Cancel"),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly, // or spaceBetween?
+          children: [           
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton( // Color is hard coded. Needs a way to match this color from 
+              onPressed: () {},
+              child: const Text("Remove", style: TextStyle(color: Color(0xFFFFFFFF))),
+              style: ButtonStyle(backgroundColor: MaterialStateColor.resolveWith((states) => Color(0xFFFB6962)))
+            ),
+          ],
         )
       ],
     );
