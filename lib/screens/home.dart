@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/screens/home/entries.dart';
-import 'package:iskolarsafe/screens/home/isolate.dart';
+import 'package:iskolarsafe/screens/home/monitor.dart';
 import 'package:iskolarsafe/screens/home/logs.dart';
 import 'package:iskolarsafe/screens/home/quarantine.dart';
 import 'package:iskolarsafe/screens/home/search.dart';
@@ -28,7 +28,7 @@ class _HomeState extends State<Home> {
           Logs(),
           Search(),
           Quarantine(),
-          Isolate()
+          Monitor()
         ][_selectedTabIndex],
         bottomNavigationBar: NavigationBar(
           selectedIndex: _selectedTabIndex,
@@ -55,8 +55,8 @@ class _HomeState extends State<Home> {
               label: 'Quarantine',
             ),
             NavigationDestination(
-              icon: Icon(Symbols.recent_patient_rounded),
-              label: 'Isolate',
+              icon: Icon(Symbols.coronavirus_rounded),
+              label: 'Monitor',
             ),
           ],
         ));

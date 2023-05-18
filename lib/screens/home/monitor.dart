@@ -3,16 +3,16 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class Isolate extends StatefulWidget {
+class Monitor extends StatefulWidget {
   static const String routeName = "/";
 
-  const Isolate({super.key});
+  const Monitor({super.key});
 
   @override
-  State<Isolate> createState() => _IsolateState();
+  State<Monitor> createState() => _MonitorState();
 }
 
-class _IsolateState extends State<Isolate> {
+class _MonitorState extends State<Monitor> {
   List<IconData> _listIcons = [Symbols.login_rounded, Symbols.logout_rounded];
   List<String> _listStrings = ["My Account", "Logout"];
   List<Map<dynamic, dynamic>> _listNames = [
