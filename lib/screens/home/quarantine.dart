@@ -86,24 +86,6 @@ class _QuarantineState extends State<Quarantine> {
     );
   }
 
-  void _showProfileModal(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.45,
-          maxChildSize: 0.95,
-          minChildSize: 0.4,
-          expand: false,
-          builder: (context, scrollController) {
-            return SingleChildScrollView(
-              controller: scrollController,
-              child: const ProfileModal(),
-            );
-          }),
-    );
-  }
-
   Widget _getHealthStatus(bool status) {
     if (status) {
       return const Icon(Symbols.sick, color: Colors.red);
