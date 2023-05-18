@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'quarantine.dart';
 
 class Search extends StatefulWidget {
   static const String routeName = "/";
@@ -22,11 +23,81 @@ class _SearchState extends State<Search> {
       "hasSymptoms": false
     },
     {
+      "name": "Maam Juana",
+      "studentNo": "20205678",
+      "course": "BS Chemistry",
+      "college": "CAS",
+      "hasSymptoms": false
+    },
+    {
+      "name": "Mami Juan",
+      "studentNo": "20205678",
+      "course": "BS Stat",
+      "college": "CAS",
+      "hasSymptoms": true
+    },
+    {
       "name": "Maria Clara",
       "studentNo": "20202468",
       "course": "BSCE",
       "college": "CEAT",
       "hasSymptoms": true
+    },
+    {
+      "name": "Maria Clara",
+      "studentNo": "20202468",
+      "course": "BSCE",
+      "college": "CEAT",
+      "hasSymptoms": true
+    },
+    {
+      "name": "Mario Clara",
+      "studentNo": "20202468",
+      "course": "BSCS",
+      "college": "CAS",
+      "hasSymptoms": false
+    },
+    {
+      "name": "Mara Clara",
+      "studentNo": "20202468",
+      "course": "BSCS",
+      "college": "CAS",
+      "hasSymptoms": true
+    },
+    {
+      "name": "Juan Tamad",
+      "studentNo": "20202468",
+      "course": "BSCS",
+      "college": "CAS",
+      "hasSymptoms": false
+    },
+    {
+      "name": "Mang Juan",
+      "studentNo": "20205678",
+      "course": "BS Stat",
+      "college": "CAS",
+      "hasSymptoms": false
+    },
+    {
+      "name": "Maria Clara",
+      "studentNo": "20202468",
+      "course": "BSCE",
+      "college": "CEAT",
+      "hasSymptoms": true
+    },
+    {
+      "name": "Mara Clara",
+      "studentNo": "20202468",
+      "course": "BSCS",
+      "college": "CAS",
+      "hasSymptoms": true
+    },
+    {
+      "name": "Juan Tamad",
+      "studentNo": "20202468",
+      "course": "BSCS",
+      "college": "CAS",
+      "hasSymptoms": false
     }
   ];
 
@@ -40,8 +111,7 @@ class _SearchState extends State<Search> {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 10),
-              child: Icon(Symbols.medical_mask,
-                  color: Color(0xFFFB6962), size: 40),
+              child: Icon(Symbols.face, color: Color(0xFFFB6962), size: 40),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 10.0, top: 10.0),
@@ -81,56 +151,61 @@ class _SearchState extends State<Search> {
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding:
+                EdgeInsets.only(left: 15.0, right: 15.0, bottom: 20, top: 20),
             child: TextField(
               onChanged: (value) {
                 // Handle text change
               },
               decoration: InputDecoration(
-                labelText: 'Search',
-                hintText: 'Enter search keywords',
+                hintText: 'Search...',
                 prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30.0))),
               ),
             ),
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: 100,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text('Item $index'),
-                );
-              },
-            ),
+                itemCount: _listNames.length,
+                itemBuilder: ((context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MonitoringDetails(
+                                  mapDetails: _listNames[index])));
+                    },
+                    child: ListTile(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          _getHealthStatus(_listNames[index]["hasSymptoms"]!),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5.0),
+                            child: Text(_listNames[index]["name"]!,
+                                style: TextStyle(fontSize: 17.0)),
+                          ),
+                        ],
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 3.0),
+                            child: Text(
+                                "Quarantined on: " + "18/05/2023 11:53am",
+                                style: TextStyle(fontStyle: FontStyle.italic)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                })),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          _showProfileModal(context);
-        },
-        label: const Text("My Profile"),
-        icon: const Icon(Symbols.person_filled_rounded),
-      ),
-    );
-  }
-
-  void _showProfileModal(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.45,
-          maxChildSize: 0.95,
-          minChildSize: 0.4,
-          expand: false,
-          builder: (context, scrollController) {
-            return SingleChildScrollView(
-              controller: scrollController,
-              child: const ProfileModal(),
-            );
-          }),
     );
   }
 
@@ -143,42 +218,5 @@ class _SearchState extends State<Search> {
       return const Icon(Symbols.health_and_safety_rounded,
           color: Color(0xFF0CC078));
     }
-  }
-
-  Widget _quarantineAlertDialog(String name) {
-    return AlertDialog(
-      content: Text("Are you sure you want to move $name to quarantine?"),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 10.0),
-          child: ElevatedButton(
-            onPressed: () {},
-            child: const Text("Move to Quarantine"),
-          ),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text("Cancel"),
-        )
-      ],
-    );
-  }
-}
-
-class ProfileModal extends StatelessWidget {
-  const ProfileModal({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(height: 64.0),
-        FlutterLogo(size: 150.0),
-        SizedBox(height: 18.0),
-        Text("User's Name", style: Theme.of(context).textTheme.titleLarge),
-      ],
-    );
   }
 }
