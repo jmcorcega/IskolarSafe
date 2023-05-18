@@ -140,42 +140,41 @@ class _SearchState extends State<Search> {
         children: [
           Expanded(
             child: ListView.builder(
-                itemCount: _listNames.length,
-                itemBuilder: ((context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MonitoringDetails(
-                                  mapDetails: _listNames[index])));
-                    },
-                    child: ListTile(
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          _getHealthStatus(_listNames[index]["hasSymptoms"]!),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5.0),
-                            child: Text(_listNames[index]["name"]!,
-                                style: TextStyle(fontSize: 17.0)),
-                          ),
-                        ],
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 3.0),
-                            child: Text(
-                                "Quarantined on: " + "18/05/2023 11:53am",
-                                style: TextStyle(fontStyle: FontStyle.italic)),
-                          ),
-                        ],
-                      ),
+              itemCount: _listNames.length,
+              itemBuilder: ((context, index) {
+                return ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  leading: SizedBox(
+                    height: double.infinity,
+                    child: CircleAvatar(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      child: Text(
+                          _listNames[index]["name"]!.toString().substring(0, 1),
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary)),
                     ),
-                  );
-                })),
+                  ),
+                  minLeadingWidth: 44.0,
+                  title: Text(_listNames[index]["name"]!),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Student No",
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MonitoringDetails(
+                                mapDetails: _listNames[index])));
+                  },
+                );
+              }),
+            ),
           ),
         ],
       ),
