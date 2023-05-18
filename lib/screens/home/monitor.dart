@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:iskolarsafe/components/app_options.dart';
+import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Monitor extends StatefulWidget {
@@ -44,75 +46,39 @@ class _MonitorState extends State<Monitor> {
     return Scaffold(
       appBar: AppBar(
         // centerTitle: true,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Padding(
-              padding: EdgeInsets.only(top: 10.0),
-              child: Icon(
-                Symbols.coronavirus,
-                color: Color(0xFFFB6962),
-                size: 40.0,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 10.0, top: 10.0),
-              child: Text("Under Monitoring",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Color(0xFFFB6962))),
-            )
-          ],
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              showMenu(
-                  context: context,
-                  position: const RelativeRect.fromLTRB(100, 20, 0, 100),
-                  items: List.generate(_listIcons.length, (index) {
-                    return PopupMenuItem(
-                        value: index,
-                        onTap: () {},
-                        child: Wrap(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Icon(_listIcons[index]),
-                            ),
-                            Padding(
-                                padding: const EdgeInsets.only(left: 20),
-                                child: Text(_listStrings[index]))
-                          ],
-                        ));
-                  }));
-            },
-            icon: const Icon(Symbols.more_vert_rounded),
-          )
+        title: AppBarHeader(
+            icon: Symbols.coronavirus_rounded,
+            title: "Under Monitoring",
+            hasAction: true),
+        actions: const [
+          AppOptions(),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 10.0),
-        child: ListView.builder(
-            itemCount: _listNames.length,
-            itemBuilder: ((context, index) {
-              return ListTile(
-                title: TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MonitoringDetails(
-                                  mapDetails: _listNames[index])));
-                    },
-                    style: TextButton.styleFrom(
-                      alignment: Alignment.centerLeft,
-                      foregroundColor: Colors.black,
-                    ),
-                    child: Text(_listNames[index]["name"]!,
-                        style: TextStyle(fontSize: 17.0))),
-                subtitle: _getHealthStatus(_listNames[index]["hasSymptoms"]!),
-                trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                  IconButton(
+      body: ListView.builder(
+          itemCount: _listNames.length,
+          itemBuilder: ((context, index) {
+            return ListTile(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            MonitoringDetails(mapDetails: _listNames[index])));
+              },
+              contentPadding: EdgeInsets.symmetric(horizontal: 24.0),
+              title: Text(_listNames[index]["name"]!),
+              subtitle: _getHealthStatus(_listNames[index]["hasSymptoms"]!),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 34.0,
+                    child: FilledButton(
+                      style: FilledButton.styleFrom(
+                          shape: const CircleBorder(),
+                          padding: EdgeInsets.all(0),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary),
                       onPressed: () {
                         showDialog(
                             context: context,
@@ -120,12 +86,18 @@ class _MonitorState extends State<Monitor> {
                                 _monitoringAlertDialog(
                                     _listNames[index]["name"]!));
                       },
-                      tooltip: "End Monitoring",
-                      icon: const Icon(
-                        Icons.highlight_remove,
-                        color: Color(0xFF58B4EE),
-                      )),
-                  IconButton(
+                      child: const Icon(Symbols.close_rounded, size: 18.0),
+                    ),
+                  ),
+                  SizedBox(width: 12.0),
+                  SizedBox(
+                    width: 34.0,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                          shape: const CircleBorder(),
+                          padding: EdgeInsets.all(0),
+                          foregroundColor:
+                              Theme.of(context).colorScheme.tertiary),
                       onPressed: () {
                         showDialog(
                             useSafeArea: false,
@@ -134,40 +106,13 @@ class _MonitorState extends State<Monitor> {
                                 _quarantineAlertDialog(
                                     _listNames[index]["name"]!));
                       },
-                      tooltip: "Move to Quarantine",
-                      icon: const Icon(
-                        Symbols.medical_mask,
-                        color: Color(0xFFFB6962),
-                      ))
-                ]),
-              );
-            })),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          _showProfileModal(context);
-        },
-        label: const Text("My Profile"),
-        icon: const Icon(Symbols.person_filled_rounded),
-      ),
-    );
-  }
-
-  void _showProfileModal(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.45,
-          maxChildSize: 0.95,
-          minChildSize: 0.4,
-          expand: false,
-          builder: (context, scrollController) {
-            return SingleChildScrollView(
-              controller: scrollController,
-              child: const ProfileModal(),
+                      child: const Icon(Symbols.medical_mask_rounded),
+                    ),
+                  ),
+                ],
+              ),
             );
-          }),
+          })),
     );
   }
 
@@ -177,22 +122,30 @@ class _MonitorState extends State<Monitor> {
     if (status) {
       return Row(
         children: [
-          const Padding(
-            padding: EdgeInsets.only(right: 5.0),
-            child: Icon(Symbols.sick, color: Color(0xFFFB6962)),
+          Icon(Symbols.sick, color: Colors.red, size: 20.0),
+          SizedBox(width: 6.0),
+          Text(
+            symptoms,
+            style: Theme.of(context)
+                .textTheme
+                .labelMedium!
+                .apply(color: Colors.red),
           ),
-          Text(symptoms),
         ],
       );
     } else {
       return Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 5.0),
-            child: const Icon(Symbols.health_and_safety_rounded,
-                color: Color(0xFF0CC078)),
+          Icon(Symbols.health_and_safety_rounded,
+              color: Colors.green, size: 20.0),
+          SizedBox(width: 6.0),
+          Text(
+            safe,
+            style: Theme.of(context)
+                .textTheme
+                .labelMedium!
+                .apply(color: Colors.green),
           ),
-          Text(safe),
         ],
       );
     }
