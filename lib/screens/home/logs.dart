@@ -72,60 +72,46 @@ class _LogsState extends State<Logs> {
           AppOptions(),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 10.0),
-        child: ListView.builder(
-            itemCount: _listNames.length,
-            itemBuilder: ((context, index) {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => MonitoringDetails(
-                              mapDetails: _listNames[index])));
-                },
-                child: ListTile(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Text(_listNames[index]["name"]!,
-                            style: TextStyle(fontSize: 17.0)),
-                      ),
-                    ],
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 3.0),
-                        child: Text("Created pass on " + "18/05/2023 11:53am",
-                            style: TextStyle(fontStyle: FontStyle.italic)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 3.0),
-                        child: Text(_listNames[index]["college"],
-                            style: TextStyle(fontStyle: FontStyle.italic)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 3.0),
-                        child: Text(_listNames[index]["studentNo"],
-                            style: TextStyle(fontStyle: FontStyle.italic)),
-                      ),
-                    ],
-                  ),
+      body: ListView.builder(
+        itemCount: _listNames.length,
+        itemBuilder: ((context, index) {
+          return ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
+            leading: SizedBox(
+              height: double.infinity,
+              child: CircleAvatar(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                child: Text(
+                    _listNames[index]["name"]!.toString().substring(0, 1),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary)),
+              ),
+            ),
+            minLeadingWidth: 44.0,
+            title: Text(_listNames[index]["name"]!),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Student No",
+                  style: Theme.of(context).textTheme.labelMedium,
                 ),
-              );
-            })),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          _showProfileModal(context);
-        },
-        label: const Text("My Profile"),
-        icon: const Icon(Symbols.person_filled_rounded),
+                Text(
+                  "18/05/2023 11:53am",
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+              ],
+            ),
+            isThreeLine: true,
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          MonitoringDetails(mapDetails: _listNames[index])));
+            },
+          );
+        }),
       ),
     );
   }
