@@ -1,5 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="uplb.cmsc23.iskolarsafe">
+    <!-- We use Firebase, we *obviously* need network access -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- For QR scanning -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- For saving generated QR code to the shared storage -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
    <application
         android:label="iskolarsafe"
         android:name="${applicationName}"
