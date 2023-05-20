@@ -1,8 +1,19 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:iskolarsafe/firebase_options.dart';
 import 'package:iskolarsafe/routes.dart';
 import 'package:iskolarsafe/theme.dart';
 
-void main() {
+void main() async {
+  // Ensure widgets have been initialized
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase options
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Run the application
   runApp(const IskolarSafeApp());
 }
 
