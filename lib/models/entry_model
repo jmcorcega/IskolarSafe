@@ -26,6 +26,9 @@ class Entry {
 
   Entry({
     required this.userId
+    required this.transactionId
+    required this.dateGenerated
+    required this.validUntil
   });
 
   // Factory constructor to instantiate object from json format
