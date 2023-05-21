@@ -156,6 +156,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
           _formKey.currentState!.validate();
           setState(() {
             _loadingButton = false;
+            _submitting = false;
           });
         }
       }
@@ -254,8 +255,9 @@ class _SignUpState extends State<SignUp> with RouteAware {
               const SizedBox(height: 24.0),
               FilledButton.icon(
                 style: OutlinedButton.styleFrom(minimumSize: _buttonSize),
-                onPressed:
-                    _isGoogle || _loadingGoogleButton ? null : getGoogleInfo,
+                onPressed: _isGoogle || _loadingGoogleButton || _submitting
+                    ? null
+                    : getGoogleInfo,
                 icon: _loadingGoogleButton
                     ? Container()
                     : const Icon(
@@ -291,7 +293,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                   border: OutlineInputBorder(),
                   labelText: "Email",
                 ),
-                enabled: !_isGoogle,
+                enabled: !_isGoogle || !_submitting,
                 validator: (value) {
                   if (_isGoogle) return null;
                   if (emailController.text.isEmpty ||
@@ -316,7 +318,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                   border: OutlineInputBorder(),
                   labelText: "Password",
                 ),
-                enabled: !_isGoogle,
+                enabled: !_isGoogle || !_submitting,
                 validator: (value) {
                   if (_isGoogle) return null;
                   if (passwordController.text.isEmpty ||
@@ -362,6 +364,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                         border: OutlineInputBorder(),
                         labelText: "First name",
                       ),
+                      enabled: !_submitting,
                       validator: (value) {
                         if (firstNameController.text.isEmpty ||
                             value == null ||
@@ -380,6 +383,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                         border: OutlineInputBorder(),
                         labelText: "Last name",
                       ),
+                      enabled: !_submitting,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'This field is required.';
@@ -398,6 +402,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                   border: OutlineInputBorder(),
                   labelText: "Username",
                 ),
+                enabled: !_submitting,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "This field is required.";
@@ -414,6 +419,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                   border: OutlineInputBorder(),
                   labelText: "Student ID Number",
                 ),
+                enabled: !_submitting,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "This field is required.";
@@ -430,6 +436,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                   border: OutlineInputBorder(),
                   labelText: "Course",
                 ),
+                enabled: !_submitting,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "This field is required.";
@@ -516,15 +523,17 @@ class _SignUpState extends State<SignUp> with RouteAware {
                   return FilterChip(
                     label: Text(conditionName),
                     selected: _conditionsList.contains(conditionName),
-                    onSelected: (bool selected) {
-                      setState(() {
-                        if (selected) {
-                          _conditionsList.add(conditionName);
-                        } else {
-                          _conditionsList.remove(conditionName);
-                        }
-                      });
-                    },
+                    onSelected: !_submitting
+                        ? (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                _conditionsList.add(conditionName);
+                              } else {
+                                _conditionsList.remove(conditionName);
+                              }
+                            });
+                          }
+                        : null,
                   );
                 }).toList(),
               ),
@@ -552,6 +561,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                     initialValue: null,
                     controller: _controller,
                     textInputAction: TextInputAction.done,
+                    enabled: !_submitting,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Symbols.masks_rounded),
                       border: const OutlineInputBorder(),
@@ -603,16 +613,20 @@ class _SignUpState extends State<SignUp> with RouteAware {
                     String allergy = _allergiesList[index];
                     return InputChip(
                       label: Text(allergy),
-                      onPressed: () {
-                        setState(() {
-                          _allergiesList.remove(allergy);
-                        });
-                      },
-                      onDeleted: () {
-                        setState(() {
-                          _allergiesList.remove(allergy);
-                        });
-                      },
+                      onPressed: !_submitting
+                          ? () {
+                              setState(() {
+                                _allergiesList.remove(allergy);
+                              });
+                            }
+                          : null,
+                      onDeleted: !_submitting
+                          ? () {
+                              setState(() {
+                                _allergiesList.remove(allergy);
+                              });
+                            }
+                          : null,
                     );
                   },
                 ).toList(),
