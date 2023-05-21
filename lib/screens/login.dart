@@ -37,17 +37,20 @@ class _LoginState extends State<Login> {
           email: emailController.text,
           password: passwordController.text,
         );
+
     if (context.mounted) {
       var status = context.read<AccountsProvider>().status;
-      _loginErr = status != FirebaseAuthStatus.success;
+      _loginErr = status != AccountsStatus.success;
 
-      if (status == FirebaseAuthStatus.success) {
+      if (status == AccountsStatus.success) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             behavior: SnackBarBehavior.floating,
             content: Text('Logged in successfully.'),
           ),
         );
+
+        return;
       }
 
       if (_loginErr) {
@@ -73,10 +76,10 @@ class _LoginState extends State<Login> {
     await context.read<AccountsProvider>().signInWithGoogle();
     if (context.mounted) {
       var status = context.read<AccountsProvider>().status;
-      _loginErr = status != FirebaseAuthStatus.success &&
-          status != FirebaseAuthStatus.needsSignUp;
+      _loginErr = status != AccountsStatus.success &&
+          status != AccountsStatus.needsSignUp;
 
-      if (status == FirebaseAuthStatus.needsSignUp) {
+      if (status == AccountsStatus.needsSignUp) {
         const snackBar = SnackBar(
           behavior: SnackBarBehavior.floating,
           content: Text('Account not found. Sign up is required.'),
@@ -84,15 +87,18 @@ class _LoginState extends State<Login> {
 
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         Navigator.pushNamed(context, SignUp.routeName, arguments: true);
+        return;
       }
 
-      if (status == FirebaseAuthStatus.success) {
+      if (status == AccountsStatus.success) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             behavior: SnackBarBehavior.floating,
             content: Text('Logged in successfully.'),
           ),
         );
+
+        return;
       }
 
       if (_loginErr) {

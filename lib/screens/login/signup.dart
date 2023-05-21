@@ -75,8 +75,8 @@ class _SignUpState extends State<SignUp> {
     await context.read<AccountsProvider>().signInWithGoogle();
     if (context.mounted) {
       var status = context.read<AccountsProvider>().status;
-      loginErr = status != FirebaseAuthStatus.success &&
-          status != FirebaseAuthStatus.needsSignUp;
+      loginErr = status != AccountsStatus.success &&
+          status != AccountsStatus.needsSignUp;
 
       if (loginErr) {
         const snackBar = SnackBar(
@@ -87,7 +87,7 @@ class _SignUpState extends State<SignUp> {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
 
-      if (status == FirebaseAuthStatus.success) {
+      if (status == AccountsStatus.success) {
         const snackBar = SnackBar(
           behavior: SnackBarBehavior.floating,
           content: Text('Account already exists.'),
@@ -98,7 +98,7 @@ class _SignUpState extends State<SignUp> {
         await context.read<AccountsProvider>().signOut();
       }
 
-      if (status == FirebaseAuthStatus.needsSignUp) {
+      if (status == AccountsStatus.needsSignUp) {
         _isGoogle = true;
       }
 
@@ -139,8 +139,7 @@ class _SignUpState extends State<SignUp> {
           userInfo: AppUserInfo.toJson(userInfo));
 
       if (context.mounted) {
-        if (context.read<AccountsProvider>().status ==
-            FirebaseAuthStatus.success) {
+        if (context.read<AccountsProvider>().status == AccountsStatus.success) {
           const snackBar = SnackBar(
             behavior: SnackBarBehavior.floating,
             content: Text('Signed up successfully.'),

@@ -7,23 +7,23 @@ import 'package:iskolarsafe/models/user_model.dart';
 class AccountsProvider with ChangeNotifier {
   late AccountsAPI _accounts;
   late Stream<User?> _userStream;
-  late FirebaseAuthStatus _authStatus;
+  late AccountsStatus _authStatus;
   late User? _user;
-  late Future<AppUserInfo?>? _userInfo;
 
   Stream<User?> get stream => _userStream;
-  String _type = "none";
 
   User? get user => _user;
-  String get type => _type;
-  Future<AppUserInfo?>? get userInfo => _userInfo;
-  FirebaseAuthStatus get status => _authStatus;
+  Future<AppUserInfo?> get userInfo => _accounts.getUserInfo(_user);
+  AccountsStatus get status => _authStatus;
 
   AccountsProvider() {
+    _authStatus = AccountsStatus.unknown;
     _accounts = AccountsAPI();
     _userStream = _accounts.getUserStream();
     _user = _accounts.user;
-    _userInfo = _accounts.userInfo;
+    if (_user != null) {
+      _authStatus = AccountsStatus.success;
+    }
     notifyListeners();
   }
 
@@ -35,9 +35,8 @@ class AccountsProvider with ChangeNotifier {
         email: email, password: password, userInfo: userInfo);
 
     // Fetch user information
+    _userStream = _accounts.getUserStream();
     _user = _accounts.user;
-    _userInfo = _accounts.userInfo;
-    _type = "new";
 
     notifyListeners();
   }
@@ -49,8 +48,6 @@ class AccountsProvider with ChangeNotifier {
 
     // Fetch user information
     _user = _accounts.user;
-    _userInfo = _accounts.userInfo;
-    _type = "email";
 
     notifyListeners();
   }
@@ -59,7 +56,7 @@ class AccountsProvider with ChangeNotifier {
     // Start the sign-in process
     GoogleSignInAccount? credentials = await GoogleSignIn().signIn();
     if (credentials == null) {
-      _authStatus = FirebaseAuthStatus.unknown;
+      _authStatus = AccountsStatus.unknown;
       return;
     }
 
@@ -77,17 +74,14 @@ class AccountsProvider with ChangeNotifier {
 
     // Fetch user information
     _user = _accounts.user;
-    _userInfo = _accounts.userInfo;
-    _type = "google";
 
     notifyListeners();
   }
 
   Future<void> signOut() async {
     await _accounts.signOut();
-    _authStatus = FirebaseAuthStatus.userNotLoggedIn;
+    _authStatus = AccountsStatus.userNotLoggedIn;
     _user = null;
-    _userInfo = null;
     notifyListeners();
   }
 }

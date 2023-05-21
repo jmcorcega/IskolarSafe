@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:iskolarsafe/api/accounts_api.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/screens/home/entries.dart';
 import 'package:iskolarsafe/screens/home/monitor.dart';
@@ -26,29 +27,14 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    Stream<User?> account = context.watch<AccountsProvider>().stream;
+    AccountsStatus? status = context.watch<AccountsProvider>().status;
 
-    return StreamBuilder(
-      stream: account,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(
-            child: Text("Error encountered! ${snapshot.error}"),
-          );
-        } else if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (!snapshot.hasData ||
-            (context.read<AccountsProvider>().type == "email" &&
-                context.read<AccountsProvider>().user == null)) {
-          return const Login();
-        }
+    if (status != AccountsStatus.success) {
+      return const Login();
+    }
 
-        // if user is logged in
-        return showHome(context);
-      },
-    );
+    // if user is logged in
+    return showHome(context);
   }
 
   Scaffold showHome(BuildContext context) {

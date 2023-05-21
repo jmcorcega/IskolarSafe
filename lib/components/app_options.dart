@@ -1,24 +1,69 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:iskolarsafe/screens/login.dart';
+import 'package:iskolarsafe/models/user_model.dart';
+import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
 
-class AppOptions extends StatelessWidget {
+class AppOptions extends StatefulWidget {
   const AppOptions({super.key});
 
   @override
+  State<AppOptions> createState() => _AppOptionsState();
+}
+
+class _AppOptionsState extends State<AppOptions> {
+  @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: CircleAvatar(
-        radius: 14,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: Text("U",
-            style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
-      ),
-      onPressed: () => _showAppOptionsDialog(context),
+    User? user = context.read<AccountsProvider>().user;
+    Future<AppUserInfo?>? userInfo = context.read<AccountsProvider>().userInfo;
+
+    return FutureBuilder(
+      future: userInfo,
+      builder: (context, AsyncSnapshot snapshot) {
+        if (!snapshot.hasData) {
+          return IconButton(
+            icon: CircleAvatar(
+              radius: 14,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              child: Text(
+                (user?.displayName ?? "U").substring(0, 1),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+              ),
+            ),
+            onPressed: () => _showAppOptionsDialog(context),
+          );
+        } else {
+          var userPhoto = user!.photoURL;
+
+          return IconButton(
+            icon: userPhoto != null
+                ? CircleAvatar(
+                    radius: 14,
+                    foregroundImage: NetworkImage(userPhoto),
+                  )
+                : CircleAvatar(
+                    radius: 14,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    child: Text(
+                      user.displayName!.substring(0, 1),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary),
+                    ),
+                  ),
+            onPressed: () => _showAppOptionsDialog(context),
+          );
+        }
+      },
     );
   }
 
   Future<void> _showAppOptionsDialog(BuildContext context) {
+    User? user = context.read<AccountsProvider>().user;
+    Future<AppUserInfo?>? userInfo = context.read<AccountsProvider>().userInfo;
+    String? userPhoto = user?.photoURL;
+
     return showDialog(
       context: context,
       barrierDismissible: true,
@@ -85,14 +130,42 @@ class AppOptions extends StatelessWidget {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              CircleAvatar(
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                child: Text("U",
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary)),
+                              FutureBuilder(
+                                future: userInfo,
+                                builder: (context, AsyncSnapshot snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return CircleAvatar(
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      child: Text(
+                                        user!.displayName!.substring(0, 1),
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary),
+                                      ),
+                                    );
+                                  } else {
+                                    return userPhoto != null
+                                        ? CircleAvatar(
+                                            foregroundImage:
+                                                NetworkImage(userPhoto),
+                                          )
+                                        : CircleAvatar(
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            child: Text(
+                                              user!.displayName!
+                                                  .substring(0, 1),
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimary),
+                                            ),
+                                          );
+                                  }
+                                },
                               ),
                               const SizedBox(width: 16),
                               Expanded(
@@ -100,7 +173,7 @@ class AppOptions extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'John Doe',
+                                      user!.displayName!,
                                       style: Theme.of(context)
                                           .textTheme
                                           .labelLarge!
@@ -108,7 +181,7 @@ class AppOptions extends StatelessWidget {
                                             fontSizeDelta: 2,
                                           ),
                                     ),
-                                    Text('johndoe@example.com',
+                                    Text(user.email!,
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelMedium!
@@ -148,9 +221,8 @@ class AppOptions extends StatelessWidget {
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 24.0),
                     onTap: () {
-                      // TODO: Should trigger logout
                       Navigator.pop(context);
-                      Navigator.pushNamed(context, Login.routeName);
+                      context.read<AccountsProvider>().signOut();
                     },
                   ),
                   const SizedBox(height: 12.0),
