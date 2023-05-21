@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/models/user_model.dart';
@@ -41,7 +42,7 @@ class _AppOptionsState extends State<AppOptions> {
             icon: userPhoto != null
                 ? CircleAvatar(
                     radius: 14,
-                    foregroundImage: NetworkImage(userPhoto),
+                    foregroundImage: CachedNetworkImageProvider(userPhoto),
                   )
                 : CircleAvatar(
                     radius: 14,
@@ -149,7 +150,8 @@ class _AppOptionsState extends State<AppOptions> {
                                     return userPhoto != null
                                         ? CircleAvatar(
                                             foregroundImage:
-                                                NetworkImage(userPhoto),
+                                                CachedNetworkImageProvider(
+                                                    userPhoto),
                                           )
                                         : CircleAvatar(
                                             backgroundColor: Theme.of(context)
