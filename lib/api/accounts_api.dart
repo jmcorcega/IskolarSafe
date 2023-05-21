@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 
 enum AccountsStatus {
@@ -36,6 +37,9 @@ class AccountsAPI {
       Map<String, dynamic>? data = info.data();
       return AppUserInfo.fromJson(data!);
     } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
       return null;
     }
   }
