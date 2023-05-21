@@ -16,6 +16,7 @@ class AppBarHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: (!hasAction) ? MainAxisSize.min : MainAxisSize.max,
       mainAxisAlignment:
           (isCenter) ? MainAxisAlignment.center : MainAxisAlignment.start,
       children: [
