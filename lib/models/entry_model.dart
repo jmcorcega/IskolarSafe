@@ -2,7 +2,7 @@ import 'dart:convert';
 
 class Entry {
   // ohms website is down, questions below are from online covid screening questionnaires
-  // do you have fever (37.8 C or higher) or are you feeling feverish 
+  // do you have fever (37.8 C or higher) or are you feeling feverish
   // have you experienced one or more flu like symptoms in the past 14 days
   // have you tested positive for covid 19 in the past 14 days
 
@@ -24,12 +24,11 @@ class Entry {
   DateTime dateGenerated;
   DateTime validUntil;
 
-  Entry({
-    required this.userId
-    required this.transactionId
-    required this.dateGenerated
-    required this.validUntil
-  });
+  Entry(
+      {required this.userId,
+      required this.transactionId,
+      required this.dateGenerated,
+      required this.validUntil});
 
   // Factory constructor to instantiate object from json format
   factory Entry.fromJson(Map<String, dynamic> json) {
