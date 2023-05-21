@@ -1,16 +1,16 @@
 import 'dart:convert';
 
 class User {
-  final int userId;
-  String firstName;
-  String lastName;
-  String userName;
-  String studentNumber;
-  String course;
-  String college;
-  List<String> condition;
-  List<String> allergies;
-  String? imageUrl;
+  int? userId;
+  final String firstName;
+  final String lastName;
+  final String userName;
+  final String studentNumber;
+  final String course;
+  final String college;
+  final List<String> condition;
+  final List<String> allergies;
+  String? photoUrl;
 
   User({
     required this.userId,
@@ -22,6 +22,7 @@ class User {
     required this.college,
     required this.condition,
     required this.allergies,
+    this.photoUrl,
   });
 
   // Factory constructor to instantiate object from json format
@@ -31,6 +32,7 @@ class User {
       firstName: json['firstName'],
       lastName: json['lastName'],
       userName: json['userName'],
+      photoUrl: json['photoUrl'],
       studentNumber: json['studentNumber'],
       course: json['course'],
       college: json['college'],
@@ -50,6 +52,7 @@ class User {
       'firstName': user.firstName,
       'lastName': user.lastName,
       'userName': user.userName,
+      'photoUrl': user.photoUrl,
       'studentNumber': user.studentNumber,
       'course': user.course,
       'college': user.college,
