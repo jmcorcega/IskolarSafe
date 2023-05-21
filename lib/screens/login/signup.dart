@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:iskolarsafe/api/accounts_api.dart';
 import 'package:iskolarsafe/college_data.dart';
+import 'package:iskolarsafe/main.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -41,7 +42,7 @@ class SignUp extends StatefulWidget {
   State<SignUp> createState() => _SignUpState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _SignUpState extends State<SignUp> with RouteAware {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController _controller = TextEditingController();
@@ -164,6 +165,35 @@ class _SignUpState extends State<SignUp> {
       _loadingButton = false;
       _submitting = false;
     });
+  }
+
+  void onLeaveScreen() {
+    if (!_submitting) {
+      context.read<AccountsProvider>().signOut();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    IskolarSafeApp.routeObserver
+        .subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    IskolarSafeApp.routeObserver.unsubscribe(this);
+  }
+
+  @override
+  void didPushNext() {
+    onLeaveScreen();
+  }
+
+  @override
+  void didPop() {
+    onLeaveScreen();
   }
 
   @override

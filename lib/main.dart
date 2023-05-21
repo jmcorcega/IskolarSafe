@@ -27,6 +27,9 @@ void main() async {
 }
 
 class IskolarSafeApp extends StatelessWidget {
+  static final RouteObserver<PageRoute> routeObserver =
+      RouteObserver<PageRoute>();
+
   const IskolarSafeApp({super.key});
 
   // This widget is the root of your application.
@@ -38,6 +41,7 @@ class IskolarSafeApp extends StatelessWidget {
       theme: IskolarSafeTheme.lightTheme,
       darkTheme: IskolarSafeTheme.darkTheme,
       initialRoute: "/",
+      navigatorObservers: [routeObserver],
       routes: IskolarSafeRoutes.routes,
       onGenerateRoute: (settings) =>
           IskolarSafeRoutes.dynamicRouteHandler(settings),
