@@ -10,8 +10,7 @@ class User {
   String college;
   List<String> condition;
   List<String> allergies;
-  String! imageUrl
-
+  String? imageUrl;
 
   User({
     required this.userId,
