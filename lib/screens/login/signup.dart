@@ -79,23 +79,25 @@ class _SignUpState extends State<SignUp> {
           status != AccountsStatus.needsSignUp;
 
       if (loginErr) {
-        const snackBar = SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           behavior: SnackBarBehavior.floating,
           content: Text('An error has occured. Try again later'),
-        );
-
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        ));
       }
 
       if (status == AccountsStatus.success) {
-        const snackBar = SnackBar(
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           behavior: SnackBarBehavior.floating,
           content: Text('Account already exists.'),
-        );
+        ));
+      }
 
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        Navigator.pop(context);
-        await context.read<AccountsProvider>().signOut();
+      if (status == AccountsStatus.needsSignUp) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Successfully retrieved Google account information.'),
+        ));
       }
 
       if (status == AccountsStatus.needsSignUp) {
@@ -178,385 +180,427 @@ class _SignUpState extends State<SignUp> {
       appBar: AppBar(),
       body: Form(
         key: _formKey,
-        child: ListView(
-          shrinkWrap: true,
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 36.0),
-          children: [
-            Text(
-              "Sign Up to IskolarSafe",
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleLarge!.apply(
-                    fontWeightDelta: 1,
-                    fontSizeDelta: 4,
-                    heightDelta: 0.75,
-                  ),
-            ),
-            Text(
-              "Keep yourself safe inside and outside the campus.",
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
-            const SizedBox(height: 56.0),
-            Container(
-              alignment: Alignment.centerLeft,
-              child: TextButton.icon(
-                onPressed: null,
-                icon: const Icon(Symbols.login_rounded, size: 28.0),
-                label: Text("Login Details",
-                    style: Theme.of(context).textTheme.labelLarge!.apply(
-                          fontSizeDelta: 4,
-                          color: Theme.of(context).colorScheme.primary,
-                        )),
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all(
-                    const EdgeInsets.symmetric(vertical: 12.0, horizontal: 0.0),
-                  ),
-                  foregroundColor: MaterialStateProperty.all(
-                    Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24.0),
-            FilledButton.icon(
-              style: OutlinedButton.styleFrom(minimumSize: _buttonSize),
-              onPressed:
-                  _isGoogle || _loadingGoogleButton ? null : getGoogleInfo,
-              icon: _loadingGoogleButton
-                  ? Container()
-                  : const Icon(
-                      Bootstrap.google,
-                      size: 18.0,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                "Sign Up to IskolarSafe",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleLarge!.apply(
+                      fontWeightDelta: 1,
+                      fontSizeDelta: 4,
+                      heightDelta: 0.75,
                     ),
-              label: _loadingGoogleButton
-                  ? Transform.scale(
-                      scale: 0.5,
-                      child: const CircularProgressIndicator(),
-                    )
-                  : const Text("Sign up via Google"),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                const SizedBox(height: 48.0),
-                const Expanded(child: Divider()),
-                const SizedBox(width: 14.0),
-                Text(
-                  "OR",
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-                const SizedBox(width: 14.0),
-                const Expanded(child: Divider()),
-                const SizedBox(height: 48.0),
-              ],
-            ),
-            TextFormField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Symbols.email_rounded),
-                border: OutlineInputBorder(),
-                labelText: "Email",
               ),
-              enabled: !_isGoogle,
-              validator: (value) {
-                if (_isGoogle) return null;
-                if (value == null || value.isEmpty) {
-                  return 'Email is required.';
-                } else if (!EmailValidator.validate(value)) {
-                  return 'Email is invalid.';
-                }
-
-                return null;
-              },
-            ),
-            const SizedBox(height: 20.0),
-            TextFormField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Symbols.key_rounded),
-                border: OutlineInputBorder(),
-                labelText: "Password",
+              Text(
+                "Keep yourself safe inside and outside the campus.",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.labelLarge,
               ),
-              enabled: !_isGoogle,
-              validator: (value) {
-                if (_isGoogle) return null;
-                if (value == null || value.isEmpty) {
-                  return 'Password is required.';
-                } else if (value.length < 6) {
-                  return 'Password must be at least 6 characters long.';
-                }
-
-                return null;
-              },
-            ),
-            const SizedBox(height: 32.0),
-            Container(
-              alignment: Alignment.centerLeft,
-              child: TextButton.icon(
-                onPressed: null,
-                icon: const Icon(Symbols.face_rounded, size: 28.0),
-                label: Text("User Information",
-                    style: Theme.of(context).textTheme.labelLarge!.apply(
-                          fontSizeDelta: 4,
-                          color: Theme.of(context).colorScheme.primary,
-                        )),
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all(
-                    const EdgeInsets.symmetric(vertical: 12.0, horizontal: 0.0),
-                  ),
-                  foregroundColor: MaterialStateProperty.all(
-                    Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12.0),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: firstNameController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "First name",
+              const SizedBox(height: 56.0),
+              Container(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: null,
+                  icon: const Icon(Symbols.login_rounded, size: 28.0),
+                  label: Text("Login Details",
+                      style: Theme.of(context).textTheme.labelLarge!.apply(
+                            fontSizeDelta: 4,
+                            color: Theme.of(context).colorScheme.primary,
+                          )),
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(
+                          vertical: 12.0, horizontal: 0.0),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This field is required.';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12.0),
-                Expanded(
-                  child: TextFormField(
-                    controller: lastNameController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Last name",
+                    foregroundColor: MaterialStateProperty.all(
+                      Theme.of(context).colorScheme.primary,
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This field is required.';
-                      }
-                      return null;
-                    },
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(height: 20.0),
-            TextFormField(
-              controller: userNameController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Symbols.account_circle_rounded),
-                border: OutlineInputBorder(),
-                labelText: "Username",
-              ),
-              validator: (value) {
-                return null;
-              },
-            ),
-            const SizedBox(height: 20.0),
-            TextFormField(
-              controller: studentNumController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Symbols.badge_rounded),
-                border: OutlineInputBorder(),
-                labelText: "Student ID Number",
-              ),
-              validator: (value) {
-                return null;
-              },
-            ),
-            const SizedBox(height: 20.0),
-            TextFormField(
-              controller: courseController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Symbols.school_rounded),
-                border: OutlineInputBorder(),
-                labelText: "Course",
-              ),
-              validator: (value) {
-                return null;
-              },
-            ),
-            const SizedBox(height: 20.0),
-            DropdownButtonFormField<String>(
-              onChanged: (String? value) {
-                college = value!;
-              },
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "College",
-              ),
-              items: CollegeData.colleges.map<DropdownMenuItem<String>>(
-                (String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                },
-              ).toList(),
-            ),
-            const SizedBox(height: 32.0),
-            Container(
-              alignment: Alignment.centerLeft,
-              child: TextButton.icon(
-                onPressed: null,
-                icon:
-                    const Icon(Symbols.medical_information_rounded, size: 28.0),
-                label: Text("Health Information",
-                    style: Theme.of(context).textTheme.labelLarge!.apply(
-                          fontSizeDelta: 4,
-                          color: Theme.of(context).colorScheme.primary,
-                        )),
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all(
-                    const EdgeInsets.symmetric(vertical: 12.0, horizontal: 0.0),
-                  ),
-                  foregroundColor: MaterialStateProperty.all(
-                    Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 12.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Do you experience any of the following?",
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .apply(heightDelta: 0.25),
-                ),
-                Text(
-                  "Tick all those that apply",
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-              ],
-            ),
-            const SizedBox(height: 12.0),
-            Wrap(
-              spacing: 5.0,
-              children: ConditionsList.values.map((ConditionsList condition) {
-                String conditionName = condition.name
-                    .replaceAll("_", " ")
-                    .toLowerCase()
-                    .capitalizeByWord();
-                return FilterChip(
-                  label: Text(conditionName),
-                  selected: _conditionsList.contains(conditionName),
-                  onSelected: (bool selected) {
-                    setState(() {
-                      if (selected) {
-                        _conditionsList.add(conditionName);
-                      } else {
-                        _conditionsList.remove(conditionName);
-                      }
-                    });
-                  },
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 20.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Do you have any allergies?",
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .apply(heightDelta: 0.25),
-                ),
-                Text(
-                  "Enter all that apply and tap the 'add' button",
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-              ],
-            ),
-            const SizedBox(height: 12.0),
-            TextFormField(
-              key: _allergyKey,
-              initialValue: null,
-              controller: _controller,
-              textInputAction: TextInputAction.done,
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Symbols.masks_rounded),
-                border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      if (_controller.text.isEmpty) {
-                        _allergyKey.currentState?.validate();
-                        return;
-                      }
-                      _allergiesList.add(_controller.text);
-                    });
-                  },
-                  icon: const Icon(Symbols.add_rounded),
-                ),
+              const SizedBox(height: 24.0),
+              FilledButton.icon(
+                style: OutlinedButton.styleFrom(minimumSize: _buttonSize),
+                onPressed:
+                    _isGoogle || _loadingGoogleButton ? null : getGoogleInfo,
+                icon: _loadingGoogleButton
+                    ? Container()
+                    : const Icon(
+                        Bootstrap.google,
+                        size: 18.0,
+                      ),
+                label: _loadingGoogleButton
+                    ? Transform.scale(
+                        scale: 0.5,
+                        child: const CircularProgressIndicator(),
+                      )
+                    : const Text("Sign up via Google"),
               ),
-              validator: (value) {
-                if (_submitting) return null;
-                if (value!.isEmpty) {
-                  return "This field cannot be empty before adding";
-                }
-                return null;
-              },
-              onSaved: (value) {
-                setState(() {
-                  if (_controller.text.isEmpty) {
-                    _allergyKey.currentState?.validate();
-                    return;
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  const SizedBox(height: 48.0),
+                  const Expanded(child: Divider()),
+                  const SizedBox(width: 14.0),
+                  Text(
+                    "OR",
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                  const SizedBox(width: 14.0),
+                  const Expanded(child: Divider()),
+                  const SizedBox(height: 48.0),
+                ],
+              ),
+              TextFormField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Symbols.email_rounded),
+                  border: OutlineInputBorder(),
+                  labelText: "Email",
+                ),
+                enabled: !_isGoogle,
+                validator: (value) {
+                  if (_isGoogle) return null;
+                  if (emailController.text.isEmpty ||
+                      value == null ||
+                      value.isEmpty) {
+                    return 'Email is required.';
+                  } else if (!EmailValidator.validate(value)) {
+                    return 'Email is invalid.';
+                  } else if (!CollegeData.isValidEmail(value)) {
+                    return 'Only college emails are allowed.';
                   }
 
-                  _allergiesList.add(_controller.text);
-                });
-              },
-            ),
-            const SizedBox(height: 16.0),
-            Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 5.0,
-              children: List<Widget>.generate(
-                _allergiesList.length,
-                (int index) {
-                  String allergy = _allergiesList[index];
-                  return InputChip(
-                    label: Text(allergy),
-                    onPressed: () {
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20.0),
+              TextFormField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Symbols.key_rounded),
+                  border: OutlineInputBorder(),
+                  labelText: "Password",
+                ),
+                enabled: !_isGoogle,
+                validator: (value) {
+                  if (_isGoogle) return null;
+                  if (passwordController.text.isEmpty ||
+                      value == null ||
+                      value.isEmpty) {
+                    return 'Password is required.';
+                  } else if (value.length < 6) {
+                    return 'Password must be at least 6 characters long.';
+                  }
+
+                  return null;
+                },
+              ),
+              const SizedBox(height: 32.0),
+              Container(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: null,
+                  icon: const Icon(Symbols.face_rounded, size: 28.0),
+                  label: Text("User Information",
+                      style: Theme.of(context).textTheme.labelLarge!.apply(
+                            fontSizeDelta: 4,
+                            color: Theme.of(context).colorScheme.primary,
+                          )),
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(
+                          vertical: 12.0, horizontal: 0.0),
+                    ),
+                    foregroundColor: MaterialStateProperty.all(
+                      Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12.0),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: firstNameController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: "First name",
+                      ),
+                      validator: (value) {
+                        if (firstNameController.text.isEmpty ||
+                            value == null ||
+                            value.isEmpty) {
+                          return 'This field is required.';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12.0),
+                  Expanded(
+                    child: TextFormField(
+                      controller: lastNameController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: "Last name",
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'This field is required.';
+                        }
+                        return null;
+                      },
+                    ),
+                  )
+                ],
+              ),
+              const SizedBox(height: 20.0),
+              TextFormField(
+                controller: userNameController,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Symbols.account_circle_rounded),
+                  border: OutlineInputBorder(),
+                  labelText: "Username",
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "This field is required.";
+                  }
+
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20.0),
+              TextFormField(
+                controller: studentNumController,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Symbols.badge_rounded),
+                  border: OutlineInputBorder(),
+                  labelText: "Student ID Number",
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "This field is required.";
+                  }
+
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20.0),
+              TextFormField(
+                controller: courseController,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Symbols.school_rounded),
+                  border: OutlineInputBorder(),
+                  labelText: "Course",
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "This field is required.";
+                  }
+
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20.0),
+              DropdownButtonFormField<String>(
+                onChanged: (String? value) {
+                  college = value!;
+                },
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Symbols.domain_rounded),
+                  labelText: "College",
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "This field is required.";
+                  }
+
+                  return null;
+                },
+                isExpanded: true,
+                items: CollegeData.colleges.map<DropdownMenuItem<String>>(
+                  (String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  },
+                ).toList(),
+              ),
+              const SizedBox(height: 32.0),
+              Container(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: null,
+                  icon: const Icon(Symbols.medical_information_rounded,
+                      size: 28.0),
+                  label: Text("Health Information",
+                      style: Theme.of(context).textTheme.labelLarge!.apply(
+                            fontSizeDelta: 4,
+                            color: Theme.of(context).colorScheme.primary,
+                          )),
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(
+                          vertical: 12.0, horizontal: 0.0),
+                    ),
+                    foregroundColor: MaterialStateProperty.all(
+                      Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12.0),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Do you experience any of the following?",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .apply(heightDelta: 0.25),
+                  ),
+                  Text(
+                    "Tick all those that apply",
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12.0),
+              Wrap(
+                spacing: 5.0,
+                children: ConditionsList.values.map((ConditionsList condition) {
+                  String conditionName = condition.name
+                      .replaceAll("_", " ")
+                      .toLowerCase()
+                      .capitalizeByWord();
+                  return FilterChip(
+                    label: Text(conditionName),
+                    selected: _conditionsList.contains(conditionName),
+                    onSelected: (bool selected) {
                       setState(() {
-                        _allergiesList.remove(allergy);
-                      });
-                    },
-                    onDeleted: () {
-                      setState(() {
-                        _allergiesList.remove(allergy);
+                        if (selected) {
+                          _conditionsList.add(conditionName);
+                        } else {
+                          _conditionsList.remove(conditionName);
+                        }
                       });
                     },
                   );
-                },
-              ).toList(),
-            ),
-            const SizedBox(height: 48.0),
-            FilledButton(
-              style: FilledButton.styleFrom(minimumSize: _buttonSize),
-              onPressed: _loadingButton ? null : signUp,
-              child: _loadingButton
-                  ? Transform.scale(
-                      scale: 0.5,
-                      child: const CircularProgressIndicator(),
-                    )
-                  : const Text('Sign up to IskolarSafe'),
-            ),
-            const SizedBox(height: 64.0),
-          ],
+                }).toList(),
+              ),
+              const SizedBox(height: 20.0),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Do you have any allergies?",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .apply(heightDelta: 0.25),
+                  ),
+                  Text(
+                    "Enter all that apply and tap the 'add' button",
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12.0),
+              Form(
+                  key: _allergyKey,
+                  child: TextFormField(
+                    initialValue: null,
+                    controller: _controller,
+                    textInputAction: TextInputAction.done,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Symbols.masks_rounded),
+                      border: const OutlineInputBorder(),
+                      hintText: "Enter your allergy",
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          if (_controller.text.isEmpty) {
+                            _allergyKey.currentState?.validate();
+                            return;
+                          }
+                          setState(() {
+                            _allergiesList.add(_controller.text);
+                            _allergyKey.currentState?.validate();
+                            _controller.clear();
+                          });
+                        },
+                        icon: const Icon(Symbols.add_rounded),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (_submitting) return null;
+                      if (_controller.text.isEmpty ||
+                          value == null ||
+                          value.isEmpty) {
+                        return "This field cannot be empty before adding";
+                      }
+                      return null;
+                    },
+                    onFieldSubmitted: (value) {
+                      setState(() {
+                        if (_controller.text.isEmpty) {
+                          _allergyKey.currentState?.validate();
+                          return;
+                        }
+
+                        _allergiesList.add(_controller.text);
+                        _allergyKey.currentState?.validate();
+                        _controller.clear();
+                      });
+                    },
+                  )),
+              const SizedBox(height: 16.0),
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 5.0,
+                children: List<Widget>.generate(
+                  _allergiesList.length,
+                  (int index) {
+                    String allergy = _allergiesList[index];
+                    return InputChip(
+                      label: Text(allergy),
+                      onPressed: () {
+                        setState(() {
+                          _allergiesList.remove(allergy);
+                        });
+                      },
+                      onDeleted: () {
+                        setState(() {
+                          _allergiesList.remove(allergy);
+                        });
+                      },
+                    );
+                  },
+                ).toList(),
+              ),
+              const SizedBox(height: 48.0),
+              FilledButton(
+                style: FilledButton.styleFrom(minimumSize: _buttonSize),
+                onPressed: _loadingButton ? null : signUp,
+                child: _loadingButton
+                    ? Transform.scale(
+                        scale: 0.5,
+                        child: const CircularProgressIndicator(),
+                      )
+                    : const Text('Sign up to IskolarSafe'),
+              ),
+              const SizedBox(height: 64.0),
+            ],
+          ),
         ),
       ),
     );
