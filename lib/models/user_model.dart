@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-class User {
-  int? userId;
+class AppUserInfo {
+  String? id;
   final String firstName;
   final String lastName;
   final String userName;
@@ -12,8 +12,8 @@ class User {
   final List<String> allergies;
   String? photoUrl;
 
-  User({
-    required this.userId,
+  AppUserInfo({
+    this.id,
     required this.firstName,
     required this.lastName,
     required this.userName,
@@ -26,29 +26,32 @@ class User {
   });
 
   // Factory constructor to instantiate object from json format
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      userId: json['userId'],
+  factory AppUserInfo.fromJson(Map<String, dynamic> json) {
+    return AppUserInfo(
+      id: json['id'],
       firstName: json['firstName'],
       lastName: json['lastName'],
       userName: json['userName'],
-      photoUrl: json['photoUrl'],
       studentNumber: json['studentNumber'],
       course: json['course'],
       college: json['college'],
-      condition: json['condition'],
-      allergies: json['allergies'],
+      condition:
+          (json['condition'] as List).map((item) => item as String).toList(),
+      allergies:
+          (json['allergies'] as List).map((item) => item as String).toList(),
     );
   }
 
-  static List<User> fromJsonArray(String jsonData) {
+  static List<AppUserInfo> fromJsonArray(String jsonData) {
     final Iterable<dynamic> data = jsonDecode(jsonData);
-    return data.map<User>((dynamic d) => User.fromJson(d)).toList();
+    return data
+        .map<AppUserInfo>((dynamic d) => AppUserInfo.fromJson(d))
+        .toList();
   }
 
-  static Map<String, dynamic> toJson(User user) {
+  static Map<String, dynamic> toJson(AppUserInfo user) {
     return {
-      'userId': user.userId,
+      'id': user.id,
       'firstName': user.firstName,
       'lastName': user.lastName,
       'userName': user.userName,
