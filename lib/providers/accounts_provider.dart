@@ -82,6 +82,7 @@ class AccountsProvider with ChangeNotifier {
     await _accounts.signOut();
     _authStatus = AccountsStatus.userNotLoggedIn;
     _user = null;
+    GoogleSignIn().disconnect();
     notifyListeners();
   }
 }
