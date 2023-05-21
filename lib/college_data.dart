@@ -14,4 +14,18 @@ class CollegeData {
     "College of Public Affairs and Development",
     "College of Veterinary Medicine"
   ];
+
+  static final List<String> _allowedEmailDomains = [
+    "up.edu.ph",
+    "uplb.edu.ph",
+    "outlook.up.edu.ph"
+  ];
+
+  static bool isValidEmail(String email) {
+    for (String domain in _allowedEmailDomains) {
+      if (email.endsWith(domain)) return true;
+    }
+
+    return false;
+  }
 }
