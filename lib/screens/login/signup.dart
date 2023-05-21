@@ -135,7 +135,7 @@ class _SignUpState extends State<SignUp> {
         condition: _conditionsList,
         allergies: _allergiesList,
       );
-      await context.read<AccountsProvider>().signUp(
+      await context.read<AccountsProvider>().signUp(_isGoogle,
           email: emailController.text,
           password: passwordController.text,
           userInfo: AppUserInfo.toJson(userInfo));

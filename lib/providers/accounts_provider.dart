@@ -27,12 +27,18 @@ class AccountsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> signUp(
+  Future<void> signUp(bool isGoogle,
       {required String email,
       required String password,
       required Map<String, dynamic> userInfo}) async {
     _authStatus = await _accounts.signUp(
         email: email, password: password, userInfo: userInfo);
+
+    // Sign in
+    if (!isGoogle) {
+      _authStatus =
+          await _accounts.signInWithEmail(email: email, password: password);
+    }
 
     // Fetch user information
     _userStream = _accounts.getUserStream();
