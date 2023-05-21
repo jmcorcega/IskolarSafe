@@ -17,46 +17,24 @@ class _AppOptionsState extends State<AppOptions> {
   @override
   Widget build(BuildContext context) {
     User? user = context.read<AccountsProvider>().user;
-    Future<AppUserInfo?>? userInfo = context.read<AccountsProvider>().userInfo;
+    var userPhoto = user!.photoURL;
 
-    return FutureBuilder(
-      future: userInfo,
-      builder: (context, AsyncSnapshot snapshot) {
-        if (!snapshot.hasData) {
-          return IconButton(
-            icon: CircleAvatar(
+    return IconButton(
+      icon: userPhoto != null
+          ? CircleAvatar(
+              radius: 14,
+              foregroundImage: CachedNetworkImageProvider(userPhoto),
+            )
+          : CircleAvatar(
               radius: 14,
               backgroundColor: Theme.of(context).colorScheme.primary,
               child: Text(
-                (user?.displayName ?? "U").substring(0, 1),
+                user.displayName!.substring(0, 1),
                 style:
                     TextStyle(color: Theme.of(context).colorScheme.onPrimary),
               ),
             ),
-            onPressed: () => _showAppOptionsDialog(context),
-          );
-        } else {
-          var userPhoto = user!.photoURL;
-
-          return IconButton(
-            icon: userPhoto != null
-                ? CircleAvatar(
-                    radius: 14,
-                    foregroundImage: CachedNetworkImageProvider(userPhoto),
-                  )
-                : CircleAvatar(
-                    radius: 14,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    child: Text(
-                      user.displayName!.substring(0, 1),
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary),
-                    ),
-                  ),
-            onPressed: () => _showAppOptionsDialog(context),
-          );
-        }
-      },
+      onPressed: () => _showAppOptionsDialog(context),
     );
   }
 
@@ -131,11 +109,12 @@ class _AppOptionsState extends State<AppOptions> {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              FutureBuilder(
-                                future: userInfo,
-                                builder: (context, AsyncSnapshot snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return CircleAvatar(
+                              userPhoto != null
+                                  ? CircleAvatar(
+                                      foregroundImage:
+                                          CachedNetworkImageProvider(userPhoto),
+                                    )
+                                  : CircleAvatar(
                                       backgroundColor:
                                           Theme.of(context).colorScheme.primary,
                                       child: Text(
@@ -145,30 +124,7 @@ class _AppOptionsState extends State<AppOptions> {
                                                 .colorScheme
                                                 .onPrimary),
                                       ),
-                                    );
-                                  } else {
-                                    return userPhoto != null
-                                        ? CircleAvatar(
-                                            foregroundImage:
-                                                CachedNetworkImageProvider(
-                                                    userPhoto),
-                                          )
-                                        : CircleAvatar(
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            child: Text(
-                                              user!.displayName!
-                                                  .substring(0, 1),
-                                              style: TextStyle(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimary),
-                                            ),
-                                          );
-                                  }
-                                },
-                              ),
+                                    ),
                               const SizedBox(width: 16),
                               Expanded(
                                 child: Column(
