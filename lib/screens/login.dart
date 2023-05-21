@@ -1,8 +1,11 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:iskolarsafe/api/accounts_api.dart';
+import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/screens/login/signup.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
   static const String routeName = "/login";
@@ -19,8 +22,90 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   bool _loginErr = false;
   bool _loadingButton = false;
+  bool _loadingGoogleButton = false;
 
   static const Size _buttonSize = Size(225.0, 47.5);
+
+  void signInWithEmail() async {
+    _loginErr = false;
+
+    setState(() {
+      _loadingButton = true;
+    });
+
+    await context.read<AccountsProvider>().signInWithEmail(
+          email: emailController.text,
+          password: passwordController.text,
+        );
+    if (context.mounted) {
+      var status = context.read<AccountsProvider>().status;
+      _loginErr = status != FirebaseAuthStatus.success;
+
+      if (status == FirebaseAuthStatus.success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Logged in successfully.'),
+          ),
+        );
+      }
+
+      if (_loginErr) {
+        _formKey.currentState!.validate();
+        setState(() {
+          _loadingButton = false;
+        });
+      }
+    }
+
+    setState(() {
+      _loadingButton = false;
+    });
+  }
+
+  void signInWithGoogle() async {
+    _loginErr = false;
+
+    setState(() {
+      _loadingGoogleButton = true;
+    });
+
+    await context.read<AccountsProvider>().signInWithGoogle();
+    if (context.mounted) {
+      var status = context.read<AccountsProvider>().status;
+      _loginErr = status != FirebaseAuthStatus.success &&
+          status != FirebaseAuthStatus.needsSignUp;
+
+      if (status == FirebaseAuthStatus.needsSignUp) {
+        const snackBar = SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Account not found. Sign up is required.'),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        Navigator.pushNamed(context, SignUp.routeName, arguments: true);
+      }
+
+      if (status == FirebaseAuthStatus.success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Logged in successfully.'),
+          ),
+        );
+      }
+
+      if (_loginErr) {
+        setState(() {
+          _loadingGoogleButton = false;
+        });
+      }
+    }
+
+    setState(() {
+      _loadingGoogleButton = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,12 +148,21 @@ class _LoginState extends State<Login> {
                       FilledButton.icon(
                         style:
                             OutlinedButton.styleFrom(minimumSize: _buttonSize),
-                        onPressed: () {},
-                        icon: const Icon(
-                          Bootstrap.google,
-                          size: 18.0,
-                        ),
-                        label: const Text("Log in via Google"),
+                        onPressed: _loadingButton || _loadingGoogleButton
+                            ? null
+                            : signInWithGoogle,
+                        icon: _loadingGoogleButton
+                            ? Container()
+                            : const Icon(
+                                Bootstrap.google,
+                                size: 18.0,
+                              ),
+                        label: _loadingGoogleButton
+                            ? Transform.scale(
+                                scale: 0.5,
+                                child: const CircularProgressIndicator(),
+                              )
+                            : const Text("Log in via Google"),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -96,6 +190,7 @@ class _LoginState extends State<Login> {
                                 border: OutlineInputBorder(),
                                 labelText: "Email",
                               ),
+                              enabled: !_loadingButton && !_loadingGoogleButton,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Email is required.';
@@ -117,6 +212,7 @@ class _LoginState extends State<Login> {
                                 border: OutlineInputBorder(),
                                 labelText: "Password",
                               ),
+                              enabled: !_loadingButton && !_loadingGoogleButton,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Password is required.';
@@ -142,30 +238,12 @@ class _LoginState extends State<Login> {
                       OutlinedButton.icon(
                         style:
                             OutlinedButton.styleFrom(minimumSize: _buttonSize),
-                        icon: const Icon(Symbols.login_rounded),
-                        onPressed: _loadingButton
+                        icon: _loadingButton
+                            ? Container()
+                            : const Icon(Symbols.login_rounded),
+                        onPressed: _loadingButton || _loadingGoogleButton
                             ? null
-                            : () async {
-                                _loginErr = false;
-                                if (_formKey.currentState!.validate()) {
-                                  setState(() {
-                                    _loadingButton = true;
-                                  });
-
-                                  if (context.mounted) {
-                                    if (_loginErr) {
-                                      _formKey.currentState!.validate();
-                                      setState(() {
-                                        _loadingButton = false;
-                                      });
-                                    }
-                                  }
-                                }
-
-                                setState(() {
-                                  _loadingButton = false;
-                                });
-                              },
+                            : signInWithEmail,
                         label: _loadingButton
                             ? Transform.scale(
                                 scale: 0.5,
@@ -178,7 +256,8 @@ class _LoginState extends State<Login> {
                         style: TextButton.styleFrom(
                             minimumSize: const Size(280.0, 40.0)),
                         onPressed: () {
-                          Navigator.pushNamed(context, SignUp.routeName);
+                          Navigator.pushNamed(context, SignUp.routeName,
+                              arguments: false);
                         },
                         icon: const Icon(Symbols.person_add_rounded),
                         label: const Text("Don't have an account? Sign up."),

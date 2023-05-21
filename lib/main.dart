@@ -1,8 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/firebase_options.dart';
+import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/routes.dart';
 import 'package:iskolarsafe/theme.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   // Ensure widgets have been initialized
@@ -14,7 +16,14 @@ void main() async {
   );
 
   // Run the application
-  runApp(const IskolarSafeApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: ((context) => AccountsProvider())),
+      ],
+      child: const IskolarSafeApp(),
+    ),
+  );
 }
 
 class IskolarSafeApp extends StatelessWidget {

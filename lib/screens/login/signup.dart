@@ -1,7 +1,12 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:iskolarsafe/api/accounts_api.dart';
+import 'package:iskolarsafe/college_data.dart';
+import 'package:iskolarsafe/models/user_model.dart';
+import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
 
 enum ConditionsList {
   hypertension,
@@ -28,8 +33,9 @@ extension StringExtension on String {
 
 class SignUp extends StatefulWidget {
   static const String routeName = "/login/signup";
+  final bool isGoogleSignUp;
 
-  const SignUp({super.key});
+  const SignUp({super.key, this.isGoogleSignUp = false});
 
   @override
   State<SignUp> createState() => _SignUpState();
@@ -40,29 +46,135 @@ class _SignUpState extends State<SignUp> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController _controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final _allergyKey = GlobalKey<FormState>();
   bool _authErr = false;
   bool _loadingButton = false;
+  bool _isGoogle = false;
+  bool _submitting = false;
+  bool _loadingGoogleButton = false;
+
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController userNameController = TextEditingController();
+  TextEditingController studentNumController = TextEditingController();
+  TextEditingController courseController = TextEditingController();
+  String college = CollegeData.colleges.first;
 
   List<String> _conditionsList = [];
   List<String> _allergiesList = [];
 
-  static final List<String> colleges = [
-    "Makalipad",
-    "Maging Invisible",
-    "Mapaibig siya",
-    "Mapabago ang isip niya",
-    "Mapalimot siya",
-    "Mabalik ang nakaraan",
-    "Mapaghiwalay sila",
-    "Makarma siya",
-    "Mapasagasaan siya sa pison",
-    "Mapaitim ang tuhod ng iniibig niya"
-  ];
-
   static const Size _buttonSize = Size(225.0, 47.5);
+
+  void getGoogleInfo() async {
+    bool loginErr;
+
+    setState(() {
+      _loadingGoogleButton = true;
+    });
+
+    await context.read<AccountsProvider>().signInWithGoogle();
+    if (context.mounted) {
+      var status = context.read<AccountsProvider>().status;
+      loginErr = status != FirebaseAuthStatus.success &&
+          status != FirebaseAuthStatus.needsSignUp;
+
+      if (loginErr) {
+        const snackBar = SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('An error has occured. Try again later'),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+
+      if (status == FirebaseAuthStatus.success) {
+        const snackBar = SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Account already exists.'),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        Navigator.pop(context);
+        await context.read<AccountsProvider>().signOut();
+      }
+
+      if (status == FirebaseAuthStatus.needsSignUp) {
+        _isGoogle = true;
+      }
+
+      setState(() {
+        _loadingGoogleButton = false;
+      });
+    }
+
+    setState(() {
+      _loadingGoogleButton = false;
+    });
+  }
+
+  void signUp() async {
+    _authErr = false;
+    _submitting = true;
+    if (_isGoogle || _formKey.currentState!.validate()) {
+      setState(() {
+        _loadingButton = true;
+      });
+
+      // Save the form
+      _formKey.currentState?.save();
+
+      AppUserInfo userInfo = AppUserInfo(
+        firstName: firstNameController.text,
+        lastName: lastNameController.text,
+        userName: userNameController.text,
+        studentNumber: studentNumController.text,
+        course: courseController.text,
+        college: college,
+        condition: _conditionsList,
+        allergies: _allergiesList,
+      );
+      await context.read<AccountsProvider>().signUp(
+          email: emailController.text,
+          password: passwordController.text,
+          userInfo: AppUserInfo.toJson(userInfo));
+
+      if (context.mounted) {
+        if (context.read<AccountsProvider>().status ==
+            FirebaseAuthStatus.success) {
+          const snackBar = SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Signed up successfully.'),
+          );
+
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          Navigator.pop(context);
+        }
+
+        if (_authErr) {
+          _formKey.currentState!.validate();
+          setState(() {
+            _loadingButton = false;
+          });
+        }
+      }
+    }
+
+    setState(() {
+      _loadingButton = false;
+      _submitting = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Check if we are signing up from log in screen using Google account
+    _isGoogle = _isGoogle || widget.isGoogleSignUp;
+
+    if (_isGoogle) {
+      emailController.text = context.read<AccountsProvider>().user!.email!;
+      passwordController.text = context.read<AccountsProvider>().user!.uid;
+    }
+
     return Scaffold(
       appBar: AppBar(),
       body: Form(
@@ -109,12 +221,20 @@ class _SignUpState extends State<SignUp> {
             const SizedBox(height: 24.0),
             FilledButton.icon(
               style: OutlinedButton.styleFrom(minimumSize: _buttonSize),
-              onPressed: () {},
-              icon: const Icon(
-                Bootstrap.google,
-                size: 18.0,
-              ),
-              label: const Text("Sign up via Google"),
+              onPressed:
+                  _isGoogle || _loadingGoogleButton ? null : getGoogleInfo,
+              icon: _loadingGoogleButton
+                  ? Container()
+                  : const Icon(
+                      Bootstrap.google,
+                      size: 18.0,
+                    ),
+              label: _loadingGoogleButton
+                  ? Transform.scale(
+                      scale: 0.5,
+                      child: const CircularProgressIndicator(),
+                    )
+                  : const Text("Sign up via Google"),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -138,7 +258,9 @@ class _SignUpState extends State<SignUp> {
                 border: OutlineInputBorder(),
                 labelText: "Email",
               ),
+              enabled: !_isGoogle,
               validator: (value) {
+                if (_isGoogle) return null;
                 if (value == null || value.isEmpty) {
                   return 'Email is required.';
                 } else if (!EmailValidator.validate(value)) {
@@ -157,7 +279,9 @@ class _SignUpState extends State<SignUp> {
                 border: OutlineInputBorder(),
                 labelText: "Password",
               ),
+              enabled: !_isGoogle,
               validator: (value) {
+                if (_isGoogle) return null;
                 if (value == null || value.isEmpty) {
                   return 'Password is required.';
                 } else if (value.length < 6) {
@@ -193,7 +317,7 @@ class _SignUpState extends State<SignUp> {
               children: [
                 Expanded(
                   child: TextFormField(
-                    // controller: firstNameController,
+                    controller: firstNameController,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "First name",
@@ -209,7 +333,7 @@ class _SignUpState extends State<SignUp> {
                 const SizedBox(width: 12.0),
                 Expanded(
                   child: TextFormField(
-                    // controller: lastNameController,
+                    controller: lastNameController,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "Last name",
@@ -226,8 +350,7 @@ class _SignUpState extends State<SignUp> {
             ),
             const SizedBox(height: 20.0),
             TextFormField(
-              // controller: passwordController,
-              obscureText: true,
+              controller: userNameController,
               decoration: const InputDecoration(
                 prefixIcon: Icon(Symbols.account_circle_rounded),
                 border: OutlineInputBorder(),
@@ -239,8 +362,7 @@ class _SignUpState extends State<SignUp> {
             ),
             const SizedBox(height: 20.0),
             TextFormField(
-              // controller: passwordController,
-              obscureText: true,
+              controller: studentNumController,
               decoration: const InputDecoration(
                 prefixIcon: Icon(Symbols.badge_rounded),
                 border: OutlineInputBorder(),
@@ -252,8 +374,7 @@ class _SignUpState extends State<SignUp> {
             ),
             const SizedBox(height: 20.0),
             TextFormField(
-              // controller: passwordController,
-              obscureText: true,
+              controller: courseController,
               decoration: const InputDecoration(
                 prefixIcon: Icon(Symbols.school_rounded),
                 border: OutlineInputBorder(),
@@ -265,13 +386,14 @@ class _SignUpState extends State<SignUp> {
             ),
             const SizedBox(height: 20.0),
             DropdownButtonFormField<String>(
-              // value: formValues["superPowerValue"],
-              onChanged: (String? value) {},
+              onChanged: (String? value) {
+                college = value!;
+              },
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: "College",
               ),
-              items: colleges.map<DropdownMenuItem<String>>(
+              items: CollegeData.colleges.map<DropdownMenuItem<String>>(
                 (String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -279,9 +401,6 @@ class _SignUpState extends State<SignUp> {
                   );
                 },
               ).toList(),
-              onSaved: (newValue) {
-                // formValues["superPowerValue"] = newValue!;
-              },
             ),
             const SizedBox(height: 32.0),
             Container(
@@ -364,6 +483,8 @@ class _SignUpState extends State<SignUp> {
             ),
             const SizedBox(height: 12.0),
             TextFormField(
+              key: _allergyKey,
+              initialValue: null,
               controller: _controller,
               textInputAction: TextInputAction.done,
               decoration: InputDecoration(
@@ -372,15 +493,31 @@ class _SignUpState extends State<SignUp> {
                 suffixIcon: IconButton(
                   onPressed: () {
                     setState(() {
+                      if (_controller.text.isEmpty) {
+                        _allergyKey.currentState?.validate();
+                        return;
+                      }
                       _allergiesList.add(_controller.text);
                     });
                   },
                   icon: const Icon(Symbols.add_rounded),
                 ),
               ),
-              onFieldSubmitted: (value) {
+              validator: (value) {
+                if (_submitting) return null;
+                if (value!.isEmpty) {
+                  return "This field cannot be empty before adding";
+                }
+                return null;
+              },
+              onSaved: (value) {
                 setState(() {
-                  _allergiesList.add(value);
+                  if (_controller.text.isEmpty) {
+                    _allergyKey.currentState?.validate();
+                    return;
+                  }
+
+                  _allergiesList.add(_controller.text);
                 });
               },
             ),
@@ -411,29 +548,7 @@ class _SignUpState extends State<SignUp> {
             const SizedBox(height: 48.0),
             FilledButton(
               style: FilledButton.styleFrom(minimumSize: _buttonSize),
-              onPressed: _loadingButton
-                  ? null
-                  : () async {
-                      _authErr = false;
-                      if (_formKey.currentState!.validate()) {
-                        setState(() {
-                          _loadingButton = true;
-                        });
-
-                        if (context.mounted) {
-                          if (_authErr) {
-                            _formKey.currentState!.validate();
-                            setState(() {
-                              _loadingButton = false;
-                            });
-                          }
-                        }
-                      }
-
-                      setState(() {
-                        _loadingButton = false;
-                      });
-                    },
+              onPressed: _loadingButton ? null : signUp,
               child: _loadingButton
                   ? Transform.scale(
                       scale: 0.5,

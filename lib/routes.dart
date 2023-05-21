@@ -8,11 +8,18 @@ class IskolarSafeRoutes {
   static Map<String, Widget Function(BuildContext)> routes = {
     Home.routeName: (context) => const Home(),
     Login.routeName: (context) => const Login(),
-    SignUp.routeName: (context) => const SignUp(),
     NewEntry.routeName: (context) => const NewEntry(),
   };
 
   static Route<dynamic>? dynamicRouteHandler(RouteSettings settings) {
+    switch (settings.name) {
+      case SignUp.routeName:
+        final args =
+            settings.arguments != null ? settings.arguments as bool : false;
+        return MaterialPageRoute(builder: (context) {
+          return SignUp(isGoogleSignUp: args);
+        });
+    }
     return null;
   }
 }
