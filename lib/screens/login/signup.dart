@@ -51,7 +51,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
   bool _authErr = false;
   bool _loadingButton = false;
   bool _isGoogle = false;
-  bool _submitting = false;
+  bool _deferSignOut = false;
   bool _loadingGoogleButton = false;
 
   TextEditingController firstNameController = TextEditingController();
@@ -87,6 +87,8 @@ class _SignUpState extends State<SignUp> with RouteAware {
       }
 
       if (status == AccountsStatus.success) {
+        _deferSignOut = true;
+        _loadingGoogleButton = false;
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           behavior: SnackBarBehavior.floating,
@@ -117,7 +119,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
 
   void signUp() async {
     _authErr = false;
-    _submitting = true;
+    _deferSignOut = true;
     if (_isGoogle || _formKey.currentState!.validate()) {
       setState(() {
         _loadingButton = true;
@@ -156,7 +158,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
           _formKey.currentState!.validate();
           setState(() {
             _loadingButton = false;
-            _submitting = false;
+            _deferSignOut = false;
           });
         }
       }
@@ -164,12 +166,12 @@ class _SignUpState extends State<SignUp> with RouteAware {
 
     setState(() {
       _loadingButton = false;
-      _submitting = false;
+      _deferSignOut = false;
     });
   }
 
   void onLeaveScreen() {
-    if (!_submitting) {
+    if (!_deferSignOut) {
       context.read<AccountsProvider>().signOut();
     }
   }
@@ -255,7 +257,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
               const SizedBox(height: 24.0),
               FilledButton.icon(
                 style: OutlinedButton.styleFrom(minimumSize: _buttonSize),
-                onPressed: _isGoogle || _loadingGoogleButton || _submitting
+                onPressed: _isGoogle || _loadingGoogleButton || _deferSignOut
                     ? null
                     : getGoogleInfo,
                 icon: _loadingGoogleButton
@@ -293,7 +295,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                   border: OutlineInputBorder(),
                   labelText: "Email",
                 ),
-                enabled: !_isGoogle || !_submitting,
+                enabled: !_isGoogle || !_deferSignOut,
                 validator: (value) {
                   if (_isGoogle) return null;
                   if (emailController.text.isEmpty ||
@@ -318,7 +320,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                   border: OutlineInputBorder(),
                   labelText: "Password",
                 ),
-                enabled: !_isGoogle || !_submitting,
+                enabled: !_isGoogle || !_deferSignOut,
                 validator: (value) {
                   if (_isGoogle) return null;
                   if (passwordController.text.isEmpty ||
@@ -364,7 +366,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                         border: OutlineInputBorder(),
                         labelText: "First name",
                       ),
-                      enabled: !_submitting,
+                      enabled: !_deferSignOut,
                       validator: (value) {
                         if (firstNameController.text.isEmpty ||
                             value == null ||
@@ -383,7 +385,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                         border: OutlineInputBorder(),
                         labelText: "Last name",
                       ),
-                      enabled: !_submitting,
+                      enabled: !_deferSignOut,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'This field is required.';
@@ -402,7 +404,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                   border: OutlineInputBorder(),
                   labelText: "Username",
                 ),
-                enabled: !_submitting,
+                enabled: !_deferSignOut,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "This field is required.";
@@ -419,7 +421,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                   border: OutlineInputBorder(),
                   labelText: "Student ID Number",
                 ),
-                enabled: !_submitting,
+                enabled: !_deferSignOut,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "This field is required.";
@@ -436,7 +438,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                   border: OutlineInputBorder(),
                   labelText: "Course",
                 ),
-                enabled: !_submitting,
+                enabled: !_deferSignOut,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "This field is required.";
@@ -523,7 +525,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                   return FilterChip(
                     label: Text(conditionName),
                     selected: _conditionsList.contains(conditionName),
-                    onSelected: !_submitting
+                    onSelected: !_deferSignOut
                         ? (bool selected) {
                             setState(() {
                               if (selected) {
@@ -561,7 +563,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                     initialValue: null,
                     controller: _controller,
                     textInputAction: TextInputAction.done,
-                    enabled: !_submitting,
+                    enabled: !_deferSignOut,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Symbols.masks_rounded),
                       border: const OutlineInputBorder(),
@@ -582,7 +584,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                       ),
                     ),
                     validator: (value) {
-                      if (_submitting) return null;
+                      if (_deferSignOut) return null;
                       if (_controller.text.isEmpty ||
                           value == null ||
                           value.isEmpty) {
@@ -613,14 +615,14 @@ class _SignUpState extends State<SignUp> with RouteAware {
                     String allergy = _allergiesList[index];
                     return InputChip(
                       label: Text(allergy),
-                      onPressed: !_submitting
+                      onPressed: !_deferSignOut
                           ? () {
                               setState(() {
                                 _allergiesList.remove(allergy);
                               });
                             }
                           : null,
-                      onDeleted: !_submitting
+                      onDeleted: !_deferSignOut
                           ? () {
                               setState(() {
                                 _allergiesList.remove(allergy);
