@@ -130,7 +130,8 @@ class AccountsAPI {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         return AccountsStatus.weakPassword;
-      } else if (e.code == 'email-already-in-use') {
+      } else if (e.code == 'email-already-in-use' ||
+          e.code == 'account-exists-with-different-credential') {
         return AccountsStatus.userAlreadyExist;
       }
     } catch (e) {
