@@ -295,7 +295,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                   border: OutlineInputBorder(),
                   labelText: "Email",
                 ),
-                enabled: !_isGoogle || !_deferSignOut,
+                enabled: !_isGoogle && !_deferSignOut,
                 validator: (value) {
                   if (_isGoogle) return null;
                   if (emailController.text.isEmpty ||
@@ -320,7 +320,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                   border: OutlineInputBorder(),
                   labelText: "Password",
                 ),
-                enabled: !_isGoogle || !_deferSignOut,
+                enabled: !_isGoogle && !_deferSignOut,
                 validator: (value) {
                   if (_isGoogle) return null;
                   if (passwordController.text.isEmpty ||
