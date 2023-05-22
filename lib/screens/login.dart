@@ -87,7 +87,6 @@ class _LoginState extends State<Login> {
 
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         Navigator.pushNamed(context, SignUp.routeName, arguments: true);
-        return;
       }
 
       if (status == AccountsStatus.success) {
@@ -97,8 +96,6 @@ class _LoginState extends State<Login> {
             content: Text('Logged in successfully.'),
           ),
         );
-
-        return;
       }
 
       if (_loginErr) {
