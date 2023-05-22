@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
+import 'package:iskolarsafe/components/user_details.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'quarantine.dart';
 
@@ -169,8 +170,8 @@ class _SearchState extends State<Search> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => MonitoringDetails(
-                                mapDetails: _listNames[index])));
+                            builder: (context) =>
+                                UserDetails(userDetails: _listNames[index])));
                   },
                 );
               }),

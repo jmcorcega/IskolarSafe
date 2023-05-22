@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 
 class MonitoringAlertDialog extends StatelessWidget {
   final String name;
+  final bool isQuarantined;
+  final bool isUnderMonitoring;
 
   const MonitoringAlertDialog({
     super.key,
     required this.name,
+    required this.isQuarantined,
+    required this.isUnderMonitoring,
   });
 
   @override

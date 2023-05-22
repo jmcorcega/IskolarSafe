@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
-import 'package:iskolarsafe/components/monitoring_alertdialog.dart';
+import 'package:iskolarsafe/components/user_details.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Quarantine extends StatefulWidget {
@@ -24,14 +24,16 @@ class _QuarantineState extends State<Quarantine> {
       "studentNo": "20205678",
       "course": "BS Stat",
       "college": "CAS",
-      "hasSymptoms": false
+      "hasSymptoms": false,
+      "isQuarantined": true
     },
     {
       "name": "Maria Clara",
       "studentNo": "20202468",
       "course": "BSCE",
       "college": "CEAT",
-      "hasSymptoms": true
+      "hasSymptoms": true,
+      "isQuarantined": true
     }
   ];
 
@@ -79,7 +81,7 @@ class _QuarantineState extends State<Quarantine> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          MonitoringDetails(mapDetails: _listNames[index])));
+                          UserDetails(userDetails: _listNames[index])));
             },
           );
         }),
@@ -138,119 +140,6 @@ class ProfileModal extends StatelessWidget {
         SizedBox(height: 18.0),
         Text("User's Name", style: Theme.of(context).textTheme.titleLarge),
       ],
-    );
-  }
-}
-
-class MonitoringDetails extends StatelessWidget {
-  final Map<dynamic, dynamic> mapDetails;
-  const MonitoringDetails({super.key, required this.mapDetails});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(mapDetails["name"]),
-      ),
-      body: Container(
-        margin: EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              child: Icon(Icons.person, size: 100, color: Color(0xFF8A1538)),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child:
-                        Icon(Symbols.person_rounded, color: Color(0xFF8A1538)),
-                  ),
-                  Text(mapDetails["name"],
-                      style: Theme.of(context).textTheme.bodyLarge)
-                ],
-              ),
-            ),
-            Divider(color: Color(0xFF8A1538), thickness: 1.0),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child:
-                        Icon(Symbols.badge_rounded, color: Color(0xFF8A1538)),
-                  ),
-                  Text(mapDetails["studentNo"],
-                      style: Theme.of(context).textTheme.bodyLarge)
-                ],
-              ),
-            ),
-            Divider(color: Color(0xFF8A1538), thickness: 1.0),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child:
-                        Icon(Symbols.school_rounded, color: Color(0xFF8A1538)),
-                  ),
-                  Text(mapDetails["course"],
-                      style: Theme.of(context).textTheme.bodyLarge)
-                ],
-              ),
-            ),
-            Divider(color: Color(0xFF8A1538), thickness: 1.0),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child: Icon(Symbols.home, color: Color(0xFF8A1538)),
-                  ),
-                  Text(mapDetails["college"],
-                      style: Theme.of(context).textTheme.bodyLarge)
-                ],
-              ),
-            ),
-            Divider(color: Color(0xFF8A1538), thickness: 1.0),
-            SizedBox(
-              width: 34.0,
-              child: FilledButton(
-                style: FilledButton.styleFrom(
-                    shape: const CircleBorder(),
-                    padding: EdgeInsets.all(0),
-                    backgroundColor: Theme.of(context).colorScheme.primary),
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          // _monitoringAlertDialog(context, mapDetails["name"]!));
-                          MonitoringAlertDialog(name: mapDetails["name"]));
-                },
-                child: const Icon(Symbols.close_rounded, size: 18.0),
-              ),
-            ),
-            SizedBox(width: 12.0),
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: Center(
-                child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("Back",
-                        style: Theme.of(context).textTheme.titleMedium)),
-              ),
-            )
-          ],
-        ),
-      ),
     );
   }
 }
