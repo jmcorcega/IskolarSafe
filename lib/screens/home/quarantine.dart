@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
+import 'package:iskolarsafe/components/monitoring_alertdialog.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Quarantine extends StatefulWidget {
@@ -103,18 +104,21 @@ class _QuarantineState extends State<Quarantine> {
       actions: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly, // or spaceBetween?
-          children: [           
+          children: [
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
               },
               child: const Text("Cancel"),
             ),
-            ElevatedButton( // Color is hard coded. Needs a way to match this color from 
-              onPressed: () {},
-              child: const Text("Remove", style: TextStyle(color: Color(0xFFFFFFFF))),
-              style: ButtonStyle(backgroundColor: MaterialStateColor.resolveWith((states) => Color(0xFFFB6962)))
-            ),
+            ElevatedButton(
+                // Color is hard coded. Needs a way to match this color from
+                onPressed: () {},
+                child: const Text("Remove",
+                    style: TextStyle(color: Color(0xFFFFFFFF))),
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateColor.resolveWith(
+                        (states) => Color(0xFFFB6962)))),
           ],
         )
       ],
@@ -215,6 +219,24 @@ class MonitoringDetails extends StatelessWidget {
               ),
             ),
             Divider(color: Color(0xFF8A1538), thickness: 1.0),
+            SizedBox(
+              width: 34.0,
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: EdgeInsets.all(0),
+                    backgroundColor: Theme.of(context).colorScheme.primary),
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          // _monitoringAlertDialog(context, mapDetails["name"]!));
+                          MonitoringAlertDialog(name: mapDetails["name"]));
+                },
+                child: const Icon(Symbols.close_rounded, size: 18.0),
+              ),
+            ),
+            SizedBox(width: 12.0),
             Padding(
               padding: const EdgeInsets.only(top: 10.0),
               child: Center(

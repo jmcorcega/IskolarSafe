@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
+import 'package:iskolarsafe/components/monitoring_alertdialog.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Monitor extends StatefulWidget {
@@ -81,8 +82,8 @@ class _MonitorState extends State<Monitor> {
                         showDialog(
                             context: context,
                             builder: (BuildContext context) =>
-                                _monitoringAlertDialog(
-                                    _listNames[index]["name"]!));
+                                MonitoringAlertDialog(
+                                    name: _listNames[index]["name"]!));
                       },
                       child: const Icon(Symbols.close_rounded, size: 18.0),
                     ),
@@ -149,23 +150,23 @@ class _MonitorState extends State<Monitor> {
     }
   }
 
-  Widget _monitoringAlertDialog(String name) {
-    return AlertDialog(
-      content: Text("Are you sure you want to end $name's monitoring?"),
-      actions: [
-        ElevatedButton(
-          onPressed: () {},
-          child: const Text("End Monitoring"),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text("Cancel"),
-        )
-      ],
-    );
-  }
+  // Widget _monitoringAlertDialog(String name) {
+  //   return AlertDialog(
+  //     content: Text("Are you sure you want to end $name's monitoring?"),
+  //     actions: [
+  //       ElevatedButton(
+  //         onPressed: () {},
+  //         child: const Text("End Monitoring"),
+  //       ),
+  //       ElevatedButton(
+  //         onPressed: () {
+  //           Navigator.pop(context);
+  //         },
+  //         child: const Text("Cancel"),
+  //       )
+  //     ],
+  //   );
+  // }
 
   Widget _quarantineAlertDialog(String name) {
     return AlertDialog(
