@@ -90,6 +90,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
         _deferSignOut = true;
         _loadingGoogleButton = false;
         Navigator.pop(context);
+
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           behavior: SnackBarBehavior.floating,
           content: Text('Account already exists.'),
@@ -144,7 +145,8 @@ class _SignUpState extends State<SignUp> with RouteAware {
           userInfo: AppUserInfo.toJson(userInfo));
 
       if (context.mounted) {
-        if (context.read<AccountsProvider>().status == AccountsStatus.success) {
+        var status = context.read<AccountsProvider>().status;
+        if (status == AccountsStatus.success) {
           const snackBar = SnackBar(
             behavior: SnackBarBehavior.floating,
             content: Text('Signed up successfully.'),
@@ -152,6 +154,22 @@ class _SignUpState extends State<SignUp> with RouteAware {
 
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
           Navigator.pop(context);
+        }
+
+        if (status == AccountsStatus.userAlreadyExist) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text(
+                'Account already exists. Try logging in using your Google account.'),
+          ));
+        }
+
+        if (status != AccountsStatus.success &&
+            status != AccountsStatus.userAlreadyExist) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('An error has occured. Try again later.'),
+          ));
         }
 
         if (_authErr) {
