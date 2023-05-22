@@ -35,7 +35,7 @@ class AccountsProvider with ChangeNotifier {
         email: email, password: password, userInfo: userInfo);
 
     // Sign in
-    if (!isGoogle) {
+    if (!isGoogle && _authStatus == AccountsStatus.success) {
       _authStatus =
           await _accounts.signInWithEmail(email: email, password: password);
     }
