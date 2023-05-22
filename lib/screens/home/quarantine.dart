@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
+import 'package:iskolarsafe/components/quarantine_alertdialog.dart';
 import 'package:iskolarsafe/components/user_details.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -25,7 +26,8 @@ class _QuarantineState extends State<Quarantine> {
       "course": "BS Stat",
       "college": "CAS",
       "hasSymptoms": false,
-      "isQuarantined": true
+      "isQuarantined": true,
+      "isUnderMonitoring": false
     },
     {
       "name": "Maria Clara",
@@ -33,7 +35,8 @@ class _QuarantineState extends State<Quarantine> {
       "course": "BSCE",
       "college": "CEAT",
       "hasSymptoms": true,
-      "isQuarantined": true
+      "isQuarantined": true,
+      "isUnderMonitoring": false
     }
   ];
 
@@ -70,8 +73,9 @@ class _QuarantineState extends State<Quarantine> {
                   showDialog(
                       useSafeArea: false,
                       context: context,
-                      builder: (BuildContext context) =>
-                          _quarantineAlertDialog(_listNames[index]["name"]!));
+                      builder: (BuildContext context) => QuarantineAlertDialog(
+                          name: _listNames[index]["name"]!,
+                          isQuarantined: _listNames[index]["isQuarantined"]));
                 },
                 child: const Icon(Symbols.close),
               ),
@@ -80,8 +84,11 @@ class _QuarantineState extends State<Quarantine> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          UserDetails(userDetails: _listNames[index])));
+                      builder: (context) => UserDetails(
+                          userDetails: _listNames[index],
+                          isQuarantined: _listNames[index]["isQuarantined"],
+                          isUnderMonitoring: _listNames[index]
+                              ["isUnderMonitoring"])));
             },
           );
         }),
@@ -95,36 +102,6 @@ class _QuarantineState extends State<Quarantine> {
     } else {
       return const Icon(Symbols.health_and_safety_rounded, color: Colors.green);
     }
-  }
-
-  Widget _quarantineAlertDialog(String name) {
-    return AlertDialog(
-      content: Padding(
-        padding: const EdgeInsets.only(top: 10.0),
-        child: Text("Are you sure you want to remove $name from quarantine?"),
-      ),
-      actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly, // or spaceBetween?
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-                // Color is hard coded. Needs a way to match this color from
-                onPressed: () {},
-                child: const Text("Remove",
-                    style: TextStyle(color: Color(0xFFFFFFFF))),
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateColor.resolveWith(
-                        (states) => Color(0xFFFB6962)))),
-          ],
-        )
-      ],
-    );
   }
 }
 

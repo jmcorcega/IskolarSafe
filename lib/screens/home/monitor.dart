@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/monitoring_alertdialog.dart';
+import 'package:iskolarsafe/components/quarantine_alertdialog.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../components/user_details.dart';
@@ -54,7 +55,6 @@ class _MonitorState extends State<Monitor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // centerTitle: true,
         title: AppBarHeader(
             icon: Symbols.coronavirus_rounded, title: "Under Monitoring"),
         actions: const [
@@ -69,8 +69,11 @@ class _MonitorState extends State<Monitor> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            UserDetails(userDetails: _listNames[index])));
+                        builder: (context) => UserDetails(
+                            userDetails: _listNames[index],
+                            isQuarantined: _listNames[index]["isQuarantined"],
+                            isUnderMonitoring: _listNames[index]
+                                ["isUnderMonitoring"])));
               },
               contentPadding: EdgeInsets.symmetric(horizontal: 24.0),
               title: Text(_listNames[index]["name"]!),
@@ -91,11 +94,12 @@ class _MonitorState extends State<Monitor> {
                             context: context,
                             builder: (BuildContext context) =>
                                 MonitoringAlertDialog(
-                                    name: _listNames[index]["name"]!,
-                                    isQuarantined: _listNames[index]
-                                        ["isQuarantined"],
-                                    isUnderMonitoring: _listNames[index]
-                                        ["isUnderMonitoring"]));
+                                  name: _listNames[index]["name"]!,
+                                  // isQuarantined: _listNames[index]
+                                  //     ["isQuarantined"],
+                                  // isUnderMonitoring: _listNames[index]
+                                  //     ["isUnderMonitoring"]
+                                ));
                       },
                       child: const Icon(Symbols.close_rounded, size: 18.0),
                     ),
@@ -114,8 +118,11 @@ class _MonitorState extends State<Monitor> {
                             useSafeArea: false,
                             context: context,
                             builder: (BuildContext context) =>
-                                _quarantineAlertDialog(
-                                    _listNames[index]["name"]!));
+                                QuarantineAlertDialog(
+                                  name: _listNames[index]["name"]!,
+                                  isQuarantined: _listNames[index]
+                                      ["isQuarantined"],
+                                ));
                       },
                       child: const Icon(Symbols.medical_mask_rounded),
                     ),
@@ -160,27 +167,6 @@ class _MonitorState extends State<Monitor> {
         ],
       );
     }
-  }
-
-  Widget _quarantineAlertDialog(String name) {
-    return AlertDialog(
-      content: Text("Are you sure you want to move $name to quarantine?"),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 10.0),
-          child: ElevatedButton(
-            onPressed: () {},
-            child: const Text("Move to Quarantine"),
-          ),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text("Cancel"),
-        )
-      ],
-    );
   }
 }
 

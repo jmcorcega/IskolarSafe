@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/monitoring_alertdialog.dart';
+import 'package:iskolarsafe/components/quarantine_alertdialog.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class UserDetails extends StatelessWidget {
   final Map<dynamic, dynamic> userDetails;
-  const UserDetails({super.key, required this.userDetails});
+  final bool isQuarantined;
+  final bool isUnderMonitoring;
+  const UserDetails({
+    super.key,
+    required this.userDetails,
+    required this.isQuarantined,
+    required this.isUnderMonitoring,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -79,39 +87,104 @@ class UserDetails extends StatelessWidget {
               ),
             ),
             Divider(color: Color(0xFF8A1538), thickness: 1.0),
-            SizedBox(
-              width: 34.0,
-              child: FilledButton(
-                style: FilledButton.styleFrom(
-                    shape: const CircleBorder(),
-                    padding: EdgeInsets.all(0),
-                    backgroundColor: Theme.of(context).colorScheme.primary),
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          // _monitoringAlertDialog(context, userDetails["name"]!));
-                          MonitoringAlertDialog(
-                            name: userDetails["name"],
-                            isQuarantined: userDetails["isQuarantined"],
-                            isUnderMonitoring: userDetails["isUnderMonitoring"],
-                          ));
-                },
-                child: const Icon(Symbols.close_rounded, size: 18.0),
-              ),
+            SizedBox(width: 12.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: (isQuarantined)
+                  ? [
+                      SizedBox(
+                        width: 220.0,
+                        child: OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.all(0),
+                          ),
+                          onPressed: () {
+                            showDialog(
+                                useSafeArea: false,
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    QuarantineAlertDialog(
+                                      name: userDetails["name"],
+                                      isQuarantined:
+                                          userDetails["isQuarantined"],
+                                    ));
+                          },
+                          icon: const Icon(Symbols.close),
+                          label: const Text("Remove from Quarantine"),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Center(
+                          child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text("Back",
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium)),
+                        ),
+                      )
+                    ]
+                  : [
+                      SizedBox(
+                        width: 160.0,
+                        child: FilledButton.icon(
+                          style: FilledButton.styleFrom(
+                              padding: EdgeInsets.all(0),
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.primary),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    // _monitoringAlertDialog(context, userDetails["name"]!));
+                                    MonitoringAlertDialog(
+                                      name: userDetails["name"],
+                                      // isQuarantined: userDetails["isQuarantined"],
+                                      // isUnderMonitoring: userDetails["isUnderMonitoring"],
+                                    ));
+                          },
+                          icon: const Icon(Symbols.close_rounded, size: 18.0),
+                          label: const Text("End Monitoring"),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 180.0,
+                        child: OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                              padding: EdgeInsets.all(0),
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.tertiary),
+                          onPressed: () {
+                            showDialog(
+                                useSafeArea: false,
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    QuarantineAlertDialog(
+                                        name: userDetails["name"],
+                                        isQuarantined:
+                                            userDetails["isQuarantined"]));
+                          },
+                          icon: const Icon(Symbols.medical_mask_rounded),
+                          label: const Text("Move to Quarantine"),
+                        ),
+                      ),
+                    ],
             ),
             SizedBox(width: 12.0),
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: Center(
-                child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("Back",
-                        style: Theme.of(context).textTheme.titleMedium)),
-              ),
-            )
+            if (!isQuarantined)
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: Center(
+                  child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text("Back",
+                          style: Theme.of(context).textTheme.titleMedium)),
+                ),
+              )
           ],
         ),
       ),

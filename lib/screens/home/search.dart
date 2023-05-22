@@ -23,84 +23,108 @@ class _SearchState extends State<Search> {
       "studentNo": "20205678",
       "course": "BS Stat",
       "college": "CAS",
-      "hasSymptoms": false
+      "hasSymptoms": false,
+      "isQuarantined": true,
+      "isUnderMonitoring": false
     },
     {
       "name": "Maam Juana",
       "studentNo": "20205678",
       "course": "BS Chemistry",
       "college": "CAS",
-      "hasSymptoms": false
+      "hasSymptoms": false,
+      "isQuarantined": true,
+      "isUnderMonitoring": false
     },
     {
       "name": "Mami Juan",
       "studentNo": "20205678",
       "course": "BS Stat",
       "college": "CAS",
-      "hasSymptoms": true
+      "hasSymptoms": true,
+      "isQuarantined": false,
+      "isUnderMonitoring": true
     },
     {
       "name": "Maria Clara",
       "studentNo": "20202468",
       "course": "BSCE",
       "college": "CEAT",
-      "hasSymptoms": true
+      "hasSymptoms": true,
+      "isQuarantined": false,
+      "isUnderMonitoring": false
     },
     {
       "name": "Maria Clara",
       "studentNo": "20202468",
       "course": "BSCE",
       "college": "CEAT",
-      "hasSymptoms": true
+      "hasSymptoms": true,
+      "isQuarantined": true,
+      "isUnderMonitoring": false
     },
     {
       "name": "Mario Clara",
       "studentNo": "20202468",
       "course": "BSCS",
       "college": "CAS",
-      "hasSymptoms": false
+      "hasSymptoms": false,
+      "isQuarantined": false,
+      "isUnderMonitoring": true
     },
     {
       "name": "Mara Clara",
       "studentNo": "20202468",
       "course": "BSCS",
       "college": "CAS",
-      "hasSymptoms": true
+      "hasSymptoms": true,
+      "isQuarantined": false,
+      "isUnderMonitoring": true
     },
     {
       "name": "Juan Tamad",
       "studentNo": "20202468",
       "course": "BSCS",
       "college": "CAS",
-      "hasSymptoms": false
+      "hasSymptoms": false,
+      "isQuarantined": true,
+      "isUnderMonitoring": false
     },
     {
       "name": "Mang Juan",
       "studentNo": "20205678",
       "course": "BS Stat",
       "college": "CAS",
-      "hasSymptoms": false
+      "hasSymptoms": false,
+      "isQuarantined": false,
+      "isUnderMonitoring": false
     },
     {
       "name": "Maria Clara",
       "studentNo": "20202468",
       "course": "BSCE",
       "college": "CEAT",
-      "hasSymptoms": true
+      "hasSymptoms": true,
+      "isQuarantined": false,
+      "isUnderMonitoring": true
     },
     {
       "name": "Mara Clara",
       "studentNo": "20202468",
       "course": "BSCS",
       "college": "CAS",
-      "hasSymptoms": true
+      "hasSymptoms": true,
+      "isQuarantined": true,
+      "isUnderMonitoring": false
     },
     {
       "name": "Juan Tamad",
       "studentNo": "20202468",
       "course": "BSCS",
       "college": "CAS",
-      "hasSymptoms": false
+      "hasSymptoms": false,
+      "isQuarantined": true,
+      "isUnderMonitoring": false
     }
   ];
 
@@ -170,8 +194,12 @@ class _SearchState extends State<Search> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                UserDetails(userDetails: _listNames[index])));
+                            builder: (context) => UserDetails(
+                                userDetails: _listNames[index],
+                                isQuarantined: _listNames[index]
+                                    ["isQuarantined"],
+                                isUnderMonitoring: _listNames[index]
+                                    ["isUnderMonitoring"])));
                   },
                 );
               }),
