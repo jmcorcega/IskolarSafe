@@ -198,7 +198,7 @@ class _SearchState extends State<Search> {
                       isScrollControlled: true,
                       builder: (context) => DraggableScrollableSheet(
                           snap: true,
-                          initialChildSize: 0.55,
+                          initialChildSize: 0.50,
                           maxChildSize: 0.95,
                           minChildSize: 0.4,
                           expand: false,
