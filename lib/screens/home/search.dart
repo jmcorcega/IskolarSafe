@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
+import 'package:iskolarsafe/components/request.dart';
 import 'package:iskolarsafe/components/user_details.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'quarantine.dart';
@@ -158,6 +159,7 @@ class _SearchState extends State<Search> {
           ),
         ),
         actions: const [
+          Request(),
           AppOptions(),
         ],
       ),
@@ -191,15 +193,26 @@ class _SearchState extends State<Search> {
                     ],
                   ),
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => UserDetails(
-                                userDetails: _listNames[index],
-                                isQuarantined: _listNames[index]
-                                    ["isQuarantined"],
-                                isUnderMonitoring: _listNames[index]
-                                    ["isUnderMonitoring"])));
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) => DraggableScrollableSheet(
+                          snap: true,
+                          initialChildSize: 0.55,
+                          maxChildSize: 0.95,
+                          minChildSize: 0.4,
+                          expand: false,
+                          builder: (context, scrollController) {
+                            return SingleChildScrollView(
+                                controller: scrollController,
+                                child: UserDetails(
+                                    userDetails: _listNames[index],
+                                    isQuarantined: _listNames[index]
+                                        ["isQuarantined"],
+                                    isUnderMonitoring: _listNames[index]
+                                        ["isUnderMonitoring"]));
+                          }),
+                    );
                   },
                 );
               }),

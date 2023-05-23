@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
+import 'package:iskolarsafe/components/request.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Entries extends StatefulWidget {
@@ -21,6 +22,7 @@ class _EntriesState extends State<Entries> {
         title:
             const AppBarHeader(icon: Symbols.home_rounded, title: "My Entries"),
         actions: const [
+          Request(),
           AppOptions(),
         ],
       ),

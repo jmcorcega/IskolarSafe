@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
+import 'package:iskolarsafe/components/request.dart';
 import 'package:iskolarsafe/components/monitoring_alertdialog.dart';
 import 'package:iskolarsafe/components/quarantine_alertdialog.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -58,6 +59,7 @@ class _MonitorState extends State<Monitor> {
         title: AppBarHeader(
             icon: Symbols.coronavirus_rounded, title: "Under Monitoring"),
         actions: const [
+          Request(),
           AppOptions(),
         ],
       ),
@@ -66,14 +68,26 @@ class _MonitorState extends State<Monitor> {
           itemBuilder: ((context, index) {
             return ListTile(
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => UserDetails(
-                            userDetails: _listNames[index],
-                            isQuarantined: _listNames[index]["isQuarantined"],
-                            isUnderMonitoring: _listNames[index]
-                                ["isUnderMonitoring"])));
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) => DraggableScrollableSheet(
+                      snap: true,
+                      initialChildSize: 0.55,
+                      maxChildSize: 0.95,
+                      minChildSize: 0.4,
+                      expand: false,
+                      builder: (context, scrollController) {
+                        return SingleChildScrollView(
+                            controller: scrollController,
+                            child: UserDetails(
+                                userDetails: _listNames[index],
+                                isQuarantined: _listNames[index]
+                                    ["isQuarantined"],
+                                isUnderMonitoring: _listNames[index]
+                                    ["isUnderMonitoring"]));
+                      }),
+                );
               },
               contentPadding: EdgeInsets.symmetric(horizontal: 24.0),
               title: Text(_listNames[index]["name"]!),

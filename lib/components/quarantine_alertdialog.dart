@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 class QuarantineAlertDialog extends StatelessWidget {
   final String name;
   final bool isQuarantined;
-  // final bool isUnderMonitoring;
 
   const QuarantineAlertDialog({
     super.key,
     required this.name,
     required this.isQuarantined,
-    // required this.isUnderMonitoring,
   });
 
   @override
