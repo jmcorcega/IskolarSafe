@@ -92,68 +92,118 @@ class _EditDeleteRequestState extends State<EditDeleteRequest> {
           ),
           body: TabBarView(
             children: [
-              _editDeleteListTile("edit"),
-              _editDeleteListTile("delete")
+              _editDeleteListView("edit"),
+              _editDeleteListView("delete")
             ],
           )),
     );
   }
 
-  Widget _editDeleteListTile(String type) {
+  Widget _editDeleteListView(String type) {
     return ListView.builder(
         itemCount: _listNames.length,
         itemBuilder: ((context, index) {
-          return (_listNames[index][
-                      "hasEditRequest"] || //check if has edit or delete request
-                  _listNames[index]["hasDeleteRequest"])
-              ? ListTile(
-                  onTap: () {},
-                  contentPadding: EdgeInsets.symmetric(horizontal: 24.0),
-                  leading: SizedBox(
-                    height: double.infinity,
-                    child: CircleAvatar(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      child: Text(
-                          _listNames[index]["name"]!.toString().substring(0, 1),
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.onPrimary)),
-                    ),
-                  ),
-                  minLeadingWidth: 44.0,
-                  title: _editDeleteRequest(_listNames[index]["name"], type),
-                  subtitle: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(
-                        width: 110.0,
-                        child: FilledButton.icon(
-                          style: FilledButton.styleFrom(
-                              padding: EdgeInsets.all(0),
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primary),
-                          onPressed: () {},
-                          icon: const Icon(Symbols.done, size: 18.0),
-                          label: const Text("Approve"),
-                        ),
-                      ),
-                      SizedBox(width: 12.0),
-                      SizedBox(
-                        width: 110.0,
-                        child: OutlinedButton.icon(
-                          style: OutlinedButton.styleFrom(
-                              padding: EdgeInsets.all(0),
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.tertiary),
-                          onPressed: () {},
-                          icon: const Icon(Symbols.close_rounded),
-                          label: const Text("Reject"),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : const SizedBox.shrink();
+          return _editDeleteListTile(type, _listNames[index]["hasEditRequest"],
+              _listNames[index]["hasDeleteRequest"], _listNames[index]["name"]);
         }));
+  }
+
+  Widget _editDeleteListTile(
+      String type, bool hasEditRequest, bool hasDeleteRequest, String name) {
+    if (type == "edit") {
+      if (hasEditRequest) {
+        return ListTile(
+          onTap: () {},
+          contentPadding: EdgeInsets.symmetric(horizontal: 24.0),
+          leading: SizedBox(
+            height: double.infinity,
+            child: CircleAvatar(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              child: Text(name.toString().substring(0, 1),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary)),
+            ),
+          ),
+          minLeadingWidth: 44.0,
+          title: _editDeleteRequest(name, type),
+          subtitle: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 110.0,
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                      padding: EdgeInsets.all(0),
+                      backgroundColor: Theme.of(context).colorScheme.primary),
+                  onPressed: () {},
+                  icon: const Icon(Symbols.done, size: 18.0),
+                  label: const Text("Approve"),
+                ),
+              ),
+              SizedBox(width: 12.0),
+              SizedBox(
+                width: 110.0,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                      padding: EdgeInsets.all(0),
+                      foregroundColor: Theme.of(context).colorScheme.tertiary),
+                  onPressed: () {},
+                  icon: const Icon(Symbols.close_rounded),
+                  label: const Text("Reject"),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+    } else {
+      if (hasDeleteRequest) {
+        return ListTile(
+          onTap: () {},
+          contentPadding: EdgeInsets.symmetric(horizontal: 24.0),
+          leading: SizedBox(
+            height: double.infinity,
+            child: CircleAvatar(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              child: Text(name.toString().substring(0, 1),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary)),
+            ),
+          ),
+          minLeadingWidth: 44.0,
+          title: _editDeleteRequest(name, type),
+          subtitle: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 110.0,
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                      padding: EdgeInsets.all(0),
+                      backgroundColor: Theme.of(context).colorScheme.primary),
+                  onPressed: () {},
+                  icon: const Icon(Symbols.done, size: 18.0),
+                  label: const Text("Approve"),
+                ),
+              ),
+              SizedBox(width: 12.0),
+              SizedBox(
+                width: 110.0,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                      padding: EdgeInsets.all(0),
+                      foregroundColor: Theme.of(context).colorScheme.tertiary),
+                  onPressed: () {},
+                  icon: const Icon(Symbols.close_rounded),
+                  label: const Text("Reject"),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+    return const SizedBox.shrink();
   }
 
   Widget _editDeleteRequest(String name, String type) {
