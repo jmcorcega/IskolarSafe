@@ -180,15 +180,4 @@ class _SearchState extends State<Search> {
       ),
     );
   }
-
-  Widget _getHealthStatus(bool status) {
-    String safe = "Safe for Work";
-    String symptoms = "Has Symptoms";
-    if (status) {
-      return const Icon(Symbols.sick, color: Color(0xFFFB6962));
-    } else {
-      return const Icon(Symbols.health_and_safety_rounded,
-          color: Color(0xFF0CC078));
-    }
-  }
 }

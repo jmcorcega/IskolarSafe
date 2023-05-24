@@ -33,7 +33,7 @@ class AppBarHeader extends StatelessWidget {
           size: 30.0,
           color: Theme.of(context).colorScheme.onBackground,
         ),
-        const SizedBox(width: 14.0),
+        const SizedBox(width: 15.0),
         Text(
           title,
           style: Theme.of(context).textTheme.titleMedium!.apply(
