@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:iskolarsafe/models/user_model.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
+import 'package:iskolarsafe/screens/edit_profile.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
@@ -40,7 +40,6 @@ class _AppOptionsState extends State<AppOptions> {
 
   Future<void> _showAppOptionsDialog(BuildContext context) {
     User? user = context.read<AccountsProvider>().user;
-    Future<AppUserInfo?>? userInfo = context.read<AccountsProvider>().userInfo;
     String? userPhoto = user?.photoURL;
 
     return showDialog(
@@ -153,7 +152,11 @@ class _AppOptionsState extends State<AppOptions> {
                           ),
                           const SizedBox(height: 18.0),
                           OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.pushNamed(
+                                  context, EditProfile.routeName);
+                            },
                             style: OutlinedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
