@@ -1,3 +1,14 @@
+enum ConditionsList {
+  hypertension,
+  tubercolosis,
+  diabetes,
+  cancer,
+  kidney_disease,
+  cardiac_disease,
+  autoimmune_disease,
+  asthma
+}
+
 class CollegeData {
   static List<String> get colleges => _colleges;
 

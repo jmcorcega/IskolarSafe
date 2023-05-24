@@ -3,34 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:iskolarsafe/api/accounts_api.dart';
 import 'package:iskolarsafe/college_data.dart';
+import 'package:iskolarsafe/extensions.dart';
 import 'package:iskolarsafe/main.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
-
-enum ConditionsList {
-  hypertension,
-  tubercolosis,
-  diabetes,
-  cancer,
-  kidney_disease,
-  cardiac_disease,
-  autoimmune_disease,
-  asthma
-}
-
-extension StringExtension on String {
-  String capitalizeByWord() {
-    if (trim().isEmpty) {
-      return '';
-    }
-    return split(' ')
-        .map((element) =>
-            "${element[0].toUpperCase()}${element.substring(1).toLowerCase()}")
-        .join(" ");
-  }
-}
 
 class SignUp extends StatefulWidget {
   static const String routeName = "/login/signup";
