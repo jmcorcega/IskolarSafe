@@ -71,11 +71,23 @@ class _EditDeleteRequestState extends State<EditDeleteRequest> {
                     icon: Symbols.article_rounded, title: "Requests")),
             bottom: const TabBar(tabs: [
               Tab(
-                  icon: Icon(Symbols.edit_document_rounded),
-                  child: Text("Edit Requests")),
+                  child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Symbols.edit_document_rounded),
+                  SizedBox(width: 12.0),
+                  Text("Edit Requests"),
+                ],
+              )),
               Tab(
-                  icon: Icon(Symbols.scan_delete_rounded),
-                  child: Text("Delete Requests"))
+                  child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Symbols.scan_delete_rounded),
+                  SizedBox(width: 12.0),
+                  Text("Delete Requests"),
+                ],
+              ))
             ]),
           ),
           body: TabBarView(
