@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/profile_modal.dart';
+import 'package:iskolarsafe/components/request.dart';
 import 'package:iskolarsafe/screens/new_entry.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -25,6 +26,7 @@ class _EntriesState extends State<Entries> {
         title:
             const AppBarHeader(icon: Symbols.home_rounded, title: "My Entries"),
         actions: const [
+          Request(),
           AppOptions(),
         ],
       ),

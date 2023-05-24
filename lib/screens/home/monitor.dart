@@ -3,7 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
+import 'package:iskolarsafe/components/request.dart';
+import 'package:iskolarsafe/components/monitoring_alertdialog.dart';
+import 'package:iskolarsafe/components/quarantine_alertdialog.dart';
 import 'package:material_symbols_icons/symbols.dart';
+
+import '../../components/user_details.dart';
 
 class Monitor extends StatefulWidget {
   static const String routeName = "/";
@@ -23,21 +28,27 @@ class _MonitorState extends State<Monitor> {
       "studentNo": "20201234",
       "course": "BSCS",
       "college": "CAS",
-      "hasSymptoms": true
+      "hasSymptoms": true,
+      "isQuarantined": false,
+      "isUnderMonitoring": true
     },
     {
       "name": "Mang Juan",
       "studentNo": "20205678",
       "course": "BS Stat",
       "college": "CAS",
-      "hasSymptoms": false
+      "hasSymptoms": false,
+      "isQuarantined": false,
+      "isUnderMonitoring": true
     },
     {
       "name": "Maria Clara",
       "studentNo": "20202468",
       "course": "BSCE",
       "college": "CEAT",
-      "hasSymptoms": true
+      "hasSymptoms": true,
+      "isQuarantined": false,
+      "isUnderMonitoring": true
     }
   ];
 
@@ -45,10 +56,10 @@ class _MonitorState extends State<Monitor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // centerTitle: true,
         title: AppBarHeader(
             icon: Symbols.coronavirus_rounded, title: "Under Monitoring"),
         actions: const [
+          Request(),
           AppOptions(),
         ],
       ),
@@ -57,11 +68,26 @@ class _MonitorState extends State<Monitor> {
           itemBuilder: ((context, index) {
             return ListTile(
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            MonitoringDetails(mapDetails: _listNames[index])));
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) => DraggableScrollableSheet(
+                      snap: true,
+                      initialChildSize: 0.50,
+                      maxChildSize: 0.95,
+                      minChildSize: 0.4,
+                      expand: false,
+                      builder: (context, scrollController) {
+                        return SingleChildScrollView(
+                            controller: scrollController,
+                            child: UserDetails(
+                                userDetails: _listNames[index],
+                                isQuarantined: _listNames[index]
+                                    ["isQuarantined"],
+                                isUnderMonitoring: _listNames[index]
+                                    ["isUnderMonitoring"]));
+                      }),
+                );
               },
               contentPadding: EdgeInsets.symmetric(horizontal: 24.0),
               title: Text(_listNames[index]["name"]!),
@@ -81,8 +107,13 @@ class _MonitorState extends State<Monitor> {
                         showDialog(
                             context: context,
                             builder: (BuildContext context) =>
-                                _monitoringAlertDialog(
-                                    _listNames[index]["name"]!));
+                                MonitoringAlertDialog(
+                                  name: _listNames[index]["name"]!,
+                                  // isQuarantined: _listNames[index]
+                                  //     ["isQuarantined"],
+                                  // isUnderMonitoring: _listNames[index]
+                                  //     ["isUnderMonitoring"]
+                                ));
                       },
                       child: const Icon(Symbols.close_rounded, size: 18.0),
                     ),
@@ -101,8 +132,11 @@ class _MonitorState extends State<Monitor> {
                             useSafeArea: false,
                             context: context,
                             builder: (BuildContext context) =>
-                                _quarantineAlertDialog(
-                                    _listNames[index]["name"]!));
+                                QuarantineAlertDialog(
+                                  name: _listNames[index]["name"]!,
+                                  isQuarantined: _listNames[index]
+                                      ["isQuarantined"],
+                                ));
                       },
                       child: const Icon(Symbols.medical_mask_rounded),
                     ),
@@ -148,45 +182,6 @@ class _MonitorState extends State<Monitor> {
       );
     }
   }
-
-  Widget _monitoringAlertDialog(String name) {
-    return AlertDialog(
-      content: Text("Are you sure you want to end $name's monitoring?"),
-      actions: [
-        ElevatedButton(
-          onPressed: () {},
-          child: const Text("End Monitoring"),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text("Cancel"),
-        )
-      ],
-    );
-  }
-
-  Widget _quarantineAlertDialog(String name) {
-    return AlertDialog(
-      content: Text("Are you sure you want to move $name to quarantine?"),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 10.0),
-          child: ElevatedButton(
-            onPressed: () {},
-            child: const Text("Move to Quarantine"),
-          ),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text("Cancel"),
-        )
-      ],
-    );
-  }
 }
 
 class ProfileModal extends StatelessWidget {
@@ -201,101 +196,6 @@ class ProfileModal extends StatelessWidget {
         SizedBox(height: 18.0),
         Text("User's Name", style: Theme.of(context).textTheme.titleLarge),
       ],
-    );
-  }
-}
-
-class MonitoringDetails extends StatelessWidget {
-  final Map<dynamic, dynamic> mapDetails;
-  const MonitoringDetails({super.key, required this.mapDetails});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(mapDetails["name"]),
-      ),
-      body: Container(
-        margin: EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              child: Icon(Icons.person, size: 100, color: Color(0xFF8A1538)),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child:
-                        Icon(Symbols.person_rounded, color: Color(0xFF8A1538)),
-                  ),
-                  Text(mapDetails["name"],
-                      style: Theme.of(context).textTheme.bodyLarge)
-                ],
-              ),
-            ),
-            Divider(color: Color(0xFF8A1538), thickness: 1.0),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child:
-                        Icon(Symbols.badge_rounded, color: Color(0xFF8A1538)),
-                  ),
-                  Text(mapDetails["studentNo"],
-                      style: Theme.of(context).textTheme.bodyLarge)
-                ],
-              ),
-            ),
-            Divider(color: Color(0xFF8A1538), thickness: 1.0),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child:
-                        Icon(Symbols.school_rounded, color: Color(0xFF8A1538)),
-                  ),
-                  Text(mapDetails["course"],
-                      style: Theme.of(context).textTheme.bodyLarge)
-                ],
-              ),
-            ),
-            Divider(color: Color(0xFF8A1538), thickness: 1.0),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child: Icon(Symbols.home, color: Color(0xFF8A1538)),
-                  ),
-                  Text(mapDetails["college"],
-                      style: Theme.of(context).textTheme.bodyLarge)
-                ],
-              ),
-            ),
-            Divider(color: Color(0xFF8A1538), thickness: 1.0),
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: Center(
-                child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("Back",
-                        style: Theme.of(context).textTheme.titleMedium)),
-              ),
-            )
-          ],
-        ),
-      ),
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
+import 'package:iskolarsafe/components/request.dart';
+import 'package:iskolarsafe/components/user_details.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'quarantine.dart';
 
@@ -22,84 +24,108 @@ class _SearchState extends State<Search> {
       "studentNo": "20205678",
       "course": "BS Stat",
       "college": "CAS",
-      "hasSymptoms": false
+      "hasSymptoms": false,
+      "isQuarantined": true,
+      "isUnderMonitoring": false
     },
     {
       "name": "Maam Juana",
       "studentNo": "20205678",
       "course": "BS Chemistry",
       "college": "CAS",
-      "hasSymptoms": false
+      "hasSymptoms": false,
+      "isQuarantined": true,
+      "isUnderMonitoring": false
     },
     {
       "name": "Mami Juan",
       "studentNo": "20205678",
       "course": "BS Stat",
       "college": "CAS",
-      "hasSymptoms": true
+      "hasSymptoms": true,
+      "isQuarantined": false,
+      "isUnderMonitoring": true
     },
     {
       "name": "Maria Clara",
       "studentNo": "20202468",
       "course": "BSCE",
       "college": "CEAT",
-      "hasSymptoms": true
+      "hasSymptoms": true,
+      "isQuarantined": false,
+      "isUnderMonitoring": false
     },
     {
       "name": "Maria Clara",
       "studentNo": "20202468",
       "course": "BSCE",
       "college": "CEAT",
-      "hasSymptoms": true
+      "hasSymptoms": true,
+      "isQuarantined": true,
+      "isUnderMonitoring": false
     },
     {
       "name": "Mario Clara",
       "studentNo": "20202468",
       "course": "BSCS",
       "college": "CAS",
-      "hasSymptoms": false
+      "hasSymptoms": false,
+      "isQuarantined": false,
+      "isUnderMonitoring": true
     },
     {
       "name": "Mara Clara",
       "studentNo": "20202468",
       "course": "BSCS",
       "college": "CAS",
-      "hasSymptoms": true
+      "hasSymptoms": true,
+      "isQuarantined": false,
+      "isUnderMonitoring": true
     },
     {
       "name": "Juan Tamad",
       "studentNo": "20202468",
       "course": "BSCS",
       "college": "CAS",
-      "hasSymptoms": false
+      "hasSymptoms": false,
+      "isQuarantined": true,
+      "isUnderMonitoring": false
     },
     {
       "name": "Mang Juan",
       "studentNo": "20205678",
       "course": "BS Stat",
       "college": "CAS",
-      "hasSymptoms": false
+      "hasSymptoms": false,
+      "isQuarantined": false,
+      "isUnderMonitoring": false
     },
     {
       "name": "Maria Clara",
       "studentNo": "20202468",
       "course": "BSCE",
       "college": "CEAT",
-      "hasSymptoms": true
+      "hasSymptoms": true,
+      "isQuarantined": false,
+      "isUnderMonitoring": true
     },
     {
       "name": "Mara Clara",
       "studentNo": "20202468",
       "course": "BSCS",
       "college": "CAS",
-      "hasSymptoms": true
+      "hasSymptoms": true,
+      "isQuarantined": true,
+      "isUnderMonitoring": false
     },
     {
       "name": "Juan Tamad",
       "studentNo": "20202468",
       "course": "BSCS",
       "college": "CAS",
-      "hasSymptoms": false
+      "hasSymptoms": false,
+      "isQuarantined": true,
+      "isUnderMonitoring": false
     }
   ];
 
@@ -133,6 +159,7 @@ class _SearchState extends State<Search> {
           ),
         ),
         actions: const [
+          Request(),
           AppOptions(),
         ],
       ),
@@ -166,11 +193,26 @@ class _SearchState extends State<Search> {
                     ],
                   ),
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MonitoringDetails(
-                                mapDetails: _listNames[index])));
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) => DraggableScrollableSheet(
+                          snap: true,
+                          initialChildSize: 0.50,
+                          maxChildSize: 0.95,
+                          minChildSize: 0.4,
+                          expand: false,
+                          builder: (context, scrollController) {
+                            return SingleChildScrollView(
+                                controller: scrollController,
+                                child: UserDetails(
+                                    userDetails: _listNames[index],
+                                    isQuarantined: _listNames[index]
+                                        ["isQuarantined"],
+                                    isUnderMonitoring: _listNames[index]
+                                        ["isUnderMonitoring"]));
+                          }),
+                    );
                   },
                 );
               }),
