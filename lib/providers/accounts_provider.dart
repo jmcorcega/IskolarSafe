@@ -9,12 +9,14 @@ class AccountsProvider with ChangeNotifier {
   late Stream<User?> _userStream;
   late AccountsStatus _authStatus;
   late User? _user;
+  late bool _userInfoAvailable;
 
   Stream<User?> get stream => _userStream;
 
   User? get user => _user;
   Future<AppUserInfo?> get userInfo => _accounts.getUserInfo(_user);
   AccountsStatus get status => _authStatus;
+  bool get editStatus => _userInfoAvailable;
 
   AccountsProvider() {
     _authStatus = AccountsStatus.unknown;
@@ -24,6 +26,7 @@ class AccountsProvider with ChangeNotifier {
     if (_user != null) {
       _authStatus = AccountsStatus.success;
     }
+    _userInfoAvailable = true;
     notifyListeners();
   }
 
@@ -45,6 +48,13 @@ class AccountsProvider with ChangeNotifier {
     _user = _accounts.user;
 
     notifyListeners();
+  }
+
+  Future<void> updateProfile(Map<String, dynamic> userInfo) async {
+    _userInfoAvailable = await _accounts.updateUserInfo(userInfo: userInfo);
+    notifyListeners();
+
+    _userInfoAvailable = true;
   }
 
   Future<void> signInWithEmail(

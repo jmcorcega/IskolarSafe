@@ -44,6 +44,28 @@ class AccountsAPI {
     }
   }
 
+  Future<bool> updateUserInfo({required Map<String, dynamic> userInfo}) async {
+    try {
+      // Update information to database
+      await _db.collection(_storeName).doc(user!.uid).set(userInfo);
+
+      // Update display name as well
+      _user?.updateDisplayName(
+          "${userInfo['firstName']} ${userInfo['lastName']}");
+
+      if (userInfo['photoUrl'] != null) {
+        _user?.updatePhotoURL(userInfo['photoUrl']);
+      }
+
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return false;
+    }
+  }
+
   Future<AccountsStatus> signInWithGoogle(OAuthCredential auth) async {
     try {
       final credential = await FirebaseAuth.instance.signInWithCredential(auth);
