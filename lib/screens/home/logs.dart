@@ -21,8 +21,6 @@ class Logs extends StatefulWidget {
 class _LogsState extends State<Logs> {
   TextEditingController _search = new TextEditingController();
 
-  List<IconData> _listIcons = [Symbols.login_rounded, Symbols.logout_rounded];
-  List<String> _listStrings = ["My Account", "Logout"];
   List<Map<dynamic, dynamic>> _listNames = [
     {
       "name": "Mang Juan",
