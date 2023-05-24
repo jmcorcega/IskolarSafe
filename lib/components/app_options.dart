@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/screens/login.dart';
+import 'package:iskolarsafe/screens/settings.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class AppOptions extends StatelessWidget {
@@ -140,7 +141,10 @@ class AppOptions extends StatelessWidget {
                     title: const Text("App Settings"),
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 24.0),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, Settings.routeName);
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Symbols.logout_rounded),
