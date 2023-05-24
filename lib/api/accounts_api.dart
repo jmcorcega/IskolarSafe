@@ -78,6 +78,18 @@ class AccountsAPI {
         return AccountsStatus.needsSignUp;
       }
 
+      // Update first and last name from added userInfo by user as necessary
+      _user
+          ?.updateDisplayName("${_userInfo!.firstName} ${_userInfo!.lastName}");
+
+      // Update photoURL in database if there is none
+      if (_userInfo!.photoUrl == null) {
+        await _db
+            .collection(_storeName)
+            .doc(_user?.uid)
+            .update({"photoUrl": _user?.photoURL});
+      }
+
       // Return success
       return AccountsStatus.success;
     } on FirebaseAuthException catch (e) {
