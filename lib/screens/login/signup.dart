@@ -445,9 +445,12 @@ class _SignUpState extends State<SignUp> with RouteAware {
               ),
               const SizedBox(height: 20.0),
               DropdownButtonFormField<String>(
-                onChanged: (String? value) {
-                  college = value!;
-                },
+                onChanged: !_deferSignOut
+                    ? (String? value) {
+                        college = value!;
+                      }
+                    : null,
+                disabledHint: Text(college),
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Symbols.domain_rounded),
