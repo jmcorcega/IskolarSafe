@@ -2,6 +2,7 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/college_data.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
@@ -20,7 +21,7 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  late final Future<AppUserInfo?> _userInfo =
+  late final Future<AppUserInfo?> _userInfoFuture =
       context.read<AccountsProvider>().userInfo;
   final _formKey = GlobalKey<FormState>();
 
@@ -39,18 +40,41 @@ class _EditProfileState extends State<EditProfile> {
   List<String> _allergiesList = [];
 
   bool _editError = false;
-  bool _loadingButton = false;
   bool _deferEditing = false;
-  bool _gotData = false;
+  AppUserInfo? _userInfo;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  bool listEqual(a, b) {
+    var condition1 = a.toSet().difference(b.toSet()).isEmpty;
+    var condition2 = a.length == b.length;
+    return condition1 && condition2;
+  }
+
+  bool checkChanges() {
+    if (firstNameController.text != _userInfo!.firstName) return true;
+    if (lastNameController.text != _userInfo!.lastName) return true;
+    if (userNameController.text != _userInfo!.userName) return true;
+    if (studentNumController.text != _userInfo!.studentNumber) return true;
+    if (courseController.text != _userInfo!.course) return true;
+    if (college != _userInfo!.college) return true;
+    // TODO: Compare condition and allergy lists as well
+
+    return false;
+  }
 
   void updateProfile() async {
     _editError = false;
     _deferEditing = true;
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _loadingButton = true;
-      });
-
       // Save the form
       _formKey.currentState?.save();
 
@@ -92,7 +116,6 @@ class _EditProfileState extends State<EditProfile> {
         if (_editError) {
           _formKey.currentState!.validate();
           setState(() {
-            _loadingButton = false;
             _deferEditing = false;
           });
         }
@@ -100,13 +123,51 @@ class _EditProfileState extends State<EditProfile> {
     }
 
     setState(() {
-      _loadingButton = false;
       _deferEditing = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        if (checkChanges()) {
+          bool shouldPop = false;
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Discard changes'),
+              content: const Text('Are you sure you want to discard changes?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    shouldPop = false;
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    shouldPop = true;
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+
+          return shouldPop;
+        }
+
+        return true;
+      },
+      child: _buildScaffold(context),
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context) {
     User? user = context.read<AccountsProvider>().user;
     var userPhoto = user!.photoURL;
 
@@ -120,7 +181,7 @@ class _EditProfileState extends State<EditProfile> {
         centerTitle: true,
       ),
       body: FutureBuilder(
-        future: _userInfo,
+        future: _userInfoFuture,
         builder: (context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
             return const Center(
@@ -153,21 +214,20 @@ class _EditProfileState extends State<EditProfile> {
             );
           }
 
-          if (!_gotData) {
-            AppUserInfo userInfo = snapshot.data;
-            firstNameController.text = userInfo.firstName;
-            lastNameController.text = userInfo.lastName;
-            userNameController.text = userInfo.userName;
-            studentNumController.text = userInfo.studentNumber;
-            courseController.text = userInfo.course;
-            college = userInfo.college;
-            photoUrl = userInfo.photoUrl;
-            userId = userInfo.id;
+          if (_userInfo == null) {
+            _userInfo = snapshot.data;
+            firstNameController.text = _userInfo!.firstName;
+            lastNameController.text = _userInfo!.lastName;
+            userNameController.text = _userInfo!.userName;
+            studentNumController.text = _userInfo!.studentNumber;
+            courseController.text = _userInfo!.course;
+            college = _userInfo!.college;
+            photoUrl = _userInfo!.photoUrl;
+            userId = _userInfo!.id;
 
-            _allergiesList = userInfo.allergies;
-            _conditionsList = userInfo.condition;
-
-            _gotData = true;
+            _allergiesList = _userInfo!.allergies;
+            _conditionsList = _userInfo!.condition;
+            checkChanges();
           }
 
           return Form(
@@ -518,7 +578,7 @@ class _EditProfileState extends State<EditProfile> {
         },
       ),
       floatingActionButton: FutureBuilder(
-        future: _userInfo,
+        future: _userInfoFuture,
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return FloatingActionButton.extended(
