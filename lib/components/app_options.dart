@@ -23,11 +23,11 @@ class _AppOptionsState extends State<AppOptions> {
     return IconButton(
       icon: userPhoto != null
           ? CircleAvatar(
-              radius: 14,
+              radius: 16,
               foregroundImage: CachedNetworkImageProvider(userPhoto),
             )
           : CircleAvatar(
-              radius: 14,
+              radius: 16,
               backgroundColor: Theme.of(context).colorScheme.primary,
               child: Text(
                 user.displayName!.substring(0, 1),
