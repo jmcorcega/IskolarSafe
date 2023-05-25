@@ -32,11 +32,14 @@ class QuarantineAlertDialog extends StatelessWidget {
             ElevatedButton(
                 // Color is hard coded. Needs a way to match this color from
                 onPressed: () {},
-                child: const Text("Remove",
-                    style: TextStyle(color: Color(0xFFFFFFFF))),
                 style: ButtonStyle(
                     backgroundColor: MaterialStateColor.resolveWith(
-                        (states) => Color(0xFFFB6962)))),
+                        (states) => Color(0xFFFB6962))),
+                child: (isQuarantined)
+                    ? const Text("Remove",
+                        style: TextStyle(color: Color(0xFFFFFFFF)))
+                    : const Text("Move",
+                        style: TextStyle(color: Color(0xFFFFFFFF)))),
           ],
         )
       ],
