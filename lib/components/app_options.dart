@@ -17,7 +17,7 @@ class AppOptions extends StatefulWidget {
 class _AppOptionsState extends State<AppOptions> {
   @override
   Widget build(BuildContext context) {
-    User? user = context.read<AccountsProvider>().user;
+    User? user = context.watch<AccountsProvider>().user;
     var userPhoto = user!.photoURL;
 
     return IconButton(
