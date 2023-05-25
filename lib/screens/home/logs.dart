@@ -134,6 +134,11 @@ class _LogsState extends State<Logs> {
           );
         }),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {},
+        label: Text("Scan user's entry"),
+        icon: const Icon(Symbols.qr_code_scanner_rounded),
+      ),
     );
   }
 

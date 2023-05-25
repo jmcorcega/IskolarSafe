@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/screens/edit_profile.dart';
+import 'package:iskolarsafe/screens/settings.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
@@ -174,7 +175,10 @@ class _AppOptionsState extends State<AppOptions> {
                     title: const Text("App Settings"),
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 24.0),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, Settings.routeName);
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Symbols.logout_rounded),
