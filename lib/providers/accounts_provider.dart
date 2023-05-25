@@ -101,9 +101,9 @@ class AccountsProvider with ChangeNotifier {
 
   Future<void> signOut() async {
     await _accounts.signOut();
+    await GoogleSignIn().disconnect();
     _authStatus = AccountsStatus.userNotLoggedIn;
     _user = null;
-    GoogleSignIn().disconnect();
     notifyListeners();
   }
 }
