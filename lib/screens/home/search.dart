@@ -4,7 +4,6 @@ import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/request.dart';
 import 'package:iskolarsafe/components/user_details.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'quarantine.dart';
 
 class Search extends StatefulWidget {
   static const String routeName = "/";
@@ -16,8 +15,6 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-  List<IconData> _listIcons = [Symbols.login_rounded, Symbols.logout_rounded];
-  List<String> _listStrings = ["My Account", "Logout"];
   List<Map<dynamic, dynamic>> _listNames = [
     {
       "name": "Mang Juan",
@@ -221,5 +218,14 @@ class _SearchState extends State<Search> {
         ],
       ),
     );
+  }
+
+  Widget _getHealthStatus(bool status) {
+    if (status) {
+      return const Icon(Symbols.sick, color: Color(0xFFFB6962));
+    } else {
+      return const Icon(Symbols.health_and_safety_rounded,
+          color: Color(0xFF0CC078));
+    }
   }
 }

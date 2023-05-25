@@ -20,8 +20,6 @@ class Monitor extends StatefulWidget {
 }
 
 class _MonitorState extends State<Monitor> {
-  List<IconData> _listIcons = [Symbols.login_rounded, Symbols.logout_rounded];
-  List<String> _listStrings = ["My Account", "Logout"];
   List<Map<dynamic, dynamic>> _listNames = [
     {
       "name": "May Laban",
@@ -109,10 +107,6 @@ class _MonitorState extends State<Monitor> {
                             builder: (BuildContext context) =>
                                 MonitoringAlertDialog(
                                   name: _listNames[index]["name"]!,
-                                  // isQuarantined: _listNames[index]
-                                  //     ["isQuarantined"],
-                                  // isUnderMonitoring: _listNames[index]
-                                  //     ["isUnderMonitoring"]
                                 ));
                       },
                       child: const Icon(Symbols.close_rounded, size: 18.0),
