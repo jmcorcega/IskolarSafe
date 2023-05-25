@@ -130,8 +130,13 @@ class _SearchState extends State<Search> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: const Request(),
         centerTitle: true,
-        title: const AppBarHeader(icon: Symbols.face, title: "Students"),
+        title: const AppBarHeader(
+          icon: Symbols.face,
+          title: "Students",
+          hasAction: false,
+        ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(80),
           child: AppBar(
@@ -156,7 +161,6 @@ class _SearchState extends State<Search> {
           ),
         ),
         actions: const [
-          Request(),
           AppOptions(),
         ],
       ),

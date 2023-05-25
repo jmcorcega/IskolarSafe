@@ -46,9 +46,13 @@ class _LogsState extends State<Logs> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: const Request(),
         centerTitle: true,
         title: const AppBarHeader(
-            icon: Symbols.quick_reference_all_rounded, title: "Logs"),
+          icon: Symbols.quick_reference_all_rounded,
+          title: "Logs",
+          hasAction: false,
+        ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(80),
           child: AppBar(
@@ -73,7 +77,6 @@ class _LogsState extends State<Logs> {
           ),
         ),
         actions: const [
-          Request(),
           AppOptions(),
         ],
       ),

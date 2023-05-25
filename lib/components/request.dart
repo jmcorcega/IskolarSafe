@@ -8,6 +8,7 @@ class Request extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.all(8.0),
       margin: const EdgeInsets.only(right: 5.0),
       child: SizedBox(
         width: 34.0,

@@ -22,11 +22,14 @@ class _EntriesState extends State<Entries> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: const Request(),
         centerTitle: true,
-        title:
-            const AppBarHeader(icon: Symbols.home_rounded, title: "My Entries"),
+        title: const AppBarHeader(
+          icon: Symbols.home_rounded,
+          title: "My Entries",
+          hasAction: false,
+        ),
         actions: const [
-          Request(),
           AppOptions(),
         ],
       ),

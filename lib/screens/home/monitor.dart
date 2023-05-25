@@ -54,10 +54,14 @@ class _MonitorState extends State<Monitor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: const Request(),
+        centerTitle: true,
         title: AppBarHeader(
-            icon: Symbols.coronavirus_rounded, title: "Under Monitoring"),
+          icon: Symbols.coronavirus_rounded,
+          title: "Under Monitoring",
+          hasAction: false,
+        ),
         actions: const [
-          Request(),
           AppOptions(),
         ],
       ),
