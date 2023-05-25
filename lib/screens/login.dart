@@ -40,13 +40,14 @@ class _LoginState extends State<Login> {
 
     if (context.mounted) {
       var status = context.read<AccountsProvider>().status;
+      var user = context.read<AccountsProvider>().user;
       _loginErr = status != AccountsStatus.success;
 
       if (status == AccountsStatus.success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             behavior: SnackBarBehavior.floating,
-            content: Text('Logged in successfully.'),
+            content: Text('Welcome back, ${user!.displayName}.'),
           ),
         );
 
@@ -76,6 +77,7 @@ class _LoginState extends State<Login> {
     await context.read<AccountsProvider>().signInWithGoogle();
     if (context.mounted) {
       var status = context.read<AccountsProvider>().status;
+      var user = context.read<AccountsProvider>().user;
       _loginErr = status != AccountsStatus.success &&
           status != AccountsStatus.needsSignUp;
 
@@ -91,9 +93,9 @@ class _LoginState extends State<Login> {
 
       if (status == AccountsStatus.success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             behavior: SnackBarBehavior.floating,
-            content: Text('Logged in successfully.'),
+            content: Text('Welcome back, ${user!.displayName}.'),
           ),
         );
       }
