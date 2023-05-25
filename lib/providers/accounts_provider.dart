@@ -52,6 +52,7 @@ class AccountsProvider with ChangeNotifier {
 
   Future<void> updateProfile(Map<String, dynamic> userInfo) async {
     _userInfoAvailable = await _accounts.updateUserInfo(userInfo: userInfo);
+    _user = _accounts.user;
     notifyListeners();
 
     _userInfoAvailable = true;

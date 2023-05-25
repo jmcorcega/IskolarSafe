@@ -57,6 +57,10 @@ class AccountsAPI {
         _user?.updatePhotoURL(userInfo['photoUrl']);
       }
 
+      // Update current user information
+      await Future.delayed(const Duration(seconds: 3));
+      _user = _auth.currentUser;
+
       return true;
     } catch (e) {
       if (kDebugMode) {
