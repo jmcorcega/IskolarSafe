@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -50,8 +52,10 @@ class AccountsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateProfile(Map<String, dynamic> userInfo) async {
-    _userInfoAvailable = await _accounts.updateUserInfo(userInfo: userInfo);
+  Future<void> updateProfile(
+      {required Map<String, dynamic> userInfo, File? photo}) async {
+    _userInfoAvailable =
+        await _accounts.updateUserInfo(userInfo: userInfo, photoFile: photo);
     _user = _accounts.user;
     notifyListeners();
 

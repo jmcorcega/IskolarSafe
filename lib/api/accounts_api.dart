@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 
@@ -17,6 +20,7 @@ enum AccountsStatus {
 class AccountsAPI {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final FirebaseFirestore _db = FirebaseFirestore.instance;
+  static final FirebaseStorage _storage = FirebaseStorage.instance;
   static const String _storeName = "users";
 
   static User? _user;
@@ -44,17 +48,31 @@ class AccountsAPI {
     }
   }
 
-  Future<bool> updateUserInfo({required Map<String, dynamic> userInfo}) async {
+  Future<bool> updateUserInfo(
+      {required Map<String, dynamic> userInfo, File? photoFile}) async {
     try {
+      final profileRef =
+          _storage.ref().child("users/${_user!.uid}/profile.png");
+
       // Update information to database
-      await _db.collection(_storeName).doc(user!.uid).set(userInfo);
+      await _db.collection(_storeName).doc(user!.uid).update(userInfo);
 
       // Update display name as well
       _user?.updateDisplayName(
           "${userInfo['firstName']} ${userInfo['lastName']}");
 
-      if (userInfo['photoUrl'] != null) {
-        _user?.updatePhotoURL(userInfo['photoUrl']);
+      if (photoFile != null) {
+        // Update information to database
+        await profileRef.putFile(photoFile);
+
+        var url = await profileRef.getDownloadURL();
+        _user?.updatePhotoURL(url);
+        await _db
+            .collection(_storeName)
+            .doc(user!.uid)
+            .update({"photoUrl": url});
+
+        _user?.updatePhotoURL(url);
       }
 
       // Update current user information

@@ -1,9 +1,13 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: depend_on_referenced_packages
+
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_android/image_picker_android.dart';
+import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:iskolarsafe/college_data.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/extensions.dart';
@@ -43,6 +47,8 @@ class _EditProfileState extends State<EditProfile> {
   bool _deferEditing = false;
   AppUserInfo? _userInfo;
 
+  File? _newPhoto;
+
   @override
   void initState() {
     super.initState();
@@ -68,12 +74,31 @@ class _EditProfileState extends State<EditProfile> {
     if (college != _userInfo!.college) return true;
     // TODO: Compare condition and allergy lists as well
 
+    if (_newPhoto != null) return true;
+
     return false;
   }
 
+  void _updateProfilePhoto() async {
+    final ImagePickerPlatform pickerPlatform = ImagePickerPlatform.instance;
+    if (pickerPlatform is ImagePickerAndroid) {
+      pickerPlatform.useAndroidPhotoPicker = true;
+    }
+
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null && context.mounted) {
+      setState(() {
+        _newPhoto = File(image.path);
+      });
+    }
+  }
+
   void updateProfile() async {
-    _editError = false;
-    _deferEditing = true;
+    setState(() {
+      _editError = false;
+      _deferEditing = true;
+    });
     if (_formKey.currentState!.validate()) {
       // Save the form
       _formKey.currentState?.save();
@@ -90,9 +115,8 @@ class _EditProfileState extends State<EditProfile> {
         photoUrl: photoUrl,
         id: userId,
       );
-      await context
-          .read<AccountsProvider>()
-          .updateProfile(AppUserInfo.toJson(userInfo));
+      await context.read<AccountsProvider>().updateProfile(
+          userInfo: AppUserInfo.toJson(userInfo), photo: _newPhoto);
 
       if (context.mounted) {
         var status = context.read<AccountsProvider>().editStatus;
@@ -264,27 +288,31 @@ class _EditProfileState extends State<EditProfile> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       IconButton(
-                        icon: userPhoto != null
+                        padding: const EdgeInsets.all(4.0),
+                        icon: _newPhoto != null
                             ? CircleAvatar(
-                                radius: 64,
-                                foregroundImage:
-                                    CachedNetworkImageProvider(userPhoto),
+                                radius: 68,
+                                foregroundImage: FileImage(_newPhoto!),
                               )
-                            : CircleAvatar(
-                                radius: 64,
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                child: Text(
-                                  user.displayName!.substring(0, 1),
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary),
-                                ),
-                              ),
-                        // TODO: Add image picker and upload file so we
-                        // can save it as the user's profile photo
-                        onPressed: () => {},
+                            : (userPhoto != null
+                                ? CircleAvatar(
+                                    radius: 68,
+                                    foregroundImage:
+                                        CachedNetworkImageProvider(userPhoto),
+                                  )
+                                : CircleAvatar(
+                                    radius: 68,
+                                    backgroundColor:
+                                        Theme.of(context).colorScheme.primary,
+                                    child: Text(
+                                      user.displayName!.substring(0, 1),
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary),
+                                    ),
+                                  )),
+                        onPressed: _deferEditing ? null : _updateProfilePhoto,
                       ),
                       const SizedBox(width: 12.0),
                       Expanded(
