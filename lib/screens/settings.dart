@@ -23,7 +23,11 @@ class _SettingsState extends State<Settings> {
       appBar: AppBar(
         centerTitle: true,
         title: const AppBarHeader(
-            icon: Symbols.settings_rounded, title: "Settings", isCenter: false),
+          icon: Symbols.settings_rounded,
+          title: "Settings",
+          isCenter: true,
+          hasAction: false,
+        ),
       ),
       body: ListView(
         children: [
