@@ -105,7 +105,11 @@ class AccountsProvider with ChangeNotifier {
 
     await _accounts.signOut();
     await Future.delayed(const Duration(seconds: 3));
-    await GoogleSignIn().disconnect();
+
+    try {
+      await GoogleSignIn().disconnect();
+      // ignore: empty_catches
+    } catch (e) {}
 
     _authStatus = AccountsStatus.userNotLoggedIn;
     _user = null;
