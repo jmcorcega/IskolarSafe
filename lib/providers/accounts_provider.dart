@@ -100,8 +100,13 @@ class AccountsProvider with ChangeNotifier {
   }
 
   Future<void> signOut() async {
+    _authStatus = AccountsStatus.loggingOut;
+    notifyListeners();
+
     await _accounts.signOut();
+    await Future.delayed(const Duration(seconds: 3));
     await GoogleSignIn().disconnect();
+
     _authStatus = AccountsStatus.userNotLoggedIn;
     _user = null;
     notifyListeners();

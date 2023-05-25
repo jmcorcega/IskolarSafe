@@ -14,7 +14,8 @@ enum AccountsStatus {
   userAlreadyExist,
   unknown,
   userNotLoggedIn,
-  needsSignUp
+  needsSignUp,
+  loggingOut
 }
 
 class AccountsAPI {

@@ -29,6 +29,14 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     AccountsStatus? status = context.watch<AccountsProvider>().status;
 
+    if (status == AccountsStatus.loggingOut) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     if (status != AccountsStatus.success) {
       return const Login();
     }
