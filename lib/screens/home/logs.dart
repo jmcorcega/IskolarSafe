@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
-import 'package:iskolarsafe/components/request.dart';
+import 'package:iskolarsafe/components/requests_button.dart';
 import 'package:iskolarsafe/components/user_details.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -46,7 +46,7 @@ class _LogsState extends State<Logs> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const EditRequestButton(),
+        leading: EditRequestButton(),
         centerTitle: true,
         title: const AppBarHeader(
           icon: Symbols.quick_reference_all_rounded,
@@ -119,7 +119,7 @@ class _LogsState extends State<Logs> {
                     snap: true,
                     initialChildSize: 0.50,
                     maxChildSize: 0.95,
-                    minChildSize: 0.4,
+                    minChildSize: 0.5,
                     expand: false,
                     builder: (context, scrollController) {
                       return SingleChildScrollView(

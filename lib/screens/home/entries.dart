@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/profile_modal.dart';
-import 'package:iskolarsafe/components/request.dart';
+import 'package:iskolarsafe/components/requests_button.dart';
 import 'package:iskolarsafe/screens/new_entry.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -22,7 +22,7 @@ class _EntriesState extends State<Entries> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const EditRequestButton(),
+        leading: EditRequestButton(),
         centerTitle: true,
         title: const AppBarHeader(
           icon: Symbols.home_rounded,
@@ -38,9 +38,12 @@ class _EntriesState extends State<Entries> {
         itemBuilder: (BuildContext context, int index) {
           if (index == 0) {
             return Padding(
-              padding: EdgeInsets.symmetric(horizontal: 18.0),
+              padding: const EdgeInsets.symmetric(horizontal: 18.0),
               child: Card(
                 child: ListTile(
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                  ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 24.0,
                     vertical: 8.0,

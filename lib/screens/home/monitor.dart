@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
-import 'package:iskolarsafe/components/request.dart';
+import 'package:iskolarsafe/components/requests_button.dart';
 import 'package:iskolarsafe/components/monitoring_alertdialog.dart';
 import 'package:iskolarsafe/components/quarantine_alertdialog.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -54,7 +54,7 @@ class _MonitorState extends State<Monitor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const EditRequestButton(),
+        leading: EditRequestButton(),
         centerTitle: true,
         title: AppBarHeader(
           icon: Symbols.coronavirus_rounded,
