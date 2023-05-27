@@ -91,7 +91,7 @@ class AccountsAPI {
 
   Future<AccountsStatus> signInWithGoogle(OAuthCredential auth) async {
     try {
-      final credential = await FirebaseAuth.instance.signInWithCredential(auth);
+      final credential = await _auth.signInWithCredential(auth);
 
       _user = credential.user;
 
@@ -131,8 +131,8 @@ class AccountsAPI {
   Future<AccountsStatus> signInWithEmail(
       {required String email, required String password}) async {
     try {
-      final credential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+      final credential = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
 
       _user = credential.user;
 
@@ -161,7 +161,7 @@ class AccountsAPI {
     UserCredential credential;
     try {
       if (_user == null) {
-        credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        credential = await _auth.createUserWithEmailAndPassword(
           email: email,
           password: password,
         );
@@ -177,10 +177,12 @@ class AccountsAPI {
           .doc(_user?.uid)
           .update({"id": _user?.uid});
 
+      await Future.delayed(const Duration(seconds: 1));
       _user?.updateDisplayName(
           "${userInfo['firstName']} ${userInfo['lastName']}");
 
       _userInfo = await getUserInfo(_user);
+      await Future.delayed(const Duration(seconds: 2));
 
       // Return success
       return AccountsStatus.success;
