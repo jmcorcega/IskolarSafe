@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:iskolarsafe/screens/entry_form.dart';
 
 class NewEntry extends StatefulWidget {
   static const String routeName = "/entry/new";
@@ -16,19 +17,14 @@ class _NewEntryState extends State<NewEntry> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const AppBarHeader(
-          icon: Symbols.add_circle_rounded,
-          title: "New Entry",
-          hasAction: false,
+        appBar: AppBar(
+          title: const AppBarHeader(
+            icon: Symbols.add_circle_rounded,
+            title: "New Entry",
+            hasAction: false,
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: Form(
-          key: _entryFormState,
-          child: ListView(
-            children: [],
-          )),
-    );
+        body: EntryForm());
   }
 }
