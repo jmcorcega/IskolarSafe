@@ -141,32 +141,92 @@ class _EntriesState extends State<Entries> {
                       entry.id = snapshot.data?.docs[index].id;
 
                       if (index == 0) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                          child: Card(
-                            child: ListTile(
-                              shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(12.0)),
+                        if (_canShowMyProfile) {
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 18.0),
+                            child: Card(
+                              child: ListTile(
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(12.0)),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 24.0,
+                                  vertical: 8.0,
+                                ),
+                                leading: _getIcon(entry.verdict),
+                                title: Text(
+                                    entry.dateGenerated.relativeTime(context)),
+                                subtitle: Text(
+                                  _getStatusString(entry.verdict),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium!
+                                      .apply(color: _getColor(entry.verdict)),
+                                ),
+                                onTap: () {},
                               ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 24.0,
-                                vertical: 8.0,
-                              ),
-                              leading: _getIcon(entry.verdict),
-                              title: Text(
-                                  entry.dateGenerated.relativeTime(context)),
-                              subtitle: Text(
-                                _getStatusString(entry.verdict),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelMedium!
-                                    .apply(color: _getColor(entry.verdict)),
-                              ),
-                              onTap: () {},
                             ),
-                          ),
-                        );
+                          );
+                        } else {
+                          return Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 18.0),
+                                child: Card(
+                                  child: ListTile(
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(12.0)),
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 24.0,
+                                      vertical: 8.0,
+                                    ),
+                                    leading: Icon(
+                                      Symbols.circle_rounded,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withOpacity(0.75),
+                                    ),
+                                    title: Text("No Entry Today"),
+                                    subtitle: Text(
+                                      "Add entry today to generate QR code",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium!
+                                          .apply(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withOpacity(0.75),
+                                          ),
+                                    ),
+                                    onTap: () {},
+                                  ),
+                                ),
+                              ),
+                              ListTile(
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 24.0),
+                                leading: _getIcon(entry.verdict),
+                                title: Text(
+                                    entry.dateGenerated.relativeTime(context)),
+                                subtitle: Text(
+                                  _getStatusString(entry.verdict),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium!
+                                      .apply(color: _getColor(entry.verdict)),
+                                ),
+                                onTap: () {},
+                              )
+                            ],
+                          );
+                        }
                       }
 
                       return ListTile(
