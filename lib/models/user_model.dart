@@ -1,31 +1,31 @@
 import 'dart:convert';
 
-enum AppUserType {
+enum IskolarType {
   student,
   monitor,
   admin;
 
-  static AppUserType fromJson(Map<String, dynamic> json) {
+  static IskolarType fromJson(Map<String, dynamic> json) {
     // Accomodate earlier sign ups from users when we still didn't have a type
     if (json['type'] == null) {
-      return AppUserType.student;
+      return IskolarType.student;
     }
 
     switch (json['type']) {
       case 'administrator':
-        return AppUserType.admin;
+        return IskolarType.admin;
       case 'building_monitor':
-        return AppUserType.monitor;
+        return IskolarType.monitor;
       default:
-        return AppUserType.student;
+        return IskolarType.student;
     }
   }
 
-  static String toJson(AppUserInfo user) {
+  static String toJson(IskolarInfo user) {
     switch (user.userType) {
-      case AppUserType.admin:
+      case IskolarType.admin:
         return "administrator";
-      case AppUserType.monitor:
+      case IskolarType.monitor:
         return "building_monitor";
       default:
         return "student";
@@ -33,7 +33,7 @@ enum AppUserType {
   }
 }
 
-class AppUserInfo {
+class IskolarInfo {
   String? id;
   final String firstName;
   final String lastName;
@@ -44,9 +44,9 @@ class AppUserInfo {
   final List<String> condition;
   final List<String> allergies;
   String? photoUrl;
-  AppUserType userType;
+  IskolarType userType;
 
-  AppUserInfo({
+  IskolarInfo({
     this.id,
     required this.firstName,
     required this.lastName,
@@ -56,15 +56,15 @@ class AppUserInfo {
     required this.college,
     required this.condition,
     required this.allergies,
-    this.userType = AppUserType.student,
+    this.userType = IskolarType.student,
     this.photoUrl,
   });
 
   // Factory constructor to instantiate object from json format
-  factory AppUserInfo.fromJson(Map<String, dynamic> json) {
-    return AppUserInfo(
+  factory IskolarInfo.fromJson(Map<String, dynamic> json) {
+    return IskolarInfo(
       id: json['id'],
-      userType: AppUserType.fromJson(json),
+      userType: IskolarType.fromJson(json),
       firstName: json['firstName'],
       lastName: json['lastName'],
       userName: json['userName'],
@@ -78,17 +78,17 @@ class AppUserInfo {
     );
   }
 
-  static List<AppUserInfo> fromJsonArray(String jsonData) {
+  static List<IskolarInfo> fromJsonArray(String jsonData) {
     final Iterable<dynamic> data = jsonDecode(jsonData);
     return data
-        .map<AppUserInfo>((dynamic d) => AppUserInfo.fromJson(d))
+        .map<IskolarInfo>((dynamic d) => IskolarInfo.fromJson(d))
         .toList();
   }
 
-  static Map<String, dynamic> toJson(AppUserInfo user) {
+  static Map<String, dynamic> toJson(IskolarInfo user) {
     return {
       'id': user.id,
-      'type': AppUserType.toJson(user),
+      'type': IskolarType.toJson(user),
       'firstName': user.firstName,
       'lastName': user.lastName,
       'userName': user.userName,

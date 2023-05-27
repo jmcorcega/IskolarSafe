@@ -27,20 +27,20 @@ class AccountsAPI {
   static User? _user;
   User? get user => _user;
 
-  static AppUserInfo? _userInfo;
-  AppUserInfo? get userInfo => _userInfo;
+  static IskolarInfo? _userInfo;
+  IskolarInfo? get userInfo => _userInfo;
 
   Stream<User?> getUserStream() {
     _user = _auth.currentUser;
     return _auth.authStateChanges();
   }
 
-  Future<AppUserInfo?> getUserInfo(User? user) async {
+  Future<IskolarInfo?> getUserInfo(User? user) async {
     try {
       var info = await _db.collection(_storeName).doc(user!.uid).get();
 
       Map<String, dynamic>? data = info.data();
-      return AppUserInfo.fromJson(data!);
+      return IskolarInfo.fromJson(data!);
     } catch (e) {
       if (kDebugMode) {
         print(e);
