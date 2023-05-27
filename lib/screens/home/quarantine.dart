@@ -45,7 +45,7 @@ class _QuarantineState extends State<Quarantine> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Request(),
+        leading: const EditRequestButton(),
         centerTitle: true,
         title: const AppBarHeader(
           icon: Symbols.medical_mask_rounded,

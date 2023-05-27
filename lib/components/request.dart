@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/edit_delete_request.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class Request extends StatelessWidget {
-  const Request({super.key});
+class EditRequestButton extends StatelessWidget {
+  const EditRequestButton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +18,8 @@ class Request extends StatelessWidget {
             padding: const EdgeInsets.all(0),
           ),
           onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const EditDeleteRequest()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const EditRequests()));
           },
           child: const Icon(Symbols.notifications),
         ),

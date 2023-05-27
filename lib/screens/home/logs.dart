@@ -46,7 +46,7 @@ class _LogsState extends State<Logs> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Request(),
+        leading: const EditRequestButton(),
         centerTitle: true,
         title: const AppBarHeader(
           icon: Symbols.quick_reference_all_rounded,

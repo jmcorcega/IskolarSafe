@@ -54,7 +54,7 @@ class _MonitorState extends State<Monitor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Request(),
+        leading: const EditRequestButton(),
         centerTitle: true,
         title: AppBarHeader(
           icon: Symbols.coronavirus_rounded,

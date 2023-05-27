@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class EditDeleteRequest extends StatefulWidget {
+class EditRequests extends StatefulWidget {
   static const String routeName = "/edit-delete";
 
-  const EditDeleteRequest({super.key});
+  const EditRequests({super.key});
 
   @override
-  State<EditDeleteRequest> createState() => _EditDeleteRequestState();
+  State<EditRequests> createState() => _EditRequestsState();
 }
 
-class _EditDeleteRequestState extends State<EditDeleteRequest> {
+class _EditRequestsState extends State<EditRequests> {
   final List<Map<dynamic, dynamic>> _listNames = [
     {
       "name": "Mang Juan",

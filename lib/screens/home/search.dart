@@ -130,7 +130,7 @@ class _SearchState extends State<Search> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Request(),
+        leading: const EditRequestButton(),
         centerTitle: true,
         title: const AppBarHeader(
           icon: Symbols.face,
