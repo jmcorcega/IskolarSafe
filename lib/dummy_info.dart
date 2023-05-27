@@ -21,8 +21,8 @@ class DummyInfo {
     studentNumber: "0000-00000",
     course: "BS Computer Science",
     college: CollegeData.colleges[1],
-    condition: [],
-    allergies: [],
+    condition: ["Hypertension", "Diabetes"],
+    allergies: ["Allergy 1", "Allergy 2"],
   );
   static final IskolarInfo fakeInfo3 = IskolarInfo(
     status: IskolarHealthStatus.quarantined,
@@ -33,7 +33,7 @@ class DummyInfo {
     course: "BS Computer Science",
     college: CollegeData.colleges[1],
     condition: [],
-    allergies: [],
+    allergies: ["Allergy 1", "Allergy 2"],
   );
   static final IskolarInfo fakeInfo4 = IskolarInfo(
     status: IskolarHealthStatus.monitored,
@@ -43,7 +43,7 @@ class DummyInfo {
     studentNumber: "0000-00000",
     course: "BS Computer Science",
     college: CollegeData.colleges[1],
-    condition: [],
+    condition: ["Hypertension", "Diabetes"],
     allergies: [],
   );
 
