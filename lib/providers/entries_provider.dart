@@ -16,6 +16,7 @@ class HealthEntryProvider with ChangeNotifier {
   /// Stream of all health entries in the database.
   late Stream<QuerySnapshot> _entryStream;
   late IskolarInfo? _userInfo;
+  late bool _status = false;
 
   HealthEntryProvider() {
     api = HealthEntriesAPI();
@@ -24,6 +25,7 @@ class HealthEntryProvider with ChangeNotifier {
 
   // Getters
   Stream<QuerySnapshot> get entries => _entryStream;
+  bool get status => _status;
 
   /// Fetches all health entries from the database.
   fetchEntries() async {
@@ -39,7 +41,7 @@ class HealthEntryProvider with ChangeNotifier {
 
   /// Adds a new slam book entry to the database.
   void addEntry(HealthEntry entry) async {
-    await api.uploadEntry(HealthEntry.toJson(entry));
+    _status = await api.uploadEntry(HealthEntry.toJson(entry));
     notifyListeners();
   }
 }

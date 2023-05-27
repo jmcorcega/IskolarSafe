@@ -75,6 +75,24 @@ class _NewEntryState extends State<NewEntry> {
       await context.read<HealthEntryProvider>().refetchEntries();
       if (context.mounted) {
         context.read<HealthEntryProvider>().addEntry(newEntry);
+        if (context.mounted) {
+          var status = context.read<HealthEntryProvider>().status;
+
+          if (status) {
+            const snackBar = SnackBar(
+              behavior: SnackBarBehavior.floating,
+              content: Text('New entry added successfully.'),
+            );
+
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            Navigator.pop(context);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              behavior: SnackBarBehavior.floating,
+              content: Text('An error has occured. Try again later.'),
+            ));
+          }
+        }
       }
     }
 
