@@ -35,6 +35,7 @@ enum IskolarType {
 
 enum IskolarHealthStatus {
   healthy,
+  notWell,
   quarantined,
   monitored;
 
@@ -49,6 +50,8 @@ enum IskolarHealthStatus {
         return IskolarHealthStatus.monitored;
       case 'quarantined':
         return IskolarHealthStatus.quarantined;
+      case 'notWell':
+        return IskolarHealthStatus.notWell;
       default:
         return IskolarHealthStatus.healthy;
     }
@@ -60,6 +63,8 @@ enum IskolarHealthStatus {
         return "quarantined";
       case IskolarHealthStatus.monitored:
         return "monitored";
+      case IskolarHealthStatus.notWell:
+        return "notWell";
       default:
         return "student";
     }
