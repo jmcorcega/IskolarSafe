@@ -22,11 +22,44 @@ enum IskolarType {
   }
 
   static String toJson(IskolarInfo user) {
-    switch (user.userType) {
+    switch (user.type) {
       case IskolarType.admin:
         return "administrator";
       case IskolarType.monitor:
         return "building_monitor";
+      default:
+        return "student";
+    }
+  }
+}
+
+enum IskolarHealthStatus {
+  healthy,
+  quarantined,
+  monitored;
+
+  static IskolarHealthStatus fromJson(Map<String, dynamic> json) {
+    // Accomodate earlier sign ups from users when we still didn't have a type
+    if (json['status'] == null) {
+      return IskolarHealthStatus.healthy;
+    }
+
+    switch (json['type']) {
+      case 'monitored':
+        return IskolarHealthStatus.monitored;
+      case 'quarantined':
+        return IskolarHealthStatus.quarantined;
+      default:
+        return IskolarHealthStatus.healthy;
+    }
+  }
+
+  static String toJson(IskolarInfo user) {
+    switch (user.status) {
+      case IskolarHealthStatus.quarantined:
+        return "quarantined";
+      case IskolarHealthStatus.monitored:
+        return "monitored";
       default:
         return "student";
     }
@@ -44,7 +77,8 @@ class IskolarInfo {
   final List<String> condition;
   final List<String> allergies;
   String? photoUrl;
-  IskolarType userType;
+  IskolarType type;
+  IskolarHealthStatus status;
 
   IskolarInfo({
     this.id,
@@ -56,7 +90,8 @@ class IskolarInfo {
     required this.college,
     required this.condition,
     required this.allergies,
-    this.userType = IskolarType.student,
+    this.type = IskolarType.student,
+    this.status = IskolarHealthStatus.healthy,
     this.photoUrl,
   });
 
@@ -64,7 +99,7 @@ class IskolarInfo {
   factory IskolarInfo.fromJson(Map<String, dynamic> json) {
     return IskolarInfo(
       id: json['id'],
-      userType: IskolarType.fromJson(json),
+      type: IskolarType.fromJson(json),
       firstName: json['firstName'],
       lastName: json['lastName'],
       userName: json['userName'],
@@ -75,6 +110,7 @@ class IskolarInfo {
           (json['condition'] as List).map((item) => item as String).toList(),
       allergies:
           (json['allergies'] as List).map((item) => item as String).toList(),
+      status: IskolarHealthStatus.fromJson(json),
     );
   }
 
@@ -98,6 +134,7 @@ class IskolarInfo {
       'college': user.college,
       'condition': user.condition,
       'allergies': user.allergies,
+      'status': IskolarHealthStatus.toJson(user),
     };
   }
 }
