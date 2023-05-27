@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class EntryForm extends StatefulWidget {
+  const EntryForm({super.key});
+
   @override
   _EntryFormState createState() => _EntryFormState();
 }
@@ -69,7 +71,36 @@ class _EntryFormState extends State<EntryForm> {
       key: _formKey,
       child: ListView(
         children: [
-          const SizedBox(height: 8.0),
+          const SizedBox(height: 15.0),
+          Divider(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28.0),
+            child: Column(
+              children: [
+                Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Create Daily Health Status",
+                      style: Theme.of(context).textTheme.headlineSmall!.apply(
+                            fontSizeDelta: 4,
+                          ),
+                    )),
+                const SizedBox(height: 5.0),
+                Row(
+                  children: [
+                    Icon(
+                      Symbols.check_box_sharp,
+                      size: 20,
+                    ),
+                    Text(
+                      " Please tick all the symptoms that apply",
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+          const SizedBox(height: 10.0),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 28.0),
             child: Container(
