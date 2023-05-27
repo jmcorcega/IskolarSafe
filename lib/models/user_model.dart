@@ -1,5 +1,38 @@
 import 'dart:convert';
 
+enum AppUserType {
+  student,
+  monitor,
+  admin;
+
+  static AppUserType fromJson(Map<String, dynamic> json) {
+    // Accomodate earlier sign ups from users when we still didn't have a type
+    if (json['type'] == null) {
+      return AppUserType.student;
+    }
+
+    switch (json['type']) {
+      case 'administrator':
+        return AppUserType.admin;
+      case 'building_monitor':
+        return AppUserType.monitor;
+      default:
+        return AppUserType.student;
+    }
+  }
+
+  static String toJson(AppUserInfo user) {
+    switch (user.userType) {
+      case AppUserType.admin:
+        return "administrator";
+      case AppUserType.monitor:
+        return "building_monitor";
+      default:
+        return "student";
+    }
+  }
+}
+
 class AppUserInfo {
   String? id;
   final String firstName;
@@ -11,6 +44,7 @@ class AppUserInfo {
   final List<String> condition;
   final List<String> allergies;
   String? photoUrl;
+  AppUserType userType;
 
   AppUserInfo({
     this.id,
@@ -22,6 +56,7 @@ class AppUserInfo {
     required this.college,
     required this.condition,
     required this.allergies,
+    this.userType = AppUserType.student,
     this.photoUrl,
   });
 
@@ -29,6 +64,7 @@ class AppUserInfo {
   factory AppUserInfo.fromJson(Map<String, dynamic> json) {
     return AppUserInfo(
       id: json['id'],
+      userType: AppUserType.fromJson(json),
       firstName: json['firstName'],
       lastName: json['lastName'],
       userName: json['userName'],
@@ -52,6 +88,7 @@ class AppUserInfo {
   static Map<String, dynamic> toJson(AppUserInfo user) {
     return {
       'id': user.id,
+      'type': AppUserType.toJson(user),
       'firstName': user.firstName,
       'lastName': user.lastName,
       'userName': user.userName,
