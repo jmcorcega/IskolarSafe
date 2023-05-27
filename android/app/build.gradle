@@ -50,7 +50,7 @@ android {
         applicationId "uplb.cmsc23.iskolarsafe"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 19 // Increase to Android 4.4 to match Firebase requirements
+        minSdkVersion 20 // Increase to Android 4.4W to match Firebase requirements
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -63,6 +63,7 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
 }
 
 flutter {
