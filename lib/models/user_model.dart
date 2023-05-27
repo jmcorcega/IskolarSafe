@@ -39,13 +39,13 @@ enum IskolarHealthStatus {
   quarantined,
   monitored;
 
-  static IskolarHealthStatus fromJson(Map<String, dynamic> json) {
+  static IskolarHealthStatus fromJson(String? json) {
     // Accomodate earlier sign ups from users when we still didn't have a type
-    if (json['status'] == null) {
+    if (json == null) {
       return IskolarHealthStatus.healthy;
     }
 
-    switch (json['type']) {
+    switch (json) {
       case 'monitored':
         return IskolarHealthStatus.monitored;
       case 'quarantined':
@@ -57,8 +57,8 @@ enum IskolarHealthStatus {
     }
   }
 
-  static String toJson(IskolarInfo user) {
-    switch (user.status) {
+  static String toJson(IskolarHealthStatus status) {
+    switch (status) {
       case IskolarHealthStatus.quarantined:
         return "quarantined";
       case IskolarHealthStatus.monitored:
@@ -66,7 +66,7 @@ enum IskolarHealthStatus {
       case IskolarHealthStatus.notWell:
         return "notWell";
       default:
-        return "student";
+        return "healthy";
     }
   }
 }
@@ -115,7 +115,7 @@ class IskolarInfo {
           (json['condition'] as List).map((item) => item as String).toList(),
       allergies:
           (json['allergies'] as List).map((item) => item as String).toList(),
-      status: IskolarHealthStatus.fromJson(json),
+      status: IskolarHealthStatus.fromJson(json['status']),
     );
   }
 
@@ -139,7 +139,7 @@ class IskolarInfo {
       'college': user.college,
       'condition': user.condition,
       'allergies': user.allergies,
-      'status': IskolarHealthStatus.toJson(user),
+      'status': IskolarHealthStatus.toJson(user.status),
     };
   }
 }
