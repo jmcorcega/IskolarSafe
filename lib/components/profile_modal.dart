@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class ProfileModal extends StatelessWidget {
-  const ProfileModal({Key? key}) : super(key: key);
+  final Map<String, dynamic> data;
+  const ProfileModal(this.data, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -11,10 +13,11 @@ class ProfileModal extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         const SizedBox(height: 64.0),
-
-        // TODO: QR goes here
-        FlutterLogo(size: 150.0),
-
+        QrImageView(
+          data: data.toString(),
+          version: QrVersions.auto,
+          size: MediaQuery.of(context).size.width * 0.75,
+        ),
         const SizedBox(height: 24.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -63,7 +66,6 @@ class ProfileModal extends StatelessWidget {
             ),
           ),
         ),
-
         const SizedBox(height: 32.0),
         SizedBox(
           width: MediaQuery.of(context).size.width -
@@ -75,7 +77,6 @@ class ProfileModal extends StatelessWidget {
             isCenter: false,
           ),
         ),
-
         const SizedBox(height: 32.0),
         SizedBox(
           width: MediaQuery.of(context).size.width -

@@ -4,6 +4,7 @@ import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/profile_modal.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
+import 'package:iskolarsafe/extensions.dart';
 import 'package:iskolarsafe/models/entry_model.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:iskolarsafe/providers/entries_provider.dart';
@@ -106,78 +107,92 @@ class _EntriesState extends State<Entries> {
                 return _buildEmptyScreen();
               }
 
-              return ListView.builder(
-                  // Build the list using ListView.builder
-                  itemCount: snapshot.data?.docs.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    HealthEntry entry = HealthEntry.fromJson(
-                        snapshot.data?.docs[index].data()
-                            as Map<String, dynamic>);
-                    entry.id = snapshot.data?.docs[index].id;
+              _canShowMyProfile = HealthEntry.fromJson(
+                      snapshot.data?.docs.first.data() as Map<String, dynamic>)
+                  .dateGenerated
+                  .isToday();
 
-                    if (index == 0) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                        child: Card(
-                          child: ListTile(
-                            shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(12.0)),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 24.0,
-                              vertical: 8.0,
-                            ),
-                            leading: _getIcon(entry.verdict),
-                            title:
-                                Text(entry.dateGenerated.relativeTime(context)),
-                            subtitle: Text(
-                              _getStatusString(entry.verdict),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelMedium!
-                                  .apply(color: _getColor(entry.verdict)),
-                            ),
-                            onTap: () {},
-                          ),
-                        ),
-                      );
-                    }
-
-                    return ListTile(
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 24.0),
-                      leading: _getIcon(entry.verdict),
-                      title: Text(entry.dateGenerated.relativeTime(context)),
-                      subtitle: Text(
-                        _getStatusString(entry.verdict),
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelMedium!
-                            .apply(color: _getColor(entry.verdict)),
+              return Scaffold(
+                floatingActionButton: _canShowMyProfile
+                    ? FloatingActionButton.extended(
+                        onPressed: () {
+                          _showProfileModal(
+                              context,
+                              snapshot.data?.docs.first.data()
+                                  as Map<String, dynamic>);
+                        },
+                        label: const Text("My profile"),
+                        icon: const Icon(Symbols.person_filled_rounded),
+                      )
+                    : FloatingActionButton.extended(
+                        onPressed: () {
+                          Navigator.pushNamed(context, NewEntry.routeName);
+                        },
+                        label: const Text("New entry"),
+                        icon: const Icon(Symbols.add_rounded),
                       ),
-                      onTap: () {},
-                    );
-                  });
+                body: ListView.builder(
+                    // Build the list using ListView.builder
+                    itemCount: snapshot.data?.docs.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      HealthEntry entry = HealthEntry.fromJson(
+                          snapshot.data?.docs[index].data()
+                              as Map<String, dynamic>);
+                      entry.id = snapshot.data?.docs[index].id;
+
+                      if (index == 0) {
+                        if (entry.dateGenerated.isToday()) {
+                          _canShowMyProfile = true;
+                        }
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                          child: Card(
+                            child: ListTile(
+                              shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(12.0)),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 24.0,
+                                vertical: 8.0,
+                              ),
+                              leading: _getIcon(entry.verdict),
+                              title: Text(
+                                  entry.dateGenerated.relativeTime(context)),
+                              subtitle: Text(
+                                _getStatusString(entry.verdict),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium!
+                                    .apply(color: _getColor(entry.verdict)),
+                              ),
+                              onTap: () {},
+                            ),
+                          ),
+                        );
+                      }
+
+                      return ListTile(
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 24.0),
+                        leading: _getIcon(entry.verdict),
+                        title: Text(entry.dateGenerated.relativeTime(context)),
+                        subtitle: Text(
+                          _getStatusString(entry.verdict),
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium!
+                              .apply(color: _getColor(entry.verdict)),
+                        ),
+                        onTap: () {},
+                      );
+                    }),
+              );
             },
           );
         },
       ),
-      floatingActionButton: _canShowMyProfile
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                _showProfileModal(context);
-              },
-              label: const Text("My profile"),
-              icon: const Icon(Symbols.person_filled_rounded),
-            )
-          : FloatingActionButton.extended(
-              onPressed: () {
-                Navigator.pushNamed(context, NewEntry.routeName);
-              },
-              label: const Text("New entry"),
-              icon: const Icon(Symbols.add_rounded),
-            ),
     );
   }
 
@@ -209,20 +224,19 @@ class _EntriesState extends State<Entries> {
     );
   }
 
-  void _showProfileModal(BuildContext context) {
+  void _showProfileModal(BuildContext context, Map<String, dynamic> data) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (context) => DraggableScrollableSheet(
           snap: true,
-          initialChildSize: 0.4,
+          initialChildSize: 0.65,
           maxChildSize: 0.95,
-          minChildSize: 0.4,
           expand: false,
           builder: (context, scrollController) {
             return SingleChildScrollView(
               controller: scrollController,
-              child: const ProfileModal(),
+              child: ProfileModal(data),
             );
           }),
     );
