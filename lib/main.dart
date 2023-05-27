@@ -2,9 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/firebase_options.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
+import 'package:iskolarsafe/providers/entries_provider.dart';
 import 'package:iskolarsafe/routes.dart';
 import 'package:iskolarsafe/theme.dart';
 import 'package:provider/provider.dart';
+import 'package:relative_time/relative_time.dart';
 
 void main() async {
   // Ensure widgets have been initialized
@@ -20,6 +22,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: ((context) => AccountsProvider())),
+        ChangeNotifierProvider(create: ((context) => HealthEntryProvider())),
       ],
       child: const IskolarSafeApp(),
     ),
@@ -45,6 +48,9 @@ class IskolarSafeApp extends StatelessWidget {
       routes: IskolarSafeRoutes.routes,
       onGenerateRoute: (settings) =>
           IskolarSafeRoutes.dynamicRouteHandler(settings),
+      localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+        RelativeTimeLocalizations.delegate,
+      ],
     );
   }
 }

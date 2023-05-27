@@ -25,7 +25,7 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  late final Future<AppUserInfo?> _userInfoFuture =
+  late final Future<IskolarInfo?> _userInfoFuture =
       context.read<AccountsProvider>().userInfo;
   final _formKey = GlobalKey<FormState>();
 
@@ -45,7 +45,7 @@ class _EditProfileState extends State<EditProfile> {
 
   bool _editError = false;
   bool _deferEditing = false;
-  AppUserInfo? _userInfo;
+  IskolarInfo? _userInfo;
 
   File? _newPhoto;
 
@@ -103,7 +103,7 @@ class _EditProfileState extends State<EditProfile> {
       // Save the form
       _formKey.currentState?.save();
 
-      AppUserInfo userInfo = AppUserInfo(
+      IskolarInfo userInfo = IskolarInfo(
         firstName: firstNameController.text,
         lastName: lastNameController.text,
         userName: userNameController.text,
@@ -116,7 +116,7 @@ class _EditProfileState extends State<EditProfile> {
         id: userId,
       );
       await context.read<AccountsProvider>().updateProfile(
-          userInfo: AppUserInfo.toJson(userInfo), photo: _newPhoto);
+          userInfo: IskolarInfo.toJson(userInfo), photo: _newPhoto);
 
       if (context.mounted) {
         var status = context.read<AccountsProvider>().editStatus;
