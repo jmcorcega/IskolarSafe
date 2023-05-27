@@ -3,6 +3,8 @@ import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
 import 'package:iskolarsafe/components/user_details.dart';
+import 'package:iskolarsafe/dummy_info.dart';
+import 'package:iskolarsafe/models/user_model.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Search extends StatefulWidget {
@@ -15,116 +17,7 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-  List<Map<dynamic, dynamic>> _listNames = [
-    {
-      "name": "Mang Juan",
-      "studentNo": "20205678",
-      "course": "BS Stat",
-      "college": "CAS",
-      "hasSymptoms": false,
-      "isQuarantined": true,
-      "isUnderMonitoring": false
-    },
-    {
-      "name": "Maam Juana",
-      "studentNo": "20205678",
-      "course": "BS Chemistry",
-      "college": "CAS",
-      "hasSymptoms": false,
-      "isQuarantined": true,
-      "isUnderMonitoring": false
-    },
-    {
-      "name": "Mami Juan",
-      "studentNo": "20205678",
-      "course": "BS Stat",
-      "college": "CAS",
-      "hasSymptoms": true,
-      "isQuarantined": false,
-      "isUnderMonitoring": true
-    },
-    {
-      "name": "Maria Clara",
-      "studentNo": "20202468",
-      "course": "BSCE",
-      "college": "CEAT",
-      "hasSymptoms": true,
-      "isQuarantined": false,
-      "isUnderMonitoring": false
-    },
-    {
-      "name": "Maria Clara",
-      "studentNo": "20202468",
-      "course": "BSCE",
-      "college": "CEAT",
-      "hasSymptoms": true,
-      "isQuarantined": true,
-      "isUnderMonitoring": false
-    },
-    {
-      "name": "Mario Clara",
-      "studentNo": "20202468",
-      "course": "BSCS",
-      "college": "CAS",
-      "hasSymptoms": false,
-      "isQuarantined": false,
-      "isUnderMonitoring": true
-    },
-    {
-      "name": "Mara Clara",
-      "studentNo": "20202468",
-      "course": "BSCS",
-      "college": "CAS",
-      "hasSymptoms": true,
-      "isQuarantined": false,
-      "isUnderMonitoring": true
-    },
-    {
-      "name": "Juan Tamad",
-      "studentNo": "20202468",
-      "course": "BSCS",
-      "college": "CAS",
-      "hasSymptoms": false,
-      "isQuarantined": true,
-      "isUnderMonitoring": false
-    },
-    {
-      "name": "Mang Juan",
-      "studentNo": "20205678",
-      "course": "BS Stat",
-      "college": "CAS",
-      "hasSymptoms": false,
-      "isQuarantined": false,
-      "isUnderMonitoring": false
-    },
-    {
-      "name": "Maria Clara",
-      "studentNo": "20202468",
-      "course": "BSCE",
-      "college": "CEAT",
-      "hasSymptoms": true,
-      "isQuarantined": false,
-      "isUnderMonitoring": true
-    },
-    {
-      "name": "Mara Clara",
-      "studentNo": "20202468",
-      "course": "BSCS",
-      "college": "CAS",
-      "hasSymptoms": true,
-      "isQuarantined": true,
-      "isUnderMonitoring": false
-    },
-    {
-      "name": "Juan Tamad",
-      "studentNo": "20202468",
-      "course": "BSCS",
-      "college": "CAS",
-      "hasSymptoms": false,
-      "isQuarantined": true,
-      "isUnderMonitoring": false
-    }
-  ];
+  final List<IskolarInfo> _iskolarInfo = DummyInfo.fakeInfoList;
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +61,7 @@ class _SearchState extends State<Search> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: _listNames.length,
+              itemCount: _iskolarInfo.length,
               itemBuilder: ((context, index) {
                 return ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -177,44 +70,30 @@ class _SearchState extends State<Search> {
                     child: CircleAvatar(
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       child: Text(
-                          _listNames[index]["name"]!.toString().substring(0, 1),
+                          _iskolarInfo[index]
+                              .firstName
+                              .toString()
+                              .substring(0, 1),
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.onPrimary)),
                     ),
                   ),
                   minLeadingWidth: 44.0,
-                  title: Text(_listNames[index]["name"]!),
+                  title: Text(
+                      "${_iskolarInfo[index].firstName} ${_iskolarInfo[index].lastName}"),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Student No",
+                        _iskolarInfo[index].studentNumber,
                         style: Theme.of(context).textTheme.labelMedium,
                       ),
                     ],
                   ),
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      builder: (context) => DraggableScrollableSheet(
-                          snap: true,
-                          initialChildSize: 0.50,
-                          maxChildSize: 0.95,
-                          minChildSize: 0.4,
-                          expand: false,
-                          builder: (context, scrollController) {
-                            return SingleChildScrollView(
-                                controller: scrollController,
-                                child: UserDetails(
-                                    userDetails: _listNames[index],
-                                    isQuarantined: _listNames[index]
-                                        ["isQuarantined"],
-                                    isUnderMonitoring: _listNames[index]
-                                        ["isUnderMonitoring"]));
-                          }),
-                    );
-                  },
+                  onTap: () => UserDetails.showSheet(
+                    context,
+                    _iskolarInfo[index],
+                  ),
                 );
               }),
             ),
@@ -222,14 +101,5 @@ class _SearchState extends State<Search> {
         ],
       ),
     );
-  }
-
-  Widget _getHealthStatus(bool status) {
-    if (status) {
-      return const Icon(Symbols.sick, color: Color(0xFFFB6962));
-    } else {
-      return const Icon(Symbols.health_and_safety_rounded,
-          color: Color(0xFF0CC078));
-    }
   }
 }

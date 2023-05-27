@@ -5,9 +5,11 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
+import 'package:iskolarsafe/components/health_confirm_dialog.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
-import 'package:iskolarsafe/components/quarantine_alertdialog.dart';
 import 'package:iskolarsafe/components/user_details.dart';
+import 'package:iskolarsafe/dummy_info.dart';
+import 'package:iskolarsafe/models/user_model.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Quarantine extends StatefulWidget {
@@ -20,26 +22,7 @@ class Quarantine extends StatefulWidget {
 }
 
 class _QuarantineState extends State<Quarantine> {
-  List<Map<dynamic, dynamic>> _listNames = [
-    {
-      "name": "Mang Juan",
-      "studentNo": "20205678",
-      "course": "BS Stat",
-      "college": "CAS",
-      "hasSymptoms": false,
-      "isQuarantined": true,
-      "isUnderMonitoring": false
-    },
-    {
-      "name": "Maria Clara",
-      "studentNo": "20202468",
-      "course": "BSCE",
-      "college": "CEAT",
-      "hasSymptoms": true,
-      "isQuarantined": true,
-      "isUnderMonitoring": false
-    }
-  ];
+  final List<IskolarInfo> _iskolarInfo = DummyInfo.fakeInfoList;
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +40,14 @@ class _QuarantineState extends State<Quarantine> {
         ],
       ),
       body: ListView.builder(
-        itemCount: _listNames.length,
+        itemCount: _iskolarInfo.length,
         itemBuilder: ((context, index) {
           return ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
-            leading: _getHealthStatus(_listNames[index]["hasSymptoms"]!),
-            title: Text(_listNames[index]["name"]!),
+            leading: _getHealthStatus(
+                _iskolarInfo[index].status != IskolarHealthStatus.healthy),
+            title: Text(
+                "${_iskolarInfo[index].firstName} ${_iskolarInfo[index].lastName}"),
             subtitle: Text(
               "Quarantined on: 18/05/2023 11:53am",
               style: Theme.of(context).textTheme.labelMedium,
@@ -74,38 +59,15 @@ class _QuarantineState extends State<Quarantine> {
                   shape: const CircleBorder(),
                   padding: const EdgeInsets.all(0),
                 ),
-                onPressed: () {
-                  showDialog(
-                      useSafeArea: false,
-                      context: context,
-                      builder: (BuildContext context) => QuarantineAlertDialog(
-                          name: _listNames[index]["name"]!,
-                          isQuarantined: _listNames[index]["isQuarantined"]));
-                },
+                onPressed: () => HealthConfirmDialog.confirmDialog(
+                  context: context,
+                  user: _iskolarInfo[index],
+                  type: HealthConfirmDialogType.startQuarantine,
+                ),
                 child: const Icon(Symbols.close),
               ),
             ),
-            onTap: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (context) => DraggableScrollableSheet(
-                    snap: true,
-                    initialChildSize: 0.50,
-                    maxChildSize: 0.95,
-                    minChildSize: 0.4,
-                    expand: false,
-                    builder: (context, scrollController) {
-                      return SingleChildScrollView(
-                          controller: scrollController,
-                          child: UserDetails(
-                              userDetails: _listNames[index],
-                              isQuarantined: _listNames[index]["isQuarantined"],
-                              isUnderMonitoring: _listNames[index]
-                                  ["isUnderMonitoring"]));
-                    }),
-              );
-            },
+            onTap: () => UserDetails.showSheet(context, _iskolarInfo[index]),
           );
         }),
       ),

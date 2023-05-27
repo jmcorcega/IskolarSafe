@@ -7,6 +7,8 @@ import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
 import 'package:iskolarsafe/components/user_details.dart';
+import 'package:iskolarsafe/dummy_info.dart';
+import 'package:iskolarsafe/models/user_model.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Logs extends StatefulWidget {
@@ -21,26 +23,7 @@ class Logs extends StatefulWidget {
 class _LogsState extends State<Logs> {
   TextEditingController _search = new TextEditingController();
 
-  List<Map<dynamic, dynamic>> _listNames = [
-    {
-      "name": "Mang Juan",
-      "studentNo": "20205678",
-      "course": "BS Stat",
-      "college": "CAS",
-      "hasSymptoms": false,
-      "isQuarantined": true,
-      "isUnderMonitoring": false
-    },
-    {
-      "name": "Maria Clara",
-      "studentNo": "20202468",
-      "course": "BSCE",
-      "college": "CEAT",
-      "hasSymptoms": true,
-      "isQuarantined": false,
-      "isUnderMonitoring": true
-    }
-  ];
+  final List<IskolarInfo> _iskolarInfo = DummyInfo.fakeInfoList;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +64,7 @@ class _LogsState extends State<Logs> {
         ],
       ),
       body: ListView.builder(
-        itemCount: _listNames.length,
+        itemCount: _iskolarInfo.length,
         itemBuilder: ((context, index) {
           return ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -90,18 +73,20 @@ class _LogsState extends State<Logs> {
               child: CircleAvatar(
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 child: Text(
-                    _listNames[index]["name"]!.toString().substring(0, 1),
+                    "${_iskolarInfo[index].firstName} ${_iskolarInfo[index].lastName}",
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.onPrimary)),
               ),
             ),
             minLeadingWidth: 44.0,
-            title: Text(_listNames[index]["name"]!),
+            title: Text(
+              "${_iskolarInfo[index].firstName} ${_iskolarInfo[index].lastName}",
+            ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Student No",
+                  _iskolarInfo[index].studentNumber,
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
                 Text(
@@ -111,33 +96,13 @@ class _LogsState extends State<Logs> {
               ],
             ),
             isThreeLine: true,
-            onTap: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (context) => DraggableScrollableSheet(
-                    snap: true,
-                    initialChildSize: 0.50,
-                    maxChildSize: 0.95,
-                    minChildSize: 0.5,
-                    expand: false,
-                    builder: (context, scrollController) {
-                      return SingleChildScrollView(
-                          controller: scrollController,
-                          child: UserDetails(
-                              userDetails: _listNames[index],
-                              isQuarantined: _listNames[index]["isQuarantined"],
-                              isUnderMonitoring: _listNames[index]
-                                  ["isUnderMonitoring"]));
-                    }),
-              );
-            },
+            onTap: () => UserDetails.showSheet(context, _iskolarInfo[index]),
           );
         }),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {},
-        label: Text("Scan user's entry"),
+        label: const Text("Scan user's entry"),
         icon: const Icon(Symbols.qr_code_scanner_rounded),
       ),
     );

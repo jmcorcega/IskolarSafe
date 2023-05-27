@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
-import 'package:iskolarsafe/components/monitoring_alertdialog.dart';
-import 'package:iskolarsafe/components/quarantine_alertdialog.dart';
+import 'package:iskolarsafe/components/health_confirm_dialog.dart';
+import 'package:iskolarsafe/dummy_info.dart';
+import 'package:iskolarsafe/models/user_model.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../components/user_details.dart';
@@ -20,35 +21,7 @@ class Monitor extends StatefulWidget {
 }
 
 class _MonitorState extends State<Monitor> {
-  List<Map<dynamic, dynamic>> _listNames = [
-    {
-      "name": "May Laban",
-      "studentNo": "20201234",
-      "course": "BSCS",
-      "college": "CAS",
-      "hasSymptoms": true,
-      "isQuarantined": false,
-      "isUnderMonitoring": true
-    },
-    {
-      "name": "Mang Juan",
-      "studentNo": "20205678",
-      "course": "BS Stat",
-      "college": "CAS",
-      "hasSymptoms": false,
-      "isQuarantined": false,
-      "isUnderMonitoring": true
-    },
-    {
-      "name": "Maria Clara",
-      "studentNo": "20202468",
-      "course": "BSCE",
-      "college": "CEAT",
-      "hasSymptoms": true,
-      "isQuarantined": false,
-      "isUnderMonitoring": true
-    }
-  ];
+  final List<IskolarInfo> _iskolarInfo = DummyInfo.fakeInfoList;
 
   @override
   Widget build(BuildContext context) {
@@ -66,34 +39,15 @@ class _MonitorState extends State<Monitor> {
         ],
       ),
       body: ListView.builder(
-          itemCount: _listNames.length,
+          itemCount: _iskolarInfo.length,
           itemBuilder: ((context, index) {
             return ListTile(
-              onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (context) => DraggableScrollableSheet(
-                      snap: true,
-                      initialChildSize: 0.50,
-                      maxChildSize: 0.95,
-                      minChildSize: 0.4,
-                      expand: false,
-                      builder: (context, scrollController) {
-                        return SingleChildScrollView(
-                            controller: scrollController,
-                            child: UserDetails(
-                                userDetails: _listNames[index],
-                                isQuarantined: _listNames[index]
-                                    ["isQuarantined"],
-                                isUnderMonitoring: _listNames[index]
-                                    ["isUnderMonitoring"]));
-                      }),
-                );
-              },
+              onTap: () => UserDetails.showSheet(context, _iskolarInfo[index]),
               contentPadding: EdgeInsets.symmetric(horizontal: 24.0),
-              title: Text(_listNames[index]["name"]!),
-              subtitle: _getHealthStatus(_listNames[index]["hasSymptoms"]!),
+              title: Text(
+                "${_iskolarInfo[index].firstName} ${_iskolarInfo[index].lastName}",
+              ),
+              subtitle: _getHealthStatus(true),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -105,14 +59,11 @@ class _MonitorState extends State<Monitor> {
                           padding: EdgeInsets.all(0),
                           backgroundColor:
                               Theme.of(context).colorScheme.primary),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) =>
-                                MonitoringAlertDialog(
-                                  name: _listNames[index]["name"]!,
-                                ));
-                      },
+                      onPressed: () => HealthConfirmDialog.confirmDialog(
+                        context: context,
+                        user: _iskolarInfo[index],
+                        type: HealthConfirmDialogType.endMonitoring,
+                      ),
                       child: const Icon(Symbols.close_rounded, size: 18.0),
                     ),
                   ),
@@ -125,17 +76,11 @@ class _MonitorState extends State<Monitor> {
                           padding: EdgeInsets.all(0),
                           foregroundColor:
                               Theme.of(context).colorScheme.tertiary),
-                      onPressed: () {
-                        showDialog(
-                            useSafeArea: false,
-                            context: context,
-                            builder: (BuildContext context) =>
-                                QuarantineAlertDialog(
-                                  name: _listNames[index]["name"]!,
-                                  isQuarantined: _listNames[index]
-                                      ["isQuarantined"],
-                                ));
-                      },
+                      onPressed: () => HealthConfirmDialog.confirmDialog(
+                        context: context,
+                        user: _iskolarInfo[index],
+                        type: HealthConfirmDialogType.startQuarantine,
+                      ),
                       child: const Icon(Symbols.medical_mask_rounded),
                     ),
                   ),
