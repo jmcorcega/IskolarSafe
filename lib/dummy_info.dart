@@ -14,7 +14,7 @@ class DummyInfo {
     allergies: [],
   );
   static final IskolarInfo fakeInfo2 = IskolarInfo(
-    status: IskolarHealthStatus.healthy,
+    status: IskolarHealthStatus.notWell,
     firstName: "May Rafael",
     lastName: "Laban",
     userName: "mrlaban",
