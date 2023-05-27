@@ -16,7 +16,7 @@ class AccountsProvider with ChangeNotifier {
   Stream<User?> get stream => _userStream;
 
   User? get user => _user;
-  Future<AppUserInfo?> get userInfo => _accounts.getUserInfo(_user);
+  Future<IskolarInfo?> get userInfo => _accounts.getUserInfo(_user);
   AccountsStatus get status => _authStatus;
   bool get editStatus => _userInfoAvailable;
 

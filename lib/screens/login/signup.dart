@@ -107,7 +107,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
       // Save the form
       _formKey.currentState?.save();
 
-      AppUserInfo userInfo = AppUserInfo(
+      IskolarInfo userInfo = IskolarInfo(
         firstName: firstNameController.text,
         lastName: lastNameController.text,
         userName: userNameController.text,
@@ -120,7 +120,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
       await context.read<AccountsProvider>().signUp(_isGoogle,
           email: emailController.text,
           password: passwordController.text,
-          userInfo: AppUserInfo.toJson(userInfo));
+          userInfo: IskolarInfo.toJson(userInfo));
 
       if (context.mounted) {
         var status = context.read<AccountsProvider>().status;
