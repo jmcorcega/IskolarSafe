@@ -13,6 +13,8 @@ class HealthBadge extends StatelessWidget {
         return Icon(Symbols.medical_mask_rounded, size: iconSize);
       case IskolarHealthStatus.monitored:
         return Icon(Symbols.coronavirus_rounded, size: iconSize);
+      case IskolarHealthStatus.notWell:
+        return Icon(Symbols.sick_rounded, size: iconSize);
       default:
         return Icon(Symbols.check_circle_filled, size: iconSize);
     }
@@ -24,6 +26,8 @@ class HealthBadge extends StatelessWidget {
         return Colors.red[400];
       case IskolarHealthStatus.monitored:
         return Colors.yellow[800];
+      case IskolarHealthStatus.notWell:
+        return Colors.orange[800];
       default:
         return Colors.green;
     }
@@ -35,6 +39,8 @@ class HealthBadge extends StatelessWidget {
         return "Quarantined";
       case IskolarHealthStatus.monitored:
         return "Under Monitoring";
+      case IskolarHealthStatus.notWell:
+        return "Reported Sick";
       default:
         return "Safe for Entry";
     }
