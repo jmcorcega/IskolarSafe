@@ -141,10 +141,6 @@ class _EntriesState extends State<Entries> {
                       entry.id = snapshot.data?.docs[index].id;
 
                       if (index == 0) {
-                        if (entry.dateGenerated.isToday()) {
-                          _canShowMyProfile = true;
-                        }
-
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 18.0),
                           child: Card(
@@ -215,7 +211,9 @@ class _EntriesState extends State<Entries> {
                       .withOpacity(0.75))),
           const SizedBox(height: 20.0),
           TextButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, NewEntry.routeName);
+            },
             icon: const Icon(Icons.add_outlined),
             label: const Text("New Entry"),
           )
@@ -231,6 +229,7 @@ class _EntriesState extends State<Entries> {
       builder: (context) => DraggableScrollableSheet(
           snap: true,
           initialChildSize: 0.65,
+          minChildSize: 0.65,
           maxChildSize: 0.95,
           expand: false,
           builder: (context, scrollController) {
