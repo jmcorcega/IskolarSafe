@@ -110,6 +110,7 @@ class IskolarInfo {
       userName: json['userName'],
       studentNumber: json['studentNumber'],
       course: json['course'],
+      photoUrl: json['photoUrl'],
       college: json['college'],
       condition:
           (json['condition'] as List).map((item) => item as String).toList(),
