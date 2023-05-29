@@ -48,6 +48,11 @@ class AccountsAPI {
       return null;
     }
   }
+  
+  // Gets all data from collection("users")
+  Stream<QuerySnapshot> getAllUsersFromStore() {
+    return _db.collection("users").snapshots();
+  }
 
   Future<bool> updateUserInfo(
       {required Map<String, dynamic> userInfo, File? photoFile}) async {
