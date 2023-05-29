@@ -67,6 +67,11 @@ class AccountsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateType(Map<String,dynamic> currentInfo, IskolarType type, String uID) async {
+    _accounts.updateUserType(currentInfo, type, uID);
+    notifyListeners(); 
+  }
+
   Future<void> updateProfile(
       {required Map<String, dynamic> userInfo, File? photo}) async {
     _userInfoAvailable =

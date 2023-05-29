@@ -54,6 +54,27 @@ class AccountsAPI {
     return _db.collection("users").snapshots();
   }
 
+  Future<bool> updateUserType(Map<String,dynamic> currentInfo, IskolarType type, String uID) async {
+    try {
+      switch (type.name) {
+        case "admin":
+          currentInfo["type"] = "administrator";
+          break;
+        case "monitor":
+          currentInfo["type"] = "building_monitor";
+          break;
+        default:
+          currentInfo["type"] = "student";
+      }
+      
+      await _db.collection(_storeName).doc(uID).update(currentInfo);
+      return true;
+    } catch (e) {
+      return false;
+    }
+    
+  }
+
   Future<bool> updateUserInfo(
       {required Map<String, dynamic> userInfo, File? photoFile}) async {
     try {
