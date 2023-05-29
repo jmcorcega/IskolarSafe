@@ -130,7 +130,7 @@ class _SearchState extends State<Search> {
                   ),
                   onTap: () => UserDetails.showSheet(
                     context,
-                    IskolarInfo.fromJson(snapshot.data!.docs[index] as Map<String,dynamic>),
+                    IskolarInfo.fromJson(snapshot.data!.docs[index].data() as Map<String,dynamic>),
                   ),
                 );
               }),
