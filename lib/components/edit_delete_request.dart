@@ -458,7 +458,7 @@ class EditRequest extends StatelessWidget {
                   return FilterChip(
                     label: Text(name),
                     selected: respiratorySymptoms.contains(symptom),
-                    onSelected:
+                    onSelected: 
                         // chipEnabled(symptom)
                         //     ? (bool selected) {
                         //         setState(() {

@@ -26,9 +26,9 @@ class _EditDeleteEntryState extends State<EditDeleteEntry> {
   List<RespiratorySymptom> respiratorySymptoms = [];
   List<OtherSymptom> otherSymptoms = [];
 
-  late bool isExposed;
-  late bool isWaitingForRtPcr;
-  late bool isWaitingForRapidAntigen;
+  bool? isExposed;
+  bool? isWaitingForRtPcr;
+  bool? isWaitingForRapidAntigen;
 
   bool _deferEditing = false;
   IskolarInfo? userInfo;
@@ -213,9 +213,10 @@ class _EditDeleteEntryState extends State<EditDeleteEntry> {
     fluSymptoms = widget.entry.fluSymptoms!;
     respiratorySymptoms = widget.entry.respiratorySymptoms!;
     otherSymptoms = widget.entry.otherSymptoms!;
-    isExposed = widget.entry.exposed;
-    isWaitingForRtPcr = widget.entry.waitingForRtPcr;
-    isWaitingForRapidAntigen = widget.entry.waitingForRapidAntigen;
+    isExposed = isExposed ?? widget.entry.exposed;
+    isWaitingForRtPcr = isWaitingForRtPcr ?? widget.entry.waitingForRtPcr;
+    isWaitingForRapidAntigen =
+        isWaitingForRapidAntigen ?? widget.entry.waitingForRapidAntigen;
 
     return Scaffold(
       appBar: AppBar(
