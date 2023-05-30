@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
-import 'package:iskolarsafe/components/edit_delete_entry.dart';
+import 'package:iskolarsafe/screens/home/edit_delete_entry.dart';
 import 'package:iskolarsafe/components/profile_modal.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
 import 'package:iskolarsafe/extensions.dart';
@@ -186,8 +186,13 @@ class _EntriesState extends State<Entries> {
                                   //             );
                                   //           }),
                                   // );
-                                  Navigator.push(context,MaterialPageRoute(builder: (context) => EntryModal( entry: entry,
-                                                ),));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => EditDeleteEntry(
+                                          entry: entry,
+                                        ),
+                                      ));
                                 },
                               ),
                             ),

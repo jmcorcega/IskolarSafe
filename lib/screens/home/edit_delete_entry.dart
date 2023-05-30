@@ -8,16 +8,16 @@ import 'package:iskolarsafe/providers/entries_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
-class EntryModal extends StatefulWidget {
+class EditDeleteEntry extends StatefulWidget {
   // static const String routeName = "/entry/new";
   late HealthEntry entry;
-  EntryModal({Key? key, required this.entry}) : super(key: key);
+  EditDeleteEntry({Key? key, required this.entry}) : super(key: key);
 
   @override
-  _EntryModalState createState() => _EntryModalState();
+  _EditDeleteEntryState createState() => _EditDeleteEntryState();
 }
 
-class _EntryModalState extends State<EntryModal> {
+class _EditDeleteEntryState extends State<EditDeleteEntry> {
   late final Future<IskolarInfo?> _userInfoFuture =
       context.read<AccountsProvider>().userInfo;
   final _entryFormState = GlobalKey<FormState>();
@@ -121,6 +121,8 @@ class _EntryModalState extends State<EntryModal> {
 
     return false;
   }
+
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -561,6 +563,7 @@ class _EntryModalState extends State<EntryModal> {
               ],
             ),
             const SizedBox(height: 72.0),
+            
           ],
         ),
       ),
