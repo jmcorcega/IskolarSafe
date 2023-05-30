@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -9,12 +10,15 @@ import 'package:iskolarsafe/models/user_model.dart';
 class AccountsProvider with ChangeNotifier {
   late AccountsAPI _accounts;
   late Stream<User?> _userStream;
+  late Stream<QuerySnapshot> _studentStream;
   late AccountsStatus _authStatus;
   late User? _user;
   late bool _userInfoAvailable;
+  late IskolarInfo? _userInfo;
 
+  // Getters
   Stream<User?> get stream => _userStream;
-
+  Stream<QuerySnapshot> get students => _studentStream;
   User? get user => _user;
   Future<IskolarInfo?> get userInfo => _accounts.getUserInfo(_user);
   AccountsStatus get status => _authStatus;
@@ -29,6 +33,16 @@ class AccountsProvider with ChangeNotifier {
       _authStatus = AccountsStatus.success;
     }
     _userInfoAvailable = true;
+    fetchStudents();
+  }
+
+  fetchStudents() async {
+    _studentStream = _accounts.getAllUsersFromStore();
+    notifyListeners();
+  }
+
+  Future<void> refetchStudents() async {
+    await fetchStudents();
     notifyListeners();
   }
 
@@ -49,6 +63,12 @@ class AccountsProvider with ChangeNotifier {
     _userStream = _accounts.getUserStream();
     _user = _accounts.user;
 
+    notifyListeners();
+  }
+
+  Future<void> updateType(
+      Map<String, dynamic> currentInfo, IskolarType type, String uID) async {
+    _accounts.updateUserType(currentInfo, type, uID);
     notifyListeners();
   }
 

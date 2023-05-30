@@ -32,15 +32,21 @@ class _EditDeleteRequestsState extends State<EditDeleteRequests> {
       "isUnderMonitoring": false,
       "hasEditRequest": true,
       "editRequest": {
-        'changedFluSymptoms': FluSymptom.feverish,
-        'fluSymptoms': FluSymptom.none,
-        'changedRespiratorySymptoms': RespiratorySymptom.none,
-        'respiratorySymptoms': RespiratorySymptom.cough,
-        'changedOtherSymptoms': OtherSymptom.none,
-        'otherSymptoms': OtherSymptom.lossOfTaste,
-        'exposed': true,
-        'waitingForRtPcr': false,
-        'waitingForRapidAntigen': false
+        'fluSymptoms': {
+          "orig": FluSymptom.none,
+          "changed": FluSymptom.feverish
+        },
+        'respiratorySymptoms': {
+          "orig": RespiratorySymptom.cough,
+          "changed": RespiratorySymptom.cough
+        },
+        'otherSymptoms': {
+          "orig": OtherSymptom.none,
+          "changed": OtherSymptom.none
+        },
+        'exposed': {"orig": false, "changed": true},
+        'waitingForRtPcr': {"orig": false, "changed": false},
+        'waitingForRapidAntigen': {"orig": false, "changed": false}
       },
       "hasDeleteRequest": true
     },
