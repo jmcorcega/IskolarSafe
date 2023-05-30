@@ -289,6 +289,86 @@ class _EditDeleteRequestsState extends State<EditDeleteRequests> {
   }
 }
 
+Widget _buttons(context) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      OutlinedButton.icon(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: Theme.of(context).colorScheme.primary,
+          minimumSize: const Size(225.0, 47.5),
+        ),
+        onPressed: () {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              content: Text("Are you sure you want approve their edit request?",
+                  style: Theme.of(context).textTheme.bodyMedium),
+              actions: <Widget>[
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Symbols.close_rounded),
+                  label: const Text('Cancel'),
+                ),
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.primary,
+                    minimumSize: const Size(225.0, 47.5),
+                  ),
+                  onPressed: () {},
+                  icon: const Icon(Symbols.scan_delete_rounded),
+                  label: const Text('Approve'),
+                ),
+              ],
+            ),
+          );
+        },
+        icon: const Icon(Symbols.edit_document_rounded),
+        label: const Text("Approve"),
+      ),
+      const SizedBox(height: 12.0),
+      FilledButton.icon(
+        style: FilledButton.styleFrom(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          minimumSize: const Size(225.0, 47.5),
+        ),
+        onPressed: () {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              content: Text(
+                  "Are you sure you want to reject their edit request?",
+                  style: Theme.of(context).textTheme.bodyMedium),
+              actions: <Widget>[
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Symbols.close_rounded),
+                  label: const Text('Cancel'),
+                ),
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.primary,
+                    minimumSize: const Size(225.0, 47.5),
+                  ),
+                  onPressed: () {},
+                  icon: const Icon(Symbols.scan_delete_rounded),
+                  label: const Text('Reject'),
+                ),
+              ],
+            ),
+          );
+        },
+        icon: const Icon(Symbols.scan_delete_rounded, size: 18.0),
+        label: const Text("Reject"),
+      ),
+    ],
+  );
+}
+
 class EditRequest extends StatelessWidget {
   EditRequest({super.key});
 
@@ -458,7 +538,7 @@ class EditRequest extends StatelessWidget {
                   return FilterChip(
                     label: Text(name),
                     selected: respiratorySymptoms.contains(symptom),
-                    onSelected: 
+                    onSelected:
                         // chipEnabled(symptom)
                         //     ? (bool selected) {
                         //         setState(() {
@@ -721,6 +801,8 @@ class EditRequest extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 72.0),
+              _buttons(context),
               const SizedBox(height: 72.0),
             ],
           ),
