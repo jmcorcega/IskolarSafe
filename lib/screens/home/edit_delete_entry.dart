@@ -122,7 +122,91 @@ class _EditDeleteEntryState extends State<EditDeleteEntry> {
     return false;
   }
 
- 
+  Widget _buttons() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        OutlinedButton.icon(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.primary,
+            minimumSize: const Size(225.0, 47.5),
+          ),
+          onPressed: () {
+            if (_checkChanges()) {
+              showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  content: Text("Are you sure you want to edit your entry?",
+                      style: Theme.of(context).textTheme.bodyMedium),
+                  actions: <Widget>[
+                    TextButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Symbols.close_rounded),
+                      label: const Text('Cancel'),
+                    ),
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Theme.of(context).colorScheme.primary,
+                        minimumSize: const Size(225.0, 47.5),
+                      ),
+                      onPressed: () {},
+                      icon: const Icon(Symbols.scan_delete_rounded),
+                      label: const Text('Send Edit Request'),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text("No changes made! Edit Request not sent!")));
+              Navigator.pop(context);
+            }
+          },
+          icon: const Icon(Symbols.edit_document_rounded),
+          label: const Text("Send Edit Request"),
+        ),
+        const SizedBox(height: 12.0),
+        FilledButton.icon(
+          style: FilledButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            minimumSize: const Size(225.0, 47.5),
+          ),
+          onPressed: () {
+            showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                content: Text("Are you sure you want to delete your entry?",
+                    style: Theme.of(context).textTheme.bodyMedium),
+                actions: <Widget>[
+                  TextButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Symbols.close_rounded),
+                    label: const Text('Cancel'),
+                  ),
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.primary,
+                      minimumSize: const Size(225.0, 47.5),
+                    ),
+                    onPressed: () {},
+                    icon: const Icon(Symbols.scan_delete_rounded),
+                    label: const Text('Send Delete Request'),
+                  ),
+                ],
+              ),
+            );
+          },
+          icon: const Icon(Symbols.scan_delete_rounded, size: 18.0),
+          label: const Text("Send Delete Request"),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -563,7 +647,8 @@ class _EditDeleteEntryState extends State<EditDeleteEntry> {
               ],
             ),
             const SizedBox(height: 72.0),
-            
+            _buttons(),
+            const SizedBox(height: 72.0),
           ],
         ),
       ),
