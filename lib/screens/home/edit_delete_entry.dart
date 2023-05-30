@@ -265,25 +265,6 @@ class _EditDeleteEntryState extends State<EditDeleteEntry> {
           return buildForm(context);
         },
       ),
-      floatingActionButton: FutureBuilder(
-        future: _userInfoFuture,
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            return FloatingActionButton.extended(
-              backgroundColor: _deferEditing
-                  ? Theme.of(context).colorScheme.background
-                  : null,
-              foregroundColor: _deferEditing
-                  ? Theme.of(context).colorScheme.onBackground.withOpacity(0.75)
-                  : null,
-              onPressed: _deferEditing ? null : saveEntry,
-              label: Text("Save Changes"),
-              icon: Icon(Symbols.save_rounded),
-            );
-          }
-          return Container();
-        },
-      ),
     );
   }
 
