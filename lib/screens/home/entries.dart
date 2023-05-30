@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
+import 'package:iskolarsafe/components/edit_delete_entry.dart';
 import 'package:iskolarsafe/components/profile_modal.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
 import 'package:iskolarsafe/extensions.dart';
@@ -165,7 +166,29 @@ class _EntriesState extends State<Entries> {
                                       .labelMedium!
                                       .apply(color: _getColor(entry.verdict)),
                                 ),
-                                onTap: () {},
+                                onTap: () {
+                                  // showModalBottomSheet(
+                                  //   context: context,
+                                  //   isScrollControlled: true,
+                                  //   builder: (context) =>
+                                  //       DraggableScrollableSheet(
+                                  //           initialChildSize: 0.45,
+                                  //           maxChildSize: 0.95,
+                                  //           minChildSize: 0.4,
+                                  //           expand: false,
+                                  //           builder:
+                                  //               (context, scrollController) {
+                                  //             return SingleChildScrollView(
+                                  //               controller: scrollController,
+                                  //               child: EntryModal(
+                                  //                 entry: entry,
+                                  //               ),
+                                  //             );
+                                  //           }),
+                                  // );
+                                  Navigator.push(context,MaterialPageRoute(builder: (context) => EntryModal( entry: entry,
+                                                ),));
+                                },
                               ),
                             ),
                           );
