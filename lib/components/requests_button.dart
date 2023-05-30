@@ -18,7 +18,7 @@ class EditRequestButton extends StatelessWidget {
         ),
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const EditRequests()));
+              MaterialPageRoute(builder: (context) => const EditDeleteRequests()));
         },
         child: (numRequests > 0)
             ? Badge(
