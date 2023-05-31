@@ -54,6 +54,18 @@ class AccountsAPI {
     return _db.collection("users").snapshots();
   }
 
+  //update users' health status
+  Future<bool> updateHealthStatus(String status, String uID) async {
+    try {
+      await _db.collection(_storeName).doc(uID).update({"status": status});
+
+      return true;
+    } on FirebaseException catch (e) {
+      // print("${e.code} : ${e.message} ");
+      return false;
+    }
+  }
+
   Future<bool> updateUserType(
       Map<String, dynamic> currentInfo, IskolarType type, String uID) async {
     try {
