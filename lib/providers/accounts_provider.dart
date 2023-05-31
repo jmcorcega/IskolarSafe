@@ -18,7 +18,9 @@ class AccountsProvider with ChangeNotifier {
 
   // Getters
   Stream<User?> get stream => _userStream;
-  Stream<QuerySnapshot> get students => _studentStream;
+  Stream<QuerySnapshot> get students => _accounts.getAllUsers();
+  Stream<QuerySnapshot> get quarantined => _accounts.getUsersUnderQuarantine();
+  Stream<QuerySnapshot> get monitored => _accounts.getUsersUnderMonitoring();
   User? get user => _user;
   Future<IskolarInfo?> get userInfo => _accounts.getUserInfo(_user);
   AccountsStatus get status => _authStatus;
@@ -36,13 +38,8 @@ class AccountsProvider with ChangeNotifier {
     fetchStudents();
   }
 
-  fetchStudents() async {
-    _studentStream = _accounts.getAllUsersFromStore();
-    notifyListeners();
-  }
-
-  Future<void> refetchStudents() async {
-    await fetchStudents();
+  fetchStudents() {
+    _studentStream = _accounts.getAllUsers();
     notifyListeners();
   }
 

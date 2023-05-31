@@ -50,8 +50,22 @@ class AccountsAPI {
   }
 
   // Gets all data from collection("users")
-  Stream<QuerySnapshot> getAllUsersFromStore() {
-    return _db.collection("users").snapshots();
+  Stream<QuerySnapshot> getAllUsers() {
+    return _db.collection(_storeName).snapshots();
+  }
+
+  Stream<QuerySnapshot> getUsersUnderQuarantine() {
+    return _db
+        .collection(_storeName)
+        .where("status", isEqualTo: "quarantined")
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getUsersUnderMonitoring() {
+    return _db
+        .collection(_storeName)
+        .where("status", isEqualTo: "monitored")
+        .snapshots();
   }
 
   //update users' health status
