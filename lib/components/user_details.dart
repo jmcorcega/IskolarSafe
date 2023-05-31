@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,6 +8,10 @@ import 'package:iskolarsafe/components/health_badge.dart';
 import 'package:iskolarsafe/components/health_confirm_dialog.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
+
+import '../college_data.dart';
+import '../providers/accounts_provider.dart';
 
 class _UserDetails extends StatelessWidget {
   final IskolarInfo userInfo;
@@ -205,8 +210,59 @@ class _UserDetails extends StatelessWidget {
               )
             : Container(),
         userInfo.allergies.isNotEmpty ? Divider(height: 1.0) : Container(),
+        FutureBuilder(
+          future: _setUserType(context,userInfo),
+          builder: ((context, snapshot) {
+          if (snapshot.hasData) {
+            return snapshot.data!;
+          }      
+          return Container();
+        })
+        )
+        
       ],
     );
+  }
+
+  Future<Widget> _setUserType(BuildContext context, IskolarInfo info) async {
+  // This widget should not appear when the current authorized user is not an administrator.
+  IskolarInfo? cond = await context.read<AccountsProvider>().userInfo;
+  User? currentUser = await context.read<AccountsProvider>().user;
+    if (cond!.type == IskolarType.admin && currentUser!.uid != info.id ) {  // cant set own status from admin to student/monitor
+
+      String currentType = IskolarType.toJson(info);
+      const List<String> list = <String>["administrator", "building_monitor", "student"];
+
+      return Container(
+        width: MediaQuery.of(context).size.width * 0.3,
+        child: DropdownButtonFormField<String>(
+          value: currentType,
+          onChanged: (value) { // I added a "fromString()"" method inside user_model.
+          print(value);
+            context.read<AccountsProvider>()
+            .updateType(IskolarInfo.toJson(info), 
+            IskolarType.fromJson(<String,dynamic>{'type': value}),
+            info.id!);
+            print("Updated?");
+            value = value!;
+          },
+      
+          decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Symbols.key),
+                    labelText: "Type",
+                  ),
+      
+          items: list.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+              );
+          }).toList(),
+          ),
+      );  
+    } 
+    return Container();
   }
 
   Widget _getBottomButtons(BuildContext context, IskolarHealthStatus status) {
