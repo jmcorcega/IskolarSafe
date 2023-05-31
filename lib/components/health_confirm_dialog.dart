@@ -114,9 +114,15 @@ class _HealthConfirmDialog extends StatelessWidget {
                 break;
               case HealthConfirmDialogType.startMonitoring:
                 // TODO: Set status to monitoring
+                context
+                    .read<AccountsProvider>()
+                    .updateStatus(IskolarHealthStatus.monitored, uID);
                 break;
               case HealthConfirmDialogType.startQuarantine:
                 // TODO: Set status to quarantined
+                context
+                    .read<AccountsProvider>()
+                    .updateStatus(IskolarHealthStatus.quarantined, uID);
                 break;
             }
           },
