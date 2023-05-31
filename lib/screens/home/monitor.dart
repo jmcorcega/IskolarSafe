@@ -25,119 +25,128 @@ class Monitor extends StatefulWidget {
 }
 
 class _MonitorState extends State<Monitor> {
-  final List<IskolarInfo> _iskolarInfo = DummyInfo.fakeInfoList;
   var noUnderMonitoring = true;
+
+  Widget _buildEmptyScreen() {
+    return Center(
+      // Show a message where the user can add an entry if list is empty
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Symbols.coronavirus_rounded,
+              size: 72.0,
+              color:
+                  Theme.of(context).colorScheme.onBackground.withOpacity(0.75)),
+          const SizedBox(height: 8.0),
+          Text("No users under monitoring",
+              style: Theme.of(context).textTheme.titleMedium!.apply(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onBackground
+                      .withOpacity(0.75))),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    Stream<QuerySnapshot> students = context.watch<AccountsProvider>().students;
+    Stream<QuerySnapshot> students =
+        context.watch<AccountsProvider>().monitored;
     return Scaffold(
-        appBar: AppBar(
-          leading: EditRequestButton(),
-          centerTitle: true,
-          title: AppBarHeader(
-            icon: Symbols.coronavirus_rounded,
-            title: "Under Monitoring",
-            hasAction: false,
-          ),
-          actions: const [
-            AppOptions(),
-          ],
+      appBar: AppBar(
+        leading: EditRequestButton(),
+        centerTitle: true,
+        title: AppBarHeader(
+          icon: Symbols.coronavirus_rounded,
+          title: "Under Monitoring",
+          hasAction: false,
         ),
-        body: Column(
-          children: [
-            StreamBuilder(
-                stream: students,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(
-                        child: Text("Error encountered ${snapshot.error}"));
-                  } else if (snapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (!snapshot.hasData) {
-                    return const Center(
-                        child: Text("No Students in Under Monitoring yet"));
+        actions: const [
+          AppOptions(),
+        ],
+      ),
+      body: StreamBuilder(
+          stream: students,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(child: Text("Error encountered ${snapshot.error}"));
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return _buildEmptyScreen();
+            }
+            return ListView.builder(
+                shrinkWrap: true,
+                itemCount: snapshot.data?.docs.length,
+                itemBuilder: ((context, index) {
+                  IskolarInfo user = IskolarInfo.fromJson(
+                      snapshot.data?.docs[index].data()
+                          as Map<String, dynamic>);
+                  user.id = snapshot.data?.docs[index].id;
+                  if (user.status == IskolarHealthStatus.monitored) {
+                    noUnderMonitoring = false;
+                    return ListTile(
+                      onTap: () => UserDetails.showSheet(context, user),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 24.0),
+                      title: Text(
+                        "${user.firstName} ${user.lastName}",
+                      ),
+                      subtitle: _getHealthStatus(true),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 34.0,
+                            child: FilledButton(
+                              style: FilledButton.styleFrom(
+                                  shape: const CircleBorder(),
+                                  padding: EdgeInsets.all(0),
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primary),
+                              onPressed: () =>
+                                  HealthConfirmDialog.confirmDialog(
+                                      context: context,
+                                      user: user,
+                                      type: HealthConfirmDialogType
+                                          .endMonitoring),
+                              child:
+                                  const Icon(Symbols.close_rounded, size: 18.0),
+                            ),
+                          ),
+                          SizedBox(width: 12.0),
+                          SizedBox(
+                            width: 34.0,
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                  shape: const CircleBorder(),
+                                  padding: EdgeInsets.all(0),
+                                  foregroundColor:
+                                      Theme.of(context).colorScheme.tertiary),
+                              onPressed: () =>
+                                  HealthConfirmDialog.confirmDialog(
+                                      context: context,
+                                      user: user,
+                                      type: HealthConfirmDialogType
+                                          .startQuarantine),
+                              child: const Icon(Symbols.medical_mask_rounded),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   }
-                  // var length = snapshot.data?.docs.length;
-                  // print(length);
-                  return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: snapshot.data?.docs.length,
-                      itemBuilder: ((context, index) {
-                        IskolarInfo user = IskolarInfo.fromJson(
-                            snapshot.data?.docs[index].data()
-                                as Map<String, dynamic>);
-                        user.id = snapshot.data?.docs[index].id;
-                        if (user.status == IskolarHealthStatus.monitored) {
-                          noUnderMonitoring = false;
-                          return ListTile(
-                            onTap: () => UserDetails.showSheet(context, user),
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 24.0),
-                            title: Text(
-                              "${user.firstName} ${user.lastName}",
-                            ),
-                            subtitle: _getHealthStatus(true),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SizedBox(
-                                  width: 34.0,
-                                  child: FilledButton(
-                                    style: FilledButton.styleFrom(
-                                        shape: const CircleBorder(),
-                                        padding: EdgeInsets.all(0),
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .primary),
-                                    onPressed: () =>
-                                        HealthConfirmDialog.confirmDialog(
-                                            context: context,
-                                            user: user,
-                                            type: HealthConfirmDialogType
-                                                .endMonitoring),
-                                    child: const Icon(Symbols.close_rounded,
-                                        size: 18.0),
-                                  ),
-                                ),
-                                SizedBox(width: 12.0),
-                                SizedBox(
-                                  width: 34.0,
-                                  child: OutlinedButton(
-                                    style: OutlinedButton.styleFrom(
-                                        shape: const CircleBorder(),
-                                        padding: EdgeInsets.all(0),
-                                        foregroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .tertiary),
-                                    onPressed: () =>
-                                        HealthConfirmDialog.confirmDialog(
-                                            context: context,
-                                            user: user,
-                                            type: HealthConfirmDialogType
-                                                .startQuarantine),
-                                    child: const Icon(
-                                        Symbols.medical_mask_rounded),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
 
-                        if (noUnderMonitoring == true &&
-                            index == snapshot.data?.docs.length) {
-                          return Center(
-                              child: Text("No Student in Under Monitoring yet!",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium!));
-                        }
-                        return SizedBox.shrink();
-                      }));
-                })
-          ],
-        ));
+                  if (noUnderMonitoring == true &&
+                      index == snapshot.data?.docs.length) {
+                    return Center(
+                        child: Text("No Student in Under Monitoring yet!",
+                            style: Theme.of(context).textTheme.titleMedium!));
+                  }
+                  return SizedBox.shrink();
+                }));
+          }),
+    );
   }
 
   Widget _getHealthStatus(bool status) {

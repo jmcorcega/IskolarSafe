@@ -20,8 +20,6 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-  //final List<IskolarInfo> _iskolarInfo = DummyInfo.fakeInfoList;
-
   @override
   Widget build(BuildContext context) {
     // return FutureBuilder(

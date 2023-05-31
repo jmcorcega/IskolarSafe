@@ -25,11 +25,32 @@ class Quarantine extends StatefulWidget {
 }
 
 class _QuarantineState extends State<Quarantine> {
-  final List<IskolarInfo> _iskolarInfo = DummyInfo.fakeInfoList;
-  bool noQuarantine = true;
+  Widget _buildEmptyScreen() {
+    return Center(
+      // Show a message where the user can add an entry if list is empty
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Symbols.masks_rounded,
+              size: 72.0,
+              color:
+                  Theme.of(context).colorScheme.onBackground.withOpacity(0.75)),
+          const SizedBox(height: 8.0),
+          Text("No users under quarantine",
+              style: Theme.of(context).textTheme.titleMedium!.apply(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onBackground
+                      .withOpacity(0.75))),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    Stream<QuerySnapshot> students = context.watch<AccountsProvider>().students;
+    Stream<QuerySnapshot> students =
+        context.watch<AccountsProvider>().quarantined;
     return Scaffold(
         appBar: AppBar(
           leading: EditRequestButton(),
@@ -54,9 +75,8 @@ class _QuarantineState extends State<Quarantine> {
                   } else if (snapshot.connectionState ==
                       ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
-                  } else if (!snapshot.hasData) {
-                    return const Center(
-                        child: Text("No Students in Quarantine yet"));
+                  } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Expanded(child: _buildEmptyScreen());
                   }
 
                   return ListView.builder(
@@ -68,7 +88,6 @@ class _QuarantineState extends State<Quarantine> {
                               as Map<String, dynamic>);
                       user.id = snapshot.data?.docs[index].id;
                       if (user.status == IskolarHealthStatus.quarantined) {
-                        noQuarantine = false;
                         return ListTile(
                           contentPadding:
                               const EdgeInsets.symmetric(horizontal: 24.0),
@@ -98,14 +117,6 @@ class _QuarantineState extends State<Quarantine> {
                           onTap: () => UserDetails.showSheet(context, user),
                         );
                       }
-                      if (noQuarantine == true &&
-                          index == snapshot.data?.docs.length) {
-                        return Center(
-                            child: Text("No Student in Quarantine yet!",
-                                style:
-                                    Theme.of(context).textTheme.titleMedium!));
-                      }
-                      return SizedBox.shrink();
                     }),
                   );
                 })

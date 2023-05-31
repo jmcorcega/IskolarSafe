@@ -107,38 +107,4 @@ class _LogsState extends State<Logs> {
       ),
     );
   }
-
-  void _showProfileModal(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.45,
-          maxChildSize: 0.95,
-          minChildSize: 0.4,
-          expand: false,
-          builder: (context, scrollController) {
-            return SingleChildScrollView(
-              controller: scrollController,
-              child: const ProfileModal(),
-            );
-          }),
-    );
-  }
-}
-
-class ProfileModal extends StatelessWidget {
-  const ProfileModal({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(height: 64.0),
-        FlutterLogo(size: 150.0),
-        SizedBox(height: 18.0),
-        Text("User's Name", style: Theme.of(context).textTheme.titleLarge),
-      ],
-    );
-  }
 }
