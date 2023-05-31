@@ -14,8 +14,7 @@ enum HealthConfirmDialogType {
 class _HealthConfirmDialog extends StatelessWidget {
   final IskolarInfo userInfo;
   final HealthConfirmDialogType type;
-  final String uID;
-  const _HealthConfirmDialog(this.userInfo, this.type, this.uID);
+  const _HealthConfirmDialog(this.userInfo, this.type);
 
   String getTitle() {
     switch (type) {
@@ -110,19 +109,19 @@ class _HealthConfirmDialog extends StatelessWidget {
                 // userInfo.status = IskolarHealthStatus.healthy;
                 context
                     .read<AccountsProvider>()
-                    .updateStatus(IskolarHealthStatus.healthy, uID);
+                    .updateStatus(IskolarHealthStatus.healthy, userInfo);
                 break;
               case HealthConfirmDialogType.startMonitoring:
                 // TODO: Set status to monitoring
                 context
                     .read<AccountsProvider>()
-                    .updateStatus(IskolarHealthStatus.monitored, uID);
+                    .updateStatus(IskolarHealthStatus.monitored, userInfo);
                 break;
               case HealthConfirmDialogType.startQuarantine:
                 // TODO: Set status to quarantined
                 context
                     .read<AccountsProvider>()
-                    .updateStatus(IskolarHealthStatus.quarantined, uID);
+                    .updateStatus(IskolarHealthStatus.quarantined, userInfo);
                 break;
             }
           },
@@ -138,11 +137,10 @@ class HealthConfirmDialog {
   static void confirmDialog(
       {required BuildContext context,
       required IskolarInfo user,
-      required HealthConfirmDialogType type,
-      required String uID}) {
+      required HealthConfirmDialogType type}) {
     showDialog<String>(
       context: context,
-      builder: (BuildContext context) => _HealthConfirmDialog(user, type, uID),
+      builder: (BuildContext context) => _HealthConfirmDialog(user, type),
     );
   }
 }

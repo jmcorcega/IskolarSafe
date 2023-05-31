@@ -15,8 +15,7 @@ import '../providers/accounts_provider.dart';
 
 class _UserDetails extends StatelessWidget {
   final IskolarInfo userInfo;
-  final String uID;
-  const _UserDetails({required this.userInfo, required this.uID});
+  const _UserDetails({required this.userInfo});
 
   static const Size _buttonSize = Size(225.0, 47.5);
 
@@ -210,57 +209,59 @@ class _UserDetails extends StatelessWidget {
             : Container(),
         userInfo.allergies.isNotEmpty ? Divider(height: 1.0) : Container(),
         FutureBuilder(
-          future: _setUserType(context,userInfo),
-          builder: ((context, snapshot) {
-          if (snapshot.hasData) {
-            return snapshot.data!;
-          }      
-          return Container();
-        })
-        )
-        
+            future: _setUserType(context, userInfo),
+            builder: ((context, snapshot) {
+              if (snapshot.hasData) {
+                return snapshot.data!;
+              }
+              return Container();
+            }))
       ],
     );
   }
 
   Future<Widget> _setUserType(BuildContext context, IskolarInfo info) async {
-  // This widget should not appear when the current authorized user is not an administrator.
-  IskolarInfo? cond = await context.read<AccountsProvider>().userInfo;
-  User? currentUser = await context.read<AccountsProvider>().user;
-    if (cond!.type == IskolarType.admin && currentUser!.uid != info.id ) {  // cant set own status from admin to student/monitor
+    // This widget should not appear when the current authorized user is not an administrator.
+    IskolarInfo? cond = await context.read<AccountsProvider>().userInfo;
+    User? currentUser = await context.read<AccountsProvider>().user;
+    if (cond!.type == IskolarType.admin && currentUser!.uid != info.id) {
+      // cant set own status from admin to student/monitor
 
       String currentType = IskolarType.toJson(info);
-      const List<String> list = <String>["administrator", "building_monitor", "student"];
+      const List<String> list = <String>[
+        "administrator",
+        "building_monitor",
+        "student"
+      ];
 
       return Container(
         width: MediaQuery.of(context).size.width * 0.3,
         child: DropdownButtonFormField<String>(
           value: currentType,
-          onChanged: (value) { // I added a "fromString()"" method inside user_model.
-          print(value);
-            context.read<AccountsProvider>()
-            .updateType(IskolarInfo.toJson(info), 
-            IskolarType.fromJson(<String,dynamic>{'type': value}),
-            info.id!);
+          onChanged: (value) {
+            // I added a "fromString()"" method inside user_model.
+            print(value);
+            context.read<AccountsProvider>().updateType(
+                IskolarInfo.toJson(info),
+                IskolarType.fromJson(<String, dynamic>{'type': value}),
+                info.id!);
             print("Updated?");
             value = value!;
           },
-      
           decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Symbols.key),
-                    labelText: "Type",
-                  ),
-      
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Symbols.key),
+            labelText: "Type",
+          ),
           items: list.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
               child: Text(value),
-              );
+            );
           }).toList(),
-          ),
-      );  
-    } 
+        ),
+      );
+    }
     return Container();
   }
 
@@ -278,8 +279,7 @@ class _UserDetails extends StatelessWidget {
               onPressed: () => HealthConfirmDialog.confirmDialog(
                   context: context,
                   user: userInfo,
-                  type: HealthConfirmDialogType.endQuarantine,
-                  uID: uID),
+                  type: HealthConfirmDialogType.endQuarantine),
               icon: const Icon(Symbols.cancel_rounded),
               label: const Text("Remove from Quarantine"),
             )
@@ -297,8 +297,7 @@ class _UserDetails extends StatelessWidget {
               onPressed: () => HealthConfirmDialog.confirmDialog(
                   context: context,
                   user: userInfo,
-                  type: HealthConfirmDialogType.endMonitoring,
-                  uID: uID),
+                  type: HealthConfirmDialogType.endMonitoring),
               icon: const Icon(Symbols.close_rounded, size: 18.0),
               label: const Text("End Monitoring"),
             ),
@@ -311,8 +310,7 @@ class _UserDetails extends StatelessWidget {
               onPressed: () => HealthConfirmDialog.confirmDialog(
                   context: context,
                   user: userInfo,
-                  type: HealthConfirmDialogType.startQuarantine,
-                  uID: uID),
+                  type: HealthConfirmDialogType.startQuarantine),
               icon: const Icon(Symbols.medical_mask_rounded),
               label: const Text("Move to Quarantine"),
             ),
@@ -330,8 +328,7 @@ class _UserDetails extends StatelessWidget {
               onPressed: () => HealthConfirmDialog.confirmDialog(
                   context: context,
                   user: userInfo,
-                  type: HealthConfirmDialogType.startMonitoring,
-                  uID: uID),
+                  type: HealthConfirmDialogType.startMonitoring),
               icon: const Icon(Symbols.add_rounded, size: 18.0),
               label: const Text("Add to Monitoring"),
             ),
@@ -344,8 +341,7 @@ class _UserDetails extends StatelessWidget {
               onPressed: () => HealthConfirmDialog.confirmDialog(
                   context: context,
                   user: userInfo,
-                  type: HealthConfirmDialogType.startQuarantine,
-                  uID: uID),
+                  type: HealthConfirmDialogType.startQuarantine),
               icon: const Icon(Symbols.medical_mask_rounded),
               label: const Text("Move to Quarantine"),
             ),
@@ -358,8 +354,7 @@ class _UserDetails extends StatelessWidget {
 }
 
 class UserDetails {
-  static void showSheet(
-      BuildContext context, IskolarInfo userInfo, String uID) {
+  static void showSheet(BuildContext context, IskolarInfo userInfo) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -372,7 +367,7 @@ class UserDetails {
           builder: (context, scrollController) {
             return SingleChildScrollView(
                 controller: scrollController,
-                child: _UserDetails(userInfo: userInfo, uID: uID));
+                child: _UserDetails(userInfo: userInfo));
           }),
     );
   }

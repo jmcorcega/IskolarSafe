@@ -21,30 +21,29 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   //final List<IskolarInfo> _iskolarInfo = DummyInfo.fakeInfoList;
- 
 
   @override
   Widget build(BuildContext context) {
-
     // return FutureBuilder(
-      //future: context.read<AccountsProvider>().refetchStudents(),
+    //future: context.read<AccountsProvider>().refetchStudents(),
     //  builder: (context, snapshot) {
-          /*if (snapshot.hasError) {
+    /*if (snapshot.hasError) {
             return _buildNoInternetScreen();
           } else if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }*/
-     // if (snapshot.connectionState == ConnectionState.waiting) {return Text('h', style: TextStyle(fontSize: 100));}
-     // context.watch<AccountsProvider>().fetchStudents();
-     // context.read<AccountsProvider>().fetchStudents();
+    // if (snapshot.connectionState == ConnectionState.waiting) {return Text('h', style: TextStyle(fontSize: 100));}
+    // context.watch<AccountsProvider>().fetchStudents();
+    // context.read<AccountsProvider>().fetchStudents();
 
-     Stream<QuerySnapshot> stream = context.watch<AccountsProvider>().students;
+    Stream<QuerySnapshot> stream = context.watch<AccountsProvider>().students;
 
-     return StreamBuilder(
+    return StreamBuilder(
         stream: stream,
-        builder: (context, snapshot) {/*
+        builder: (context, snapshot) {
+          /*
           if (snapshot.hasError) {
             return Center(
               child: Text("Error encountered! ${snapshot.error}"),
@@ -56,94 +55,99 @@ class _SearchState extends State<Search> {
           } else if (!snapshot.hasData) {
             return _buildEmptyScreen();
           }*/
-     if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData || snapshot.data == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-       
-    return Scaffold(
-      appBar: AppBar(
-        leading: EditRequestButton(),
-        centerTitle: true,
-        title: const AppBarHeader(
-          icon: Symbols.face,
-          title: "Students",
-          hasAction: false,
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(80),
-          child: AppBar(
-            toolbarHeight: 80,
-            title: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Center(
-                child: TextField(
-                  onSubmitted: (value) {
-                    setState(() {});
-                  },
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Symbols.search_rounded),
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(vertical: 16.0),
-                    hintText: "Search for students",
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              !snapshot.hasData ||
+              snapshot.data == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          return Scaffold(
+            appBar: AppBar(
+              leading: EditRequestButton(),
+              centerTitle: true,
+              title: const AppBarHeader(
+                icon: Symbols.face,
+                title: "Students",
+                hasAction: false,
+              ),
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(80),
+                child: AppBar(
+                  toolbarHeight: 80,
+                  title: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Center(
+                      child: TextField(
+                        onSubmitted: (value) {
+                          setState(() {});
+                        },
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Symbols.search_rounded),
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(vertical: 16.0),
+                          hintText: "Search for students",
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
+              actions: const [
+                AppOptions(),
+              ],
             ),
-          ),
-        ),
-        actions: const [
-          AppOptions(),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: ((context, index) {
-                return ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  leading: SizedBox(
-                    height: double.infinity,
-                    child: CircleAvatar(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      child: Text(
-                          snapshot.data!.docs[index]
-                              ["firstName"]
-                              .toString()
-                              .substring(0, 1),
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.onPrimary)),
-                    ),
+            body: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: ((context, index) {
+                      return ListTile(
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 24.0),
+                        leading: SizedBox(
+                          height: double.infinity,
+                          child: CircleAvatar(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            child: Text(
+                                snapshot.data!.docs[index]["firstName"]
+                                    .toString()
+                                    .substring(0, 1),
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimary)),
+                          ),
+                        ),
+                        minLeadingWidth: 44.0,
+                        title: Text(
+                            "${snapshot.data!.docs[index]["firstName"]} ${snapshot.data!.docs[index]["lastName"]}"),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              snapshot.data!.docs[index]["studentNumber"],
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                          ],
+                        ),
+                        onTap: () => UserDetails.showSheet(
+                            context,
+                            IskolarInfo.fromJson(snapshot.data!.docs[index]
+                                .data() as Map<String, dynamic>)),
+                      );
+                    }),
                   ),
-                  minLeadingWidth: 44.0,
-                  title: Text("${snapshot.data!.docs[index]["firstName"]} ${snapshot.data!.docs[index]["lastName"]}"),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        snapshot.data!.docs[index]["studentNumber"],
-                        style: Theme.of(context).textTheme.labelMedium,
-                      ),
-                    ],
-                  ),
-                  onTap: () => UserDetails.showSheet(
-                    context,
-                    IskolarInfo.fromJson(snapshot.data!.docs[index].data() as Map<String,dynamic>),
-                  ),
-                );
-              }),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
-    );
-
-     });// });
+          );
+        }); // });
   }
 
-    /*Widget _buildEmptyScreen() {
+  /*Widget _buildEmptyScreen() {
       return Center(
         // Show a message where the user can add an entry if list is empty
         child: Column(

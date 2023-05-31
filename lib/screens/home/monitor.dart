@@ -71,7 +71,7 @@ class _MonitorState extends State<Monitor> {
                         if (user.status == IskolarHealthStatus.monitored) {
                           noUnderMonitoring = false;
                           return ListTile(
-                            onTap: () => UserDetails.showSheet(context, user, user.id!),
+                            onTap: () => UserDetails.showSheet(context, user),
                             contentPadding:
                                 EdgeInsets.symmetric(horizontal: 24.0),
                             title: Text(
@@ -95,8 +95,7 @@ class _MonitorState extends State<Monitor> {
                                             context: context,
                                             user: user,
                                             type: HealthConfirmDialogType
-                                                .endMonitoring,
-                                            uID: user.id!),
+                                                .endMonitoring),
                                     child: const Icon(Symbols.close_rounded,
                                         size: 18.0),
                                   ),
@@ -116,8 +115,7 @@ class _MonitorState extends State<Monitor> {
                                             context: context,
                                             user: user,
                                             type: HealthConfirmDialogType
-                                                .startQuarantine,
-                                            uID: user.id!),
+                                                .startQuarantine),
                                     child: const Icon(
                                         Symbols.medical_mask_rounded),
                                   ),

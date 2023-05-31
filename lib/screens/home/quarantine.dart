@@ -90,14 +90,12 @@ class _QuarantineState extends State<Quarantine> {
                                   HealthConfirmDialog.confirmDialog(
                                       context: context,
                                       user: user,
-                                      type:
-                                          HealthConfirmDialogType.endQuarantine,
-                                      uID: user.id!),
+                                      type: HealthConfirmDialogType
+                                          .endQuarantine),
                               child: const Icon(Symbols.close),
                             ),
                           ),
-                          onTap: () =>
-                              UserDetails.showSheet(context, user, user.id!),
+                          onTap: () => UserDetails.showSheet(context, user),
                         );
                       }
                       if (noQuarantine == true &&

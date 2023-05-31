@@ -96,8 +96,7 @@ class _LogsState extends State<Logs> {
               ],
             ),
             isThreeLine: true,
-            onTap: () =>
-                UserDetails.showSheet(context, _iskolarInfo[index], ""),
+            onTap: () => UserDetails.showSheet(context, _iskolarInfo[index]),
           );
         }),
       ),

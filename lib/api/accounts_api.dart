@@ -48,32 +48,6 @@ class AccountsAPI {
       return null;
     }
   }
-  
-  // Gets all data from collection("users")
-  Stream<QuerySnapshot> getAllUsersFromStore() {
-    return _db.collection("users").snapshots();
-  }
-
-  Future<bool> updateUserType(Map<String,dynamic> currentInfo, IskolarType type, String uID) async {
-    try {
-      switch (type.name) {
-        case "admin":
-          currentInfo["type"] = "administrator";
-          break;
-        case "monitor":
-          currentInfo["type"] = "building_monitor";
-          break;
-        default:
-          currentInfo["type"] = "student";
-      }
-      
-      await _db.collection(_storeName).doc(uID).update(currentInfo);
-      return true;
-    } catch (e) {
-      return false;
-    }
-    
-  }
 
   // Gets all data from collection("users")
   Stream<QuerySnapshot> getAllUsersFromStore() {
@@ -81,9 +55,9 @@ class AccountsAPI {
   }
 
   //update users' health status
-  Future<bool> updateHealthStatus(String status, String uID) async {
+  Future<bool> updateHealthStatus(String status, IskolarInfo user) async {
     try {
-      await _db.collection(_storeName).doc(uID).update({"status": status});
+      await _db.collection(_storeName).doc(user.id).update({"status": status});
 
       return true;
     } on FirebaseException catch (e) {
