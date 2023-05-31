@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/models/user_model.dart';
+import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
 
 enum HealthConfirmDialogType {
   endMonitoring,
@@ -12,7 +14,8 @@ enum HealthConfirmDialogType {
 class _HealthConfirmDialog extends StatelessWidget {
   final IskolarInfo userInfo;
   final HealthConfirmDialogType type;
-  const _HealthConfirmDialog(this.userInfo, this.type);
+  final String uID;
+  const _HealthConfirmDialog(this.userInfo, this.type, this.uID);
 
   String getTitle() {
     switch (type) {
@@ -104,6 +107,10 @@ class _HealthConfirmDialog extends StatelessWidget {
               case HealthConfirmDialogType.endMonitoring:
               case HealthConfirmDialogType.endQuarantine:
                 // TODO: Set status to healthy
+                // userInfo.status = IskolarHealthStatus.healthy;
+                context
+                    .read<AccountsProvider>()
+                    .updateStatus(IskolarHealthStatus.healthy, uID);
                 break;
               case HealthConfirmDialogType.startMonitoring:
                 // TODO: Set status to monitoring
@@ -125,10 +132,11 @@ class HealthConfirmDialog {
   static void confirmDialog(
       {required BuildContext context,
       required IskolarInfo user,
-      required HealthConfirmDialogType type}) {
+      required HealthConfirmDialogType type,
+      required String uID}) {
     showDialog<String>(
       context: context,
-      builder: (BuildContext context) => _HealthConfirmDialog(user, type),
+      builder: (BuildContext context) => _HealthConfirmDialog(user, type, uID),
     );
   }
 }

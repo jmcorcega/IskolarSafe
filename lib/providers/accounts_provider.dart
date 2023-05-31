@@ -76,7 +76,7 @@ class AccountsProvider with ChangeNotifier {
     String stat = IskolarHealthStatus.toJson(status);
 
     _accounts.updateHealthStatus(stat, uID);
-    print("updated");
+
     notifyListeners();
   }
 

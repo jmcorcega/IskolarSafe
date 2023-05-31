@@ -67,7 +67,7 @@ class _MonitorState extends State<Monitor> {
                         IskolarInfo user = IskolarInfo.fromJson(
                             snapshot.data?.docs[index].data()
                                 as Map<String, dynamic>);
-
+                        user.id = snapshot.data?.docs[index].id;
                         if (user.status == IskolarHealthStatus.monitored) {
                           noUnderMonitoring = false;
                           return ListTile(
@@ -92,11 +92,11 @@ class _MonitorState extends State<Monitor> {
                                             .primary),
                                     onPressed: () =>
                                         HealthConfirmDialog.confirmDialog(
-                                      context: context,
-                                      user: user,
-                                      type:
-                                          HealthConfirmDialogType.endMonitoring,
-                                    ),
+                                            context: context,
+                                            user: user,
+                                            type: HealthConfirmDialogType
+                                                .endMonitoring,
+                                            uID: user.id!),
                                     child: const Icon(Symbols.close_rounded,
                                         size: 18.0),
                                   ),
@@ -113,11 +113,11 @@ class _MonitorState extends State<Monitor> {
                                             .tertiary),
                                     onPressed: () =>
                                         HealthConfirmDialog.confirmDialog(
-                                      context: context,
-                                      user: user,
-                                      type: HealthConfirmDialogType
-                                          .startQuarantine,
-                                    ),
+                                            context: context,
+                                            user: user,
+                                            type: HealthConfirmDialogType
+                                                .startQuarantine,
+                                            uID: user.id!),
                                     child: const Icon(
                                         Symbols.medical_mask_rounded),
                                   ),
