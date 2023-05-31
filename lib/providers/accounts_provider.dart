@@ -16,7 +16,6 @@ class AccountsProvider with ChangeNotifier {
   late bool _userInfoAvailable;
   late IskolarInfo? _userInfo;
 
-
   // Getters
   Stream<User?> get stream => _userStream;
   Stream<QuerySnapshot> get students => _studentStream;
@@ -67,9 +66,18 @@ class AccountsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateType(Map<String,dynamic> currentInfo, IskolarType type, String uID) async {
+  Future<void> updateType(
+      Map<String, dynamic> currentInfo, IskolarType type, String uID) async {
     _accounts.updateUserType(currentInfo, type, uID);
-    notifyListeners(); 
+    notifyListeners();
+  }
+
+  Future<void> updateStatus(IskolarHealthStatus status, String uID) async {
+    String stat = IskolarHealthStatus.toJson(status);
+
+    _accounts.updateHealthStatus(stat, uID);
+
+    notifyListeners();
   }
 
   Future<void> updateProfile(

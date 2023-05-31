@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "124127910000-iens6bsshegh6lsqp6q7llcd2d90i35h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "uplb.cmsc23.iskolarsafe",
+            "certificate_hash": "df440721d8ab5eeebe6d763b561af8c9d1e46372"
+          }
+        },
+        {
           "client_id": "124127910000-vs7rt8nvgmug5slb2qqs7k1esrn3a9jj.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,13 @@
             {
               "client_id": "124127910000-dl5af03mm8qugk2plj14vodqvute178l.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "124127910000-muie3ara718l2gsksbu2gafe9qae39i1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "uplb.cmsc23.iskolarsafe"
+              }
             }
           ]
         }
