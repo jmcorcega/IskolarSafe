@@ -67,20 +67,10 @@ class AccountsAPI {
   }
 
   Future<bool> updateUserType(
-      Map<String, dynamic> currentInfo, IskolarType type, String uID) async {
+      Map<String, dynamic> userInfo, IskolarType type) async {
     try {
-      switch (type.name) {
-        case "admin":
-          currentInfo["type"] = "administrator";
-          break;
-        case "monitor":
-          currentInfo["type"] = "building_monitor";
-          break;
-        default:
-          currentInfo["type"] = "student";
-      }
-
-      await _db.collection(_storeName).doc(uID).update(currentInfo);
+      userInfo["type"] = IskolarType.toJson(type);
+      await _db.collection(_storeName).doc(userInfo["id"]).update(userInfo);
       return true;
     } catch (e) {
       return false;

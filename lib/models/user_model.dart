@@ -23,14 +23,25 @@ enum IskolarType {
     }
   }
 
-  static String toJson(IskolarInfo user) {
-    switch (user.type) {
+  static String toJson(IskolarType type) {
+    switch (type) {
       case IskolarType.admin:
         return "administrator";
       case IskolarType.monitor:
         return "building_monitor";
       default:
         return "student";
+    }
+  }
+
+  static String toStr(IskolarType type) {
+    switch (type) {
+      case IskolarType.admin:
+        return "Administrator";
+      case IskolarType.monitor:
+        return "Building Monitor";
+      default:
+        return "Student";
     }
   }
 }
@@ -132,7 +143,7 @@ class IskolarInfo {
   static Map<String, dynamic> toJson(IskolarInfo user) {
     return {
       'id': user.id,
-      'type': IskolarType.toJson(user),
+      'type': IskolarType.toJson(user.type),
       'firstName': user.firstName,
       'lastName': user.lastName,
       'userName': user.userName,

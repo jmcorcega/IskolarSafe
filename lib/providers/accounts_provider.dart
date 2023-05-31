@@ -66,9 +66,8 @@ class AccountsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateType(
-      Map<String, dynamic> currentInfo, IskolarType type, String uID) async {
-    _accounts.updateUserType(currentInfo, type, uID);
+  Future<void> updateType(IskolarInfo userInfo, IskolarType newType) async {
+    await _accounts.updateUserType(IskolarInfo.toJson(userInfo), newType);
     notifyListeners();
   }
 
