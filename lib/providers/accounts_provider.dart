@@ -72,6 +72,14 @@ class AccountsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateStatus(IskolarHealthStatus status, String uID) async {
+    String stat = IskolarHealthStatus.toJson(status);
+
+    _accounts.updateHealthStatus(stat, uID);
+    print("updated");
+    notifyListeners();
+  }
+
   Future<void> updateProfile(
       {required Map<String, dynamic> userInfo, File? photo}) async {
     _userInfoAvailable =
