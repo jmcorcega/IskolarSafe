@@ -90,10 +90,8 @@ class _SearchState extends State<Search> {
                       ),
                     ],
                   ),
-                  onTap: () => UserDetails.showSheet(
-                    context,
-                    _iskolarInfo[index],
-                  ),
+                  onTap: () =>
+                      UserDetails.showSheet(context, _iskolarInfo[index], ""),
                 );
               }),
             ),

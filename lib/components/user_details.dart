@@ -10,9 +10,8 @@ import 'package:material_symbols_icons/symbols.dart';
 
 class _UserDetails extends StatelessWidget {
   final IskolarInfo userInfo;
-  const _UserDetails({
-    required this.userInfo,
-  });
+  final String uID;
+  const _UserDetails({required this.userInfo, required this.uID});
 
   static const Size _buttonSize = Size(225.0, 47.5);
 
@@ -224,7 +223,7 @@ class _UserDetails extends StatelessWidget {
                   context: context,
                   user: userInfo,
                   type: HealthConfirmDialogType.endQuarantine,
-                  uID: ""),
+                  uID: uID),
               icon: const Icon(Symbols.cancel_rounded),
               label: const Text("Remove from Quarantine"),
             )
@@ -243,7 +242,7 @@ class _UserDetails extends StatelessWidget {
                   context: context,
                   user: userInfo,
                   type: HealthConfirmDialogType.endMonitoring,
-                  uID: ""),
+                  uID: uID),
               icon: const Icon(Symbols.close_rounded, size: 18.0),
               label: const Text("End Monitoring"),
             ),
@@ -257,7 +256,7 @@ class _UserDetails extends StatelessWidget {
                   context: context,
                   user: userInfo,
                   type: HealthConfirmDialogType.startQuarantine,
-                  uID: ""),
+                  uID: uID),
               icon: const Icon(Symbols.medical_mask_rounded),
               label: const Text("Move to Quarantine"),
             ),
@@ -276,7 +275,7 @@ class _UserDetails extends StatelessWidget {
                   context: context,
                   user: userInfo,
                   type: HealthConfirmDialogType.startMonitoring,
-                  uID: ""),
+                  uID: uID),
               icon: const Icon(Symbols.add_rounded, size: 18.0),
               label: const Text("Add to Monitoring"),
             ),
@@ -290,7 +289,7 @@ class _UserDetails extends StatelessWidget {
                   context: context,
                   user: userInfo,
                   type: HealthConfirmDialogType.startQuarantine,
-                  uID: ""),
+                  uID: uID),
               icon: const Icon(Symbols.medical_mask_rounded),
               label: const Text("Move to Quarantine"),
             ),
@@ -303,7 +302,8 @@ class _UserDetails extends StatelessWidget {
 }
 
 class UserDetails {
-  static void showSheet(BuildContext context, IskolarInfo userInfo) {
+  static void showSheet(
+      BuildContext context, IskolarInfo userInfo, String uID) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -316,7 +316,7 @@ class UserDetails {
           builder: (context, scrollController) {
             return SingleChildScrollView(
                 controller: scrollController,
-                child: _UserDetails(userInfo: userInfo));
+                child: _UserDetails(userInfo: userInfo, uID: uID));
           }),
     );
   }

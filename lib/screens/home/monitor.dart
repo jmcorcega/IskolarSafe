@@ -71,7 +71,7 @@ class _MonitorState extends State<Monitor> {
                         if (user.status == IskolarHealthStatus.monitored) {
                           noUnderMonitoring = false;
                           return ListTile(
-                            onTap: () => UserDetails.showSheet(context, user),
+                            onTap: () => UserDetails.showSheet(context, user, user.id!),
                             contentPadding:
                                 EdgeInsets.symmetric(horizontal: 24.0),
                             title: Text(

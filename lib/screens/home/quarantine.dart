@@ -96,18 +96,18 @@ class _QuarantineState extends State<Quarantine> {
                               child: const Icon(Symbols.close),
                             ),
                           ),
-                          onTap: () => UserDetails.showSheet(context, user),
+                          onTap: () =>
+                              UserDetails.showSheet(context, user, user.id!),
                         );
                       }
-                       if (noQuarantine == true &&
-                            index == snapshot.data?.docs.length) {
-                          return Center(
-                              child: Text("No Student in Under Monitoring yet!",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium!));
-                        }
-                        return SizedBox.shrink();
+                      if (noQuarantine == true &&
+                          index == snapshot.data?.docs.length) {
+                        return Center(
+                            child: Text("No Student in Under Monitoring yet!",
+                                style:
+                                    Theme.of(context).textTheme.titleMedium!));
+                      }
+                      return SizedBox.shrink();
                     }),
                   );
                 })
