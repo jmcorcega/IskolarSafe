@@ -90,8 +90,8 @@ class _QuarantineState extends State<Quarantine> {
                                   HealthConfirmDialog.confirmDialog(
                                       context: context,
                                       user: user,
-                                      type: HealthConfirmDialogType
-                                          .startQuarantine,
+                                      type:
+                                          HealthConfirmDialogType.endQuarantine,
                                       uID: user.id!),
                               child: const Icon(Symbols.close),
                             ),
@@ -103,7 +103,7 @@ class _QuarantineState extends State<Quarantine> {
                       if (noQuarantine == true &&
                           index == snapshot.data?.docs.length) {
                         return Center(
-                            child: Text("No Student in Under Monitoring yet!",
+                            child: Text("No Student in Quarantine yet!",
                                 style:
                                     Theme.of(context).textTheme.titleMedium!));
                       }
