@@ -32,6 +32,7 @@ class _HomeState extends State<Home> {
     AccountsStatus? status = context.watch<AccountsProvider>().status;
 
     if (status == AccountsStatus.loggingOut) {
+      _selectedTabIndex = 0;
       return Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
@@ -40,6 +41,7 @@ class _HomeState extends State<Home> {
     }
 
     if (status != AccountsStatus.success) {
+      _selectedTabIndex = 0;
       return const Login();
     }
 
