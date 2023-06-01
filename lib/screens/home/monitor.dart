@@ -2,18 +2,16 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:iskolarsafe/components/screen_placeholder.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
 import 'package:iskolarsafe/components/health_confirm_dialog.dart';
+import 'package:iskolarsafe/components/user_details.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
-
-import '../../components/user_details.dart';
 
 class Monitor extends StatefulWidget {
   static const String routeName = "/";
