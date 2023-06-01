@@ -163,8 +163,9 @@ class _EntriesState extends State<Entries> {
                               vertical: 8.0,
                             ),
                             leading: _getIcon(entry.verdict),
-                            title:
-                                Text(entry.dateGenerated.relativeTime(context)),
+                            title: Text(entry.dateGenerated
+                                .relativeTime(context)
+                                .capitalizeFirstLetter()),
                             subtitle: Text(
                               _getStatusString(entry.verdict),
                               style: Theme.of(context)
@@ -247,8 +248,9 @@ class _EntriesState extends State<Entries> {
                             contentPadding:
                                 const EdgeInsets.symmetric(horizontal: 24.0),
                             leading: _getIcon(entry.verdict),
-                            title:
-                                Text(entry.dateGenerated.relativeTime(context)),
+                            title: Text(entry.dateGenerated
+                                .relativeTime(context)
+                                .capitalizeFirstLetter()),
                             subtitle: Text(
                               _getStatusString(entry.verdict),
                               style: Theme.of(context)
@@ -267,7 +269,9 @@ class _EntriesState extends State<Entries> {
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 24.0),
                     leading: _getIcon(entry.verdict),
-                    title: Text(entry.dateGenerated.relativeTime(context)),
+                    title: Text(entry.dateGenerated
+                        .relativeTime(context)
+                        .capitalizeFirstLetter()),
                     subtitle: Text(
                       _getStatusString(entry.verdict),
                       style: Theme.of(context)
