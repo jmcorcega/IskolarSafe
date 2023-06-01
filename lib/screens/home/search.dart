@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
@@ -101,40 +102,42 @@ class _SearchState extends State<Search> {
                   child: ListView.builder(
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: ((context, index) {
+                      IskolarInfo user = IskolarInfo.fromJson(
+                          snapshot.data!.docs[index].data()
+                              as Map<String, dynamic>);
                       return ListTile(
                         contentPadding:
                             const EdgeInsets.symmetric(horizontal: 24.0),
                         leading: SizedBox(
                           height: double.infinity,
-                          child: CircleAvatar(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            child: Text(
-                                snapshot.data!.docs[index]["firstName"]
-                                    .toString()
-                                    .substring(0, 1),
-                                style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary)),
-                          ),
+                          child: user.photoUrl != null
+                              ? CircleAvatar(
+                                  foregroundImage: CachedNetworkImageProvider(
+                                      user.photoUrl!),
+                                )
+                              : CircleAvatar(
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  child: Text(
+                                      user.firstName.toString().substring(0, 1),
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary)),
+                                ),
                         ),
                         minLeadingWidth: 44.0,
-                        title: Text(
-                            "${snapshot.data!.docs[index]["firstName"]} ${snapshot.data!.docs[index]["lastName"]}"),
+                        title: Text("${user.firstName} ${user.lastName}"),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              snapshot.data!.docs[index]["studentNumber"],
+                              user.studentNumber,
                               style: Theme.of(context).textTheme.labelMedium,
                             ),
                           ],
                         ),
-                        onTap: () => UserDetails.showSheet(
-                            context,
-                            IskolarInfo.fromJson(snapshot.data!.docs[index]
-                                .data() as Map<String, dynamic>)),
+                        onTap: () => UserDetails.showSheet(context, user),
                       );
                     }),
                   ),

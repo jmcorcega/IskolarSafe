@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,16 +30,22 @@ class _UserDetails extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 48,
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                child: Text(
-                  "U".substring(0, 1),
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                      fontSize: 38.0),
-                ),
-              ),
+              (userInfo.photoUrl != null)
+                  ? CircleAvatar(
+                      radius: 48,
+                      foregroundImage:
+                          CachedNetworkImageProvider(userInfo.photoUrl!),
+                    )
+                  : CircleAvatar(
+                      radius: 48,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      child: Text(
+                        userInfo.firstName.substring(0, 1),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.inversePrimary,
+                            fontSize: 38.0),
+                      ),
+                    ),
               const SizedBox(width: 20.0),
               Expanded(
                 child: Column(
@@ -221,7 +228,7 @@ class _UserDetails extends StatelessWidget {
 
   Future<Widget> _setUserType(BuildContext context, IskolarInfo info) async {
     // This widget should not appear when the current authorized user is not an administrator.
-    IskolarInfo? cond = await context.read<AccountsProvider>().userInfo;
+    IskolarInfo? cond = context.read<AccountsProvider>().userInfo;
     if (context.mounted) {
       User? currentUser = context.read<AccountsProvider>().user;
       if (cond!.type == IskolarType.admin && currentUser!.uid != info.id) {
