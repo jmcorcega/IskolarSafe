@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/screen_placeholder.dart';
+import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/screens/home/edit_delete_entry.dart';
 import 'package:iskolarsafe/components/profile_modal.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
@@ -72,10 +73,12 @@ class _EntriesState extends State<Entries> {
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> entryStream =
         context.watch<HealthEntryProvider>().entries;
+    IskolarInfo? userInfo = context.read<AccountsProvider>().userInfo;
 
     return Scaffold(
       appBar: AppBar(
-        leading: EditRequestButton(),
+        leading:
+            userInfo!.type == IskolarType.student ? null : EditRequestButton(),
         centerTitle: true,
         title: const AppBarHeader(
           icon: Symbols.home_rounded,
