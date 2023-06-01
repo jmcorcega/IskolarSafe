@@ -35,6 +35,12 @@ class AccountsProvider with ChangeNotifier {
     _user = _accounts.user;
     _userInfoAvailable = true;
     _fetchUserInfo();
+
+    if (_user == null) {
+      _authStatus = AccountsStatus.userNotLoggedIn;
+      _userInfoAvailable = false;
+    }
+
     fetchStudents();
   }
 
@@ -107,6 +113,7 @@ class AccountsProvider with ChangeNotifier {
     // Fetch user information
     _user = _accounts.user;
     _userInfo = await _accounts.getUserInfo(_user);
+    _userInfoAvailable = true;
     if (context.mounted) {
       context.read<HealthEntryProvider>().fetchEntries(context);
     }
@@ -137,6 +144,7 @@ class AccountsProvider with ChangeNotifier {
     // Fetch user information
     _user = _accounts.user;
     _userInfo = await _accounts.getUserInfo(_user);
+    _userInfoAvailable = true;
     if (context.mounted) {
       context.read<HealthEntryProvider>().fetchEntries(context);
     }
@@ -159,6 +167,7 @@ class AccountsProvider with ChangeNotifier {
     _authStatus = AccountsStatus.userNotLoggedIn;
     _user = null;
     _userInfo = null;
+    _userInfoAvailable = false;
     notifyListeners();
   }
 }

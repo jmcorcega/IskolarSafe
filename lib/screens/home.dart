@@ -31,18 +31,18 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     AccountsStatus? status = context.watch<AccountsProvider>().status;
 
-    if (status == AccountsStatus.loggingOut) {
+    if (status == AccountsStatus.userNotLoggedIn) {
+      _selectedTabIndex = 0;
+      return const Login();
+    }
+
+    if (status != AccountsStatus.success) {
       _selectedTabIndex = 0;
       return Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
         ),
       );
-    }
-
-    if (status != AccountsStatus.success) {
-      _selectedTabIndex = 0;
-      return const Login();
     }
 
     // if user is logged in
