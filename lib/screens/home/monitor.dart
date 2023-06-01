@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
@@ -31,17 +32,22 @@ class _MonitorState extends State<Monitor> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Symbols.coronavirus_rounded,
-              size: 72.0,
-              color:
-                  Theme.of(context).colorScheme.onBackground.withOpacity(0.75)),
-          const SizedBox(height: 8.0),
-          Text("No users under monitoring",
-              style: Theme.of(context).textTheme.titleMedium!.apply(
+          SvgPicture.asset(
+            width: MediaQuery.of(context).size.width * 0.75,
+            "assets/images/illust_no_monitored.svg",
+            fit: BoxFit.cover,
+          ),
+          const SizedBox(height: 12.0),
+          Text(
+            "No users under monitoring",
+            style: Theme.of(context).textTheme.titleMedium!.apply(
                   color: Theme.of(context)
                       .colorScheme
                       .onBackground
-                      .withOpacity(0.75))),
+                      .withOpacity(0.75),
+                ),
+          ),
+          const SizedBox(height: 16.0),
         ],
       ),
     );
