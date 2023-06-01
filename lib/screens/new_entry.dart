@@ -16,8 +16,7 @@ class NewEntry extends StatefulWidget {
 }
 
 class _NewEntryState extends State<NewEntry> {
-  late final IskolarInfo? _userInfoFuture =
-      context.read<AccountsProvider>().userInfo;
+  late final IskolarInfo? userInfo = context.read<AccountsProvider>().userInfo;
   final _entryFormState = GlobalKey<FormState>();
 
   List<FluSymptom> fluSymptoms = [];
@@ -29,7 +28,6 @@ class _NewEntryState extends State<NewEntry> {
   bool isWaitingForRapidAntigen = false;
 
   bool _deferEditing = false;
-  IskolarInfo? userInfo;
 
   IskolarHealthStatus getVerdict() {
     if (fluSymptoms.length > 1) return IskolarHealthStatus.notWell;
@@ -71,6 +69,12 @@ class _NewEntryState extends State<NewEntry> {
         waitingForRapidAntigen: isWaitingForRapidAntigen,
         verdict: getVerdict(),
       );
+
+      if (newEntry.verdict == IskolarHealthStatus.notWell) {
+        await context
+            .read<AccountsProvider>()
+            .updateStatus(IskolarHealthStatus.monitored, userInfo!);
+      }
 
       if (context.mounted) {
         await context.read<HealthEntryProvider>().addEntry(newEntry);
@@ -132,30 +136,7 @@ class _NewEntryState extends State<NewEntry> {
           hasAction: false,
         ),
       ),
-      body: Center(
-        // Show a message where the user can add an entry if list is empty
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Symbols.sentiment_dissatisfied,
-                size: 64.0,
-                color: Theme.of(context)
-                    .colorScheme
-                    .onBackground
-                    .withOpacity(0.5)),
-            const SizedBox(height: 16.0),
-            Text(
-              "An error has occured. Please try again.",
-              style: Theme.of(context).textTheme.titleMedium!.apply(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onBackground
-                        .withOpacity(0.5),
-                  ),
-            ),
-          ],
-        ),
-      ),
+      body: _buildForm(context),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor:
             _deferEditing ? Theme.of(context).colorScheme.background : null,
@@ -169,7 +150,7 @@ class _NewEntryState extends State<NewEntry> {
     );
   }
 
-  Widget buildForm(BuildContext context) {
+  Widget _buildForm(BuildContext context) {
     return Form(
       key: _entryFormState,
       child: SingleChildScrollView(
