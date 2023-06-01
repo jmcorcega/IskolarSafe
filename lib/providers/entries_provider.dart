@@ -40,7 +40,7 @@ class HealthEntryProvider with ChangeNotifier {
   }
 
   /// Adds a new slam book entry to the database.
-  void addEntry(HealthEntry entry) async {
+  Future<void> addEntry(HealthEntry entry) async {
     _status = await api.uploadEntry(HealthEntry.toJson(entry));
     notifyListeners();
   }

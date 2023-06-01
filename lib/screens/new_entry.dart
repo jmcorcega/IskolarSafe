@@ -74,7 +74,7 @@ class _NewEntryState extends State<NewEntry> {
 
       await context.read<HealthEntryProvider>().refetchEntries();
       if (context.mounted) {
-        context.read<HealthEntryProvider>().addEntry(newEntry);
+        await context.read<HealthEntryProvider>().addEntry(newEntry);
         if (context.mounted) {
           var status = context.read<HealthEntryProvider>().status;
 
