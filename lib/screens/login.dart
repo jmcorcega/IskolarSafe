@@ -34,6 +34,7 @@ class _LoginState extends State<Login> {
     });
 
     await context.read<AccountsProvider>().signInWithEmail(
+          context,
           email: emailController.text,
           password: passwordController.text,
         );
@@ -74,7 +75,7 @@ class _LoginState extends State<Login> {
       _loadingGoogleButton = true;
     });
 
-    await context.read<AccountsProvider>().signInWithGoogle();
+    await context.read<AccountsProvider>().signInWithGoogle(context);
     if (context.mounted) {
       var status = context.read<AccountsProvider>().status;
       var user = context.read<AccountsProvider>().user;

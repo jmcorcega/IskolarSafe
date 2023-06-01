@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:iskolarsafe/api/accounts_api.dart';
 import 'package:iskolarsafe/models/user_model.dart';
+import 'package:iskolarsafe/providers/entries_provider.dart';
+import 'package:provider/provider.dart';
 
 class AccountsProvider with ChangeNotifier {
   late AccountsAPI _accounts;
@@ -22,7 +24,7 @@ class AccountsProvider with ChangeNotifier {
   Stream<QuerySnapshot> get quarantined => _accounts.getUsersUnderQuarantine();
   Stream<QuerySnapshot> get monitored => _accounts.getUsersUnderMonitoring();
   User? get user => _user;
-  Future<IskolarInfo?> get userInfo => _accounts.getUserInfo(_user);
+  IskolarInfo? get userInfo => _userInfo;
   AccountsStatus get status => _authStatus;
   bool get editStatus => _userInfoAvailable;
 
@@ -31,10 +33,8 @@ class AccountsProvider with ChangeNotifier {
     _accounts = AccountsAPI();
     _userStream = _accounts.getUserStream();
     _user = _accounts.user;
-    if (_user != null) {
-      _authStatus = AccountsStatus.success;
-    }
     _userInfoAvailable = true;
+    _fetchUserInfo();
     fetchStudents();
   }
 
@@ -43,7 +43,15 @@ class AccountsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> signUp(bool isGoogle,
+  _fetchUserInfo() async {
+    _userInfo = await _accounts.getUserInfo(_user);
+    if (_userInfo != null) {
+      _authStatus = AccountsStatus.success;
+    }
+    notifyListeners();
+  }
+
+  Future<void> signUp(BuildContext context, bool isGoogle,
       {required String email,
       required String password,
       required Map<String, dynamic> userInfo}) async {
@@ -59,6 +67,10 @@ class AccountsProvider with ChangeNotifier {
     // Fetch user information
     _userStream = _accounts.getUserStream();
     _user = _accounts.user;
+    _userInfo = await _accounts.getUserInfo(_user);
+    if (context.mounted) {
+      context.read<HealthEntryProvider>().fetchEntries(context);
+    }
 
     notifyListeners();
   }
@@ -81,23 +93,28 @@ class AccountsProvider with ChangeNotifier {
     _userInfoAvailable =
         await _accounts.updateUserInfo(userInfo: userInfo, photoFile: photo);
     _user = _accounts.user;
+    await _fetchUserInfo();
     notifyListeners();
 
     _userInfoAvailable = true;
   }
 
-  Future<void> signInWithEmail(
+  Future<void> signInWithEmail(BuildContext context,
       {required String email, required String password}) async {
     _authStatus =
         await _accounts.signInWithEmail(email: email, password: password);
 
     // Fetch user information
     _user = _accounts.user;
+    _userInfo = await _accounts.getUserInfo(_user);
+    if (context.mounted) {
+      context.read<HealthEntryProvider>().fetchEntries(context);
+    }
 
     notifyListeners();
   }
 
-  Future<void> signInWithGoogle() async {
+  Future<void> signInWithGoogle(BuildContext context) async {
     // Start the sign-in process
     GoogleSignInAccount? credentials = await GoogleSignIn().signIn();
     if (credentials == null) {
@@ -119,6 +136,10 @@ class AccountsProvider with ChangeNotifier {
 
     // Fetch user information
     _user = _accounts.user;
+    _userInfo = await _accounts.getUserInfo(_user);
+    if (context.mounted) {
+      context.read<HealthEntryProvider>().fetchEntries(context);
+    }
 
     notifyListeners();
   }
@@ -137,6 +158,7 @@ class AccountsProvider with ChangeNotifier {
 
     _authStatus = AccountsStatus.userNotLoggedIn;
     _user = null;
+    _userInfo = null;
     notifyListeners();
   }
 }

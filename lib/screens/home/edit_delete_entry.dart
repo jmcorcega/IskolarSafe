@@ -18,8 +18,7 @@ class EditDeleteEntry extends StatefulWidget {
 }
 
 class _EditDeleteEntryState extends State<EditDeleteEntry> {
-  late final Future<IskolarInfo?> _userInfoFuture =
-      context.read<AccountsProvider>().userInfo;
+  late final IskolarInfo? _userInfo = context.read<AccountsProvider>().userInfo;
   final _entryFormState = GlobalKey<FormState>();
 
   List<FluSymptom> fluSymptoms = [];
@@ -31,7 +30,6 @@ class _EditDeleteEntryState extends State<EditDeleteEntry> {
   bool? isWaitingForRapidAntigen;
 
   bool _deferEditing = false;
-  IskolarInfo? userInfo;
 
   IskolarHealthStatus getVerdict() {
     if (fluSymptoms.length > 1) return IskolarHealthStatus.notWell;
@@ -63,8 +61,8 @@ class _EditDeleteEntryState extends State<EditDeleteEntry> {
       _entryFormState.currentState?.save();
 
       HealthEntry newEntry = HealthEntry(
-        userInfo: userInfo!,
-        userId: userInfo!.id!,
+        userInfo: _userInfo!,
+        userId: _userInfo!.id!,
         dateGenerated: DateTime.now(),
         fluSymptoms: fluSymptoms,
         respiratorySymptoms: respiratorySymptoms,
@@ -227,44 +225,7 @@ class _EditDeleteEntryState extends State<EditDeleteEntry> {
           hasAction: false,
         ),
       ),
-      body: FutureBuilder(
-        future: _userInfoFuture,
-        builder: (context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              // Show a message where the user can add an entry if list is empty
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Symbols.sentiment_dissatisfied,
-                      size: 64.0,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onBackground
-                          .withOpacity(0.5)),
-                  const SizedBox(height: 16.0),
-                  Text(
-                    "An error has occured. Please try again.",
-                    style: Theme.of(context).textTheme.titleMedium!.apply(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onBackground
-                              .withOpacity(0.5),
-                        ),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          userInfo ??= snapshot.data;
-          return buildForm(context);
-        },
-      ),
+      body: buildForm(context),
     );
   }
 

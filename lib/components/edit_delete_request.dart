@@ -433,8 +433,6 @@ class EditRequest extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    late final Future<IskolarInfo?> _userInfoFuture =
-        context.read<AccountsProvider>().userInfo;
     return Form(
       key: _entryFormState,
       child: SingleChildScrollView(

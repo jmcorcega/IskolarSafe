@@ -25,8 +25,7 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  late final Future<IskolarInfo?> _userInfoFuture =
-      context.read<AccountsProvider>().userInfo;
+  late final IskolarInfo? _userInfo = context.read<AccountsProvider>().userInfo;
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController firstNameController = TextEditingController();
@@ -45,7 +44,6 @@ class _EditProfileState extends State<EditProfile> {
 
   bool _editError = false;
   bool _deferEditing = false;
-  IskolarInfo? _userInfo;
 
   File? _newPhoto;
 
@@ -195,6 +193,19 @@ class _EditProfileState extends State<EditProfile> {
     User? user = context.read<AccountsProvider>().user;
     var userPhoto = user!.photoURL;
 
+    firstNameController.text = _userInfo!.firstName;
+    lastNameController.text = _userInfo!.lastName;
+    userNameController.text = _userInfo!.userName;
+    studentNumController.text = _userInfo!.studentNumber;
+    courseController.text = _userInfo!.course;
+    college = _userInfo!.college;
+    photoUrl = _userInfo!.photoUrl;
+    userId = _userInfo!.id;
+
+    _allergiesList = _userInfo!.allergies;
+    _conditionsList = _userInfo!.condition;
+    checkChanges();
+
     return Scaffold(
       appBar: AppBar(
         title: const AppBarHeader(
@@ -204,425 +215,363 @@ class _EditProfileState extends State<EditProfile> {
         ),
         centerTitle: true,
       ),
-      body: FutureBuilder(
-        future: _userInfoFuture,
-        builder: (context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              // Show a message where the user can add an entry if list is empty
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 28.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8.0),
+              Container(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: null,
+                  icon: const Icon(Symbols.face_rounded, size: 28.0),
+                  label: Text("User Information",
+                      style: Theme.of(context).textTheme.labelLarge!.apply(
+                            fontSizeDelta: 4,
+                            color: Theme.of(context).colorScheme.primary,
+                          )),
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(
+                          vertical: 12.0, horizontal: 0.0),
+                    ),
+                    foregroundColor: MaterialStateProperty.all(
+                      Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 18.0),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(Symbols.sentiment_dissatisfied,
-                      size: 64.0,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onBackground
-                          .withOpacity(0.5)),
-                  const SizedBox(height: 16.0),
-                  Text(
-                    "An error has occured. Please try again.",
-                    style: Theme.of(context).textTheme.titleMedium!.apply(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onBackground
-                              .withOpacity(0.5),
+                  IconButton(
+                    padding: const EdgeInsets.all(4.0),
+                    icon: _newPhoto != null
+                        ? CircleAvatar(
+                            radius: 68,
+                            foregroundImage: FileImage(_newPhoto!),
+                          )
+                        : (userPhoto != null
+                            ? CircleAvatar(
+                                radius: 68,
+                                foregroundImage:
+                                    CachedNetworkImageProvider(userPhoto),
+                              )
+                            : CircleAvatar(
+                                radius: 68,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                child: Text(
+                                  user.displayName!.substring(0, 1),
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary),
+                                ),
+                              )),
+                    onPressed: _deferEditing ? null : _updateProfilePhoto,
+                  ),
+                  const SizedBox(width: 12.0),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        TextFormField(
+                          controller: firstNameController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "First name",
+                          ),
+                          enabled: !_deferEditing,
+                          validator: (value) {
+                            if (firstNameController.text.isEmpty ||
+                                value == null ||
+                                value.isEmpty) {
+                              return 'This field is required.';
+                            }
+                            return null;
+                          },
                         ),
+                        const SizedBox(height: 12.0),
+                        TextFormField(
+                          controller: lastNameController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Last name",
+                          ),
+                          enabled: !_deferEditing,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'This field is required.';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              const SizedBox(height: 20.0),
+              TextFormField(
+                controller: userNameController,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Symbols.account_circle_rounded),
+                  border: OutlineInputBorder(),
+                  labelText: "Username",
+                ),
+                enabled: !_deferEditing,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "This field is required.";
+                  }
+
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20.0),
+              TextFormField(
+                controller: studentNumController,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Symbols.badge_rounded),
+                  border: OutlineInputBorder(),
+                  labelText: "Student ID Number",
+                ),
+                enabled: !_deferEditing,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "This field is required.";
+                  }
+
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20.0),
+              TextFormField(
+                controller: courseController,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Symbols.school_rounded),
+                  border: OutlineInputBorder(),
+                  labelText: "Course",
+                ),
+                enabled: !_deferEditing,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "This field is required.";
+                  }
+
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20.0),
+              DropdownButtonFormField<String>(
+                onChanged: !_deferEditing
+                    ? (String? value) {
+                        college = value!;
+                      }
+                    : null,
+                disabledHint: Text(college),
+                value: college,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Symbols.domain_rounded),
+                  labelText: "College",
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "This field is required.";
+                  }
+
+                  return null;
+                },
+                isExpanded: true,
+                items: CollegeData.colleges.map<DropdownMenuItem<String>>(
+                  (String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  },
+                ).toList(),
+              ),
+              const SizedBox(height: 32.0),
+              Container(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: null,
+                  icon: const Icon(Symbols.medical_information_rounded,
+                      size: 28.0),
+                  label: Text("Health Information",
+                      style: Theme.of(context).textTheme.labelLarge!.apply(
+                            fontSizeDelta: 4,
+                            color: Theme.of(context).colorScheme.primary,
+                          )),
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(
+                          vertical: 12.0, horizontal: 0.0),
+                    ),
+                    foregroundColor: MaterialStateProperty.all(
+                      Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12.0),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Do you experience any of the following?",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .apply(heightDelta: 0.25),
+                  ),
+                  Text(
+                    "Tick all those that apply",
+                    style: Theme.of(context).textTheme.labelMedium,
                   ),
                 ],
               ),
-            );
-          }
-
-          if (_userInfo == null) {
-            _userInfo = snapshot.data;
-            firstNameController.text = _userInfo!.firstName;
-            lastNameController.text = _userInfo!.lastName;
-            userNameController.text = _userInfo!.userName;
-            studentNumController.text = _userInfo!.studentNumber;
-            courseController.text = _userInfo!.course;
-            college = _userInfo!.college;
-            photoUrl = _userInfo!.photoUrl;
-            userId = _userInfo!.id;
-
-            _allergiesList = _userInfo!.allergies;
-            _conditionsList = _userInfo!.condition;
-            checkChanges();
-          }
-
-          return Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 28.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 8.0),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: null,
-                      icon: const Icon(Symbols.face_rounded, size: 28.0),
-                      label: Text("User Information",
-                          style: Theme.of(context).textTheme.labelLarge!.apply(
-                                fontSizeDelta: 4,
-                                color: Theme.of(context).colorScheme.primary,
-                              )),
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all(
-                          const EdgeInsets.symmetric(
-                              vertical: 12.0, horizontal: 0.0),
-                        ),
-                        foregroundColor: MaterialStateProperty.all(
-                          Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 18.0),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        padding: const EdgeInsets.all(4.0),
-                        icon: _newPhoto != null
-                            ? CircleAvatar(
-                                radius: 68,
-                                foregroundImage: FileImage(_newPhoto!),
-                              )
-                            : (userPhoto != null
-                                ? CircleAvatar(
-                                    radius: 68,
-                                    foregroundImage:
-                                        CachedNetworkImageProvider(userPhoto),
-                                  )
-                                : CircleAvatar(
-                                    radius: 68,
-                                    backgroundColor:
-                                        Theme.of(context).colorScheme.primary,
-                                    child: Text(
-                                      user.displayName!.substring(0, 1),
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary),
-                                    ),
-                                  )),
-                        onPressed: _deferEditing ? null : _updateProfilePhoto,
-                      ),
-                      const SizedBox(width: 12.0),
-                      Expanded(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            TextFormField(
-                              controller: firstNameController,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: "First name",
-                              ),
-                              enabled: !_deferEditing,
-                              validator: (value) {
-                                if (firstNameController.text.isEmpty ||
-                                    value == null ||
-                                    value.isEmpty) {
-                                  return 'This field is required.';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 12.0),
-                            TextFormField(
-                              controller: lastNameController,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: "Last name",
-                              ),
-                              enabled: !_deferEditing,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'This field is required.';
-                                }
-                                return null;
-                              },
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 20.0),
-                  TextFormField(
-                    controller: userNameController,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Symbols.account_circle_rounded),
-                      border: OutlineInputBorder(),
-                      labelText: "Username",
-                    ),
-                    enabled: !_deferEditing,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "This field is required.";
-                      }
-
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20.0),
-                  TextFormField(
-                    controller: studentNumController,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Symbols.badge_rounded),
-                      border: OutlineInputBorder(),
-                      labelText: "Student ID Number",
-                    ),
-                    enabled: !_deferEditing,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "This field is required.";
-                      }
-
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20.0),
-                  TextFormField(
-                    controller: courseController,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Symbols.school_rounded),
-                      border: OutlineInputBorder(),
-                      labelText: "Course",
-                    ),
-                    enabled: !_deferEditing,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "This field is required.";
-                      }
-
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20.0),
-                  DropdownButtonFormField<String>(
-                    onChanged: !_deferEditing
-                        ? (String? value) {
-                            college = value!;
+              const SizedBox(height: 12.0),
+              Wrap(
+                spacing: 5.0,
+                children: ConditionsList.values.map((ConditionsList condition) {
+                  String conditionName = condition.name
+                      .replaceAll("_", " ")
+                      .toLowerCase()
+                      .capitalizeByWord();
+                  return FilterChip(
+                    label: Text(conditionName),
+                    selected: _conditionsList.contains(conditionName),
+                    onSelected: !_deferEditing
+                        ? (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                _conditionsList.add(conditionName);
+                              } else {
+                                _conditionsList.remove(conditionName);
+                              }
+                            });
                           }
                         : null,
-                    disabledHint: Text(college),
-                    value: college,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Symbols.domain_rounded),
-                      labelText: "College",
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "This field is required.";
-                      }
-
-                      return null;
-                    },
-                    isExpanded: true,
-                    items: CollegeData.colleges.map<DropdownMenuItem<String>>(
-                      (String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      },
-                    ).toList(),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 20.0),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Do you have any allergies?",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .apply(heightDelta: 0.25),
                   ),
-                  const SizedBox(height: 32.0),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: null,
-                      icon: const Icon(Symbols.medical_information_rounded,
-                          size: 28.0),
-                      label: Text("Health Information",
-                          style: Theme.of(context).textTheme.labelLarge!.apply(
-                                fontSizeDelta: 4,
-                                color: Theme.of(context).colorScheme.primary,
-                              )),
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all(
-                          const EdgeInsets.symmetric(
-                              vertical: 12.0, horizontal: 0.0),
-                        ),
-                        foregroundColor: MaterialStateProperty.all(
-                          Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
+                  Text(
+                    "Enter all that apply and tap the 'add' button",
+                    style: Theme.of(context).textTheme.labelMedium,
                   ),
-                  const SizedBox(height: 12.0),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Do you experience any of the following?",
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium!
-                            .apply(heightDelta: 0.25),
-                      ),
-                      Text(
-                        "Tick all those that apply",
-                        style: Theme.of(context).textTheme.labelMedium,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12.0),
-                  Wrap(
-                    spacing: 5.0,
-                    children:
-                        ConditionsList.values.map((ConditionsList condition) {
-                      String conditionName = condition.name
-                          .replaceAll("_", " ")
-                          .toLowerCase()
-                          .capitalizeByWord();
-                      return FilterChip(
-                        label: Text(conditionName),
-                        selected: _conditionsList.contains(conditionName),
-                        onSelected: !_deferEditing
-                            ? (bool selected) {
-                                setState(() {
-                                  if (selected) {
-                                    _conditionsList.add(conditionName);
-                                  } else {
-                                    _conditionsList.remove(conditionName);
-                                  }
-                                });
-                              }
-                            : null,
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 20.0),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Do you have any allergies?",
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium!
-                            .apply(heightDelta: 0.25),
-                      ),
-                      Text(
-                        "Enter all that apply and tap the 'add' button",
-                        style: Theme.of(context).textTheme.labelMedium,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12.0),
-                  Form(
-                      key: _allergyKey,
-                      child: TextFormField(
-                        initialValue: null,
-                        controller: _controller,
-                        textInputAction: TextInputAction.done,
-                        enabled: !_deferEditing,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Symbols.masks_rounded),
-                          border: const OutlineInputBorder(),
-                          hintText: "Enter your allergy",
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              if (_controller.text.isEmpty) {
-                                _allergyKey.currentState?.validate();
-                                return;
-                              }
-                              setState(() {
-                                _allergiesList.add(_controller.text);
-                                _allergyKey.currentState?.validate();
-                                _controller.clear();
-                              });
-                            },
-                            icon: const Icon(Symbols.add_rounded),
-                          ),
-                        ),
-                        validator: (value) {
-                          if (_deferEditing) return null;
-                          if (_controller.text.isEmpty ||
-                              value == null ||
-                              value.isEmpty) {
-                            return "This field cannot be empty before adding";
+                ],
+              ),
+              const SizedBox(height: 12.0),
+              Form(
+                  key: _allergyKey,
+                  child: TextFormField(
+                    initialValue: null,
+                    controller: _controller,
+                    textInputAction: TextInputAction.done,
+                    enabled: !_deferEditing,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Symbols.masks_rounded),
+                      border: const OutlineInputBorder(),
+                      hintText: "Enter your allergy",
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          if (_controller.text.isEmpty) {
+                            _allergyKey.currentState?.validate();
+                            return;
                           }
-                          return null;
-                        },
-                        onFieldSubmitted: (value) {
                           setState(() {
-                            if (_controller.text.isEmpty) {
-                              _allergyKey.currentState?.validate();
-                              return;
-                            }
-
                             _allergiesList.add(_controller.text);
                             _allergyKey.currentState?.validate();
                             _controller.clear();
                           });
                         },
-                      )),
-                  const SizedBox(height: 16.0),
-                  Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 5.0,
-                    children: List<Widget>.generate(
-                      _allergiesList.length,
-                      (int index) {
-                        String allergy = _allergiesList[index];
-                        return InputChip(
-                          label: Text(allergy),
-                          onPressed: !_deferEditing
-                              ? () {
-                                  setState(() {
-                                    _allergiesList.remove(allergy);
-                                  });
-                                }
-                              : null,
-                          onDeleted: !_deferEditing
-                              ? () {
-                                  setState(() {
-                                    _allergiesList.remove(allergy);
-                                  });
-                                }
-                              : null,
-                        );
-                      },
-                    ).toList(),
-                  ),
-                  const SizedBox(height: 64.0),
-                ],
+                        icon: const Icon(Symbols.add_rounded),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (_deferEditing) return null;
+                      if (_controller.text.isEmpty ||
+                          value == null ||
+                          value.isEmpty) {
+                        return "This field cannot be empty before adding";
+                      }
+                      return null;
+                    },
+                    onFieldSubmitted: (value) {
+                      setState(() {
+                        if (_controller.text.isEmpty) {
+                          _allergyKey.currentState?.validate();
+                          return;
+                        }
+
+                        _allergiesList.add(_controller.text);
+                        _allergyKey.currentState?.validate();
+                        _controller.clear();
+                      });
+                    },
+                  )),
+              const SizedBox(height: 16.0),
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 5.0,
+                children: List<Widget>.generate(
+                  _allergiesList.length,
+                  (int index) {
+                    String allergy = _allergiesList[index];
+                    return InputChip(
+                      label: Text(allergy),
+                      onPressed: !_deferEditing
+                          ? () {
+                              setState(() {
+                                _allergiesList.remove(allergy);
+                              });
+                            }
+                          : null,
+                      onDeleted: !_deferEditing
+                          ? () {
+                              setState(() {
+                                _allergiesList.remove(allergy);
+                              });
+                            }
+                          : null,
+                    );
+                  },
+                ).toList(),
               ),
-            ),
-          );
-        },
+              const SizedBox(height: 64.0),
+            ],
+          ),
+        ),
       ),
-      floatingActionButton: FutureBuilder(
-        future: _userInfoFuture,
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            return FloatingActionButton.extended(
-              backgroundColor: _deferEditing
-                  ? Theme.of(context).colorScheme.background
-                  : null,
-              foregroundColor: _deferEditing
-                  ? Theme.of(context).colorScheme.onBackground.withOpacity(0.75)
-                  : null,
-              onPressed: _deferEditing ? null : updateProfile,
-              label: Text("Save Changes"),
-              icon: Icon(Symbols.save_rounded),
-            );
-          }
-          return Container();
-        },
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor:
+            _deferEditing ? Theme.of(context).colorScheme.background : null,
+        foregroundColor: _deferEditing
+            ? Theme.of(context).colorScheme.onBackground.withOpacity(0.75)
+            : null,
+        onPressed: _deferEditing ? null : updateProfile,
+        label: Text("Save Changes"),
+        icon: Icon(Symbols.save_rounded),
       ),
     );
   }

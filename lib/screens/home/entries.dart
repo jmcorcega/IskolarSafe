@@ -69,6 +69,9 @@ class _EntriesState extends State<Entries> {
 
   @override
   Widget build(BuildContext context) {
+    Stream<QuerySnapshot> entryStream =
+        context.watch<HealthEntryProvider>().entries;
+
     return Scaffold(
       appBar: AppBar(
         leading: EditRequestButton(),
@@ -82,8 +85,8 @@ class _EntriesState extends State<Entries> {
           AppOptions(),
         ],
       ),
-      body: FutureBuilder(
-        future: context.read<HealthEntryProvider>().refetchEntries(),
+      body: StreamBuilder(
+        stream: entryStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return _buildNoInternetScreen();
@@ -91,59 +94,102 @@ class _EntriesState extends State<Entries> {
             return const Center(
               child: CircularProgressIndicator(),
             );
+          } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return _buildEmptyScreen();
           }
 
-          Stream<QuerySnapshot> entryStream =
-              context.watch<HealthEntryProvider>().entries;
-          return StreamBuilder(
-            stream: entryStream,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return _buildNoInternetScreen();
-              } else if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return _buildEmptyScreen();
-              }
+          _canShowMyProfile = HealthEntry.fromJson(
+                  snapshot.data?.docs.first.data() as Map<String, dynamic>)
+              .dateGenerated
+              .isToday();
 
-              _canShowMyProfile = HealthEntry.fromJson(
-                      snapshot.data?.docs.first.data() as Map<String, dynamic>)
-                  .dateGenerated
-                  .isToday();
-
-              return Scaffold(
-                floatingActionButton: _canShowMyProfile
-                    ? FloatingActionButton.extended(
-                        onPressed: () {
-                          _showProfileModal(
-                              context,
-                              snapshot.data?.docs.first.data()
-                                  as Map<String, dynamic>);
-                        },
-                        label: const Text("My profile"),
-                        icon: const Icon(Symbols.person_filled_rounded),
-                      )
-                    : FloatingActionButton.extended(
-                        onPressed: () {
-                          Navigator.pushNamed(context, NewEntry.routeName);
-                        },
-                        label: const Text("New entry"),
-                        icon: const Icon(Symbols.add_rounded),
-                      ),
-                body: ListView.builder(
-                    // Build the list using ListView.builder
-                    itemCount: snapshot.data?.docs.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      HealthEntry entry = HealthEntry.fromJson(
-                          snapshot.data?.docs[index].data()
+          return Scaffold(
+            floatingActionButton: _canShowMyProfile
+                ? FloatingActionButton.extended(
+                    onPressed: () {
+                      _showProfileModal(
+                          context,
+                          snapshot.data?.docs.first.data()
                               as Map<String, dynamic>);
-                      entry.id = snapshot.data?.docs[index].id;
+                    },
+                    label: const Text("My profile"),
+                    icon: const Icon(Symbols.person_filled_rounded),
+                  )
+                : FloatingActionButton.extended(
+                    onPressed: () {
+                      Navigator.pushNamed(context, NewEntry.routeName);
+                    },
+                    label: const Text("New entry"),
+                    icon: const Icon(Symbols.add_rounded),
+                  ),
+            body: ListView.builder(
+                // Build the list using ListView.builder
+                itemCount: snapshot.data?.docs.length,
+                itemBuilder: (BuildContext context, int index) {
+                  HealthEntry entry = HealthEntry.fromJson(
+                      snapshot.data?.docs[index].data()
+                          as Map<String, dynamic>);
+                  entry.id = snapshot.data?.docs[index].id;
 
-                      if (index == 0) {
-                        if (_canShowMyProfile) {
-                          return Padding(
+                  if (index == 0) {
+                    if (_canShowMyProfile) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                        child: Card(
+                          child: ListTile(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12.0)),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 24.0,
+                              vertical: 8.0,
+                            ),
+                            leading: _getIcon(entry.verdict),
+                            title:
+                                Text(entry.dateGenerated.relativeTime(context)),
+                            subtitle: Text(
+                              _getStatusString(entry.verdict),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .apply(color: _getColor(entry.verdict)),
+                            ),
+                            onTap: () {
+                              // showModalBottomSheet(
+                              //   context: context,
+                              //   isScrollControlled: true,
+                              //   builder: (context) =>
+                              //       DraggableScrollableSheet(
+                              //           initialChildSize: 0.45,
+                              //           maxChildSize: 0.95,
+                              //           minChildSize: 0.4,
+                              //           expand: false,
+                              //           builder:
+                              //               (context, scrollController) {
+                              //             return SingleChildScrollView(
+                              //               controller: scrollController,
+                              //               child: EntryModal(
+                              //                 entry: entry,
+                              //               ),
+                              //             );
+                              //           }),
+                              // );
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditDeleteEntry(
+                                      entry: entry,
+                                    ),
+                                  ));
+                            },
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Column(
+                        children: [
+                          Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 18.0),
                             child: Card(
@@ -156,124 +202,65 @@ class _EntriesState extends State<Entries> {
                                   horizontal: 24.0,
                                   vertical: 8.0,
                                 ),
-                                leading: _getIcon(entry.verdict),
-                                title: Text(
-                                    entry.dateGenerated.relativeTime(context)),
+                                leading: Icon(
+                                  Symbols.circle_rounded,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withOpacity(0.75),
+                                ),
+                                title: Text("No Entry Today"),
                                 subtitle: Text(
-                                  _getStatusString(entry.verdict),
+                                  "Add entry today to generate QR code",
                                   style: Theme.of(context)
                                       .textTheme
                                       .labelMedium!
-                                      .apply(color: _getColor(entry.verdict)),
-                                ),
-                                onTap: () {
-                                  // showModalBottomSheet(
-                                  //   context: context,
-                                  //   isScrollControlled: true,
-                                  //   builder: (context) =>
-                                  //       DraggableScrollableSheet(
-                                  //           initialChildSize: 0.45,
-                                  //           maxChildSize: 0.95,
-                                  //           minChildSize: 0.4,
-                                  //           expand: false,
-                                  //           builder:
-                                  //               (context, scrollController) {
-                                  //             return SingleChildScrollView(
-                                  //               controller: scrollController,
-                                  //               child: EntryModal(
-                                  //                 entry: entry,
-                                  //               ),
-                                  //             );
-                                  //           }),
-                                  // );
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => EditDeleteEntry(
-                                          entry: entry,
-                                        ),
-                                      ));
-                                },
-                              ),
-                            ),
-                          );
-                        } else {
-                          return Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 18.0),
-                                child: Card(
-                                  child: ListTile(
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(12.0)),
-                                    ),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 24.0,
-                                      vertical: 8.0,
-                                    ),
-                                    leading: Icon(
-                                      Symbols.circle_rounded,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface
-                                          .withOpacity(0.75),
-                                    ),
-                                    title: Text("No Entry Today"),
-                                    subtitle: Text(
-                                      "Add entry today to generate QR code",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelMedium!
-                                          .apply(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface
-                                                .withOpacity(0.75),
-                                          ),
-                                    ),
-                                    onTap: () {},
-                                  ),
-                                ),
-                              ),
-                              ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 24.0),
-                                leading: _getIcon(entry.verdict),
-                                title: Text(
-                                    entry.dateGenerated.relativeTime(context)),
-                                subtitle: Text(
-                                  _getStatusString(entry.verdict),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelMedium!
-                                      .apply(color: _getColor(entry.verdict)),
+                                      .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withOpacity(0.75),
+                                      ),
                                 ),
                                 onTap: () {},
-                              )
-                            ],
-                          );
-                        }
-                      }
-
-                      return ListTile(
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 24.0),
-                        leading: _getIcon(entry.verdict),
-                        title: Text(entry.dateGenerated.relativeTime(context)),
-                        subtitle: Text(
-                          _getStatusString(entry.verdict),
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelMedium!
-                              .apply(color: _getColor(entry.verdict)),
-                        ),
-                        onTap: () {},
+                              ),
+                            ),
+                          ),
+                          ListTile(
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 24.0),
+                            leading: _getIcon(entry.verdict),
+                            title:
+                                Text(entry.dateGenerated.relativeTime(context)),
+                            subtitle: Text(
+                              _getStatusString(entry.verdict),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .apply(color: _getColor(entry.verdict)),
+                            ),
+                            onTap: () {},
+                          )
+                        ],
                       );
-                    }),
-              );
-            },
+                    }
+                  }
+
+                  return ListTile(
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 24.0),
+                    leading: _getIcon(entry.verdict),
+                    title: Text(entry.dateGenerated.relativeTime(context)),
+                    subtitle: Text(
+                      _getStatusString(entry.verdict),
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelMedium!
+                          .apply(color: _getColor(entry.verdict)),
+                    ),
+                    onTap: () {},
+                  );
+                }),
           );
         },
       ),

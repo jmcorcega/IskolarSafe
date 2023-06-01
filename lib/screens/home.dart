@@ -3,7 +3,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/api/accounts_api.dart';
+import 'package:iskolarsafe/models/user_model.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
+import 'package:iskolarsafe/providers/entries_provider.dart';
 import 'package:iskolarsafe/screens/home/entries.dart';
 import 'package:iskolarsafe/screens/home/monitor.dart';
 import 'package:iskolarsafe/screens/home/logs.dart';
@@ -42,7 +44,7 @@ class _HomeState extends State<Home> {
     }
 
     // if user is logged in
-    return showHome(context);
+    return _buildHomeScreen(context);
   }
 
   Scaffold showHome(BuildContext context) {

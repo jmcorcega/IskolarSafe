@@ -16,7 +16,7 @@ class NewEntry extends StatefulWidget {
 }
 
 class _NewEntryState extends State<NewEntry> {
-  late final Future<IskolarInfo?> _userInfoFuture =
+  late final IskolarInfo? _userInfoFuture =
       context.read<AccountsProvider>().userInfo;
   final _entryFormState = GlobalKey<FormState>();
 
@@ -72,7 +72,6 @@ class _NewEntryState extends State<NewEntry> {
         verdict: getVerdict(),
       );
 
-      await context.read<HealthEntryProvider>().refetchEntries();
       if (context.mounted) {
         await context.read<HealthEntryProvider>().addEntry(newEntry);
         if (context.mounted) {
@@ -107,6 +106,8 @@ class _NewEntryState extends State<NewEntry> {
         respiratorySymptoms.contains(RespiratorySymptom.none);
     bool otherNone = otherSymptoms.contains(OtherSymptom.none);
 
+    if (_deferEditing) return false;
+
     if (symptom == FluSymptom.none ||
         symptom == RespiratorySymptom.none ||
         symptom == OtherSymptom.none) {
@@ -131,62 +132,39 @@ class _NewEntryState extends State<NewEntry> {
           hasAction: false,
         ),
       ),
-      body: FutureBuilder(
-        future: _userInfoFuture,
-        builder: (context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              // Show a message where the user can add an entry if list is empty
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Symbols.sentiment_dissatisfied,
-                      size: 64.0,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onBackground
-                          .withOpacity(0.5)),
-                  const SizedBox(height: 16.0),
-                  Text(
-                    "An error has occured. Please try again.",
-                    style: Theme.of(context).textTheme.titleMedium!.apply(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onBackground
-                              .withOpacity(0.5),
-                        ),
+      body: Center(
+        // Show a message where the user can add an entry if list is empty
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Symbols.sentiment_dissatisfied,
+                size: 64.0,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onBackground
+                    .withOpacity(0.5)),
+            const SizedBox(height: 16.0),
+            Text(
+              "An error has occured. Please try again.",
+              style: Theme.of(context).textTheme.titleMedium!.apply(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onBackground
+                        .withOpacity(0.5),
                   ),
-                ],
-              ),
-            );
-          }
-
-          userInfo ??= snapshot.data;
-          return buildForm(context);
-        },
+            ),
+          ],
+        ),
       ),
-      floatingActionButton: FutureBuilder(
-        future: _userInfoFuture,
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            return FloatingActionButton.extended(
-              backgroundColor: _deferEditing
-                  ? Theme.of(context).colorScheme.background
-                  : null,
-              foregroundColor: _deferEditing
-                  ? Theme.of(context).colorScheme.onBackground.withOpacity(0.75)
-                  : null,
-              onPressed: _deferEditing ? null : saveEntry,
-              label: Text("Save Changes"),
-              icon: Icon(Symbols.save_rounded),
-            );
-          }
-          return Container();
-        },
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor:
+            _deferEditing ? Theme.of(context).colorScheme.background : null,
+        foregroundColor: _deferEditing
+            ? Theme.of(context).colorScheme.onBackground.withOpacity(0.75)
+            : null,
+        onPressed: _deferEditing ? null : saveEntry,
+        label: const Text("Submit entry"),
+        icon: const Icon(Symbols.send_rounded),
       ),
     );
   }
@@ -398,11 +376,13 @@ class _NewEntryState extends State<NewEntry> {
                     leading: Radio<bool>(
                       value: false,
                       groupValue: isExposed,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          isExposed = value!;
-                        });
-                      },
+                      onChanged: _deferEditing
+                          ? null
+                          : (bool? value) {
+                              setState(() {
+                                isExposed = value!;
+                              });
+                            },
                     ),
                   ),
                 ),
@@ -412,11 +392,13 @@ class _NewEntryState extends State<NewEntry> {
                     leading: Radio<bool>(
                       value: true,
                       groupValue: isExposed,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          isExposed = value!;
-                        });
-                      },
+                      onChanged: _deferEditing
+                          ? null
+                          : (bool? value) {
+                              setState(() {
+                                isExposed = value!;
+                              });
+                            },
                     ),
                   ),
                 ),
@@ -462,11 +444,13 @@ class _NewEntryState extends State<NewEntry> {
                     leading: Radio<bool>(
                       value: false,
                       groupValue: isWaitingForRtPcr,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          isWaitingForRtPcr = value!;
-                        });
-                      },
+                      onChanged: _deferEditing
+                          ? null
+                          : (bool? value) {
+                              setState(() {
+                                isWaitingForRtPcr = value!;
+                              });
+                            },
                     ),
                   ),
                 ),
@@ -476,11 +460,13 @@ class _NewEntryState extends State<NewEntry> {
                     leading: Radio<bool>(
                       value: true,
                       groupValue: isWaitingForRtPcr,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          isWaitingForRtPcr = value!;
-                        });
-                      },
+                      onChanged: _deferEditing
+                          ? null
+                          : (bool? value) {
+                              setState(() {
+                                isWaitingForRtPcr = value!;
+                              });
+                            },
                     ),
                   ),
                 ),
@@ -527,11 +513,13 @@ class _NewEntryState extends State<NewEntry> {
                     leading: Radio<bool>(
                       value: false,
                       groupValue: isWaitingForRapidAntigen,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          isWaitingForRapidAntigen = value!;
-                        });
-                      },
+                      onChanged: _deferEditing
+                          ? null
+                          : (bool? value) {
+                              setState(() {
+                                isWaitingForRapidAntigen = value!;
+                              });
+                            },
                     ),
                   ),
                 ),
@@ -541,11 +529,13 @@ class _NewEntryState extends State<NewEntry> {
                     leading: Radio<bool>(
                       value: true,
                       groupValue: isWaitingForRapidAntigen,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          isWaitingForRapidAntigen = value!;
-                        });
-                      },
+                      onChanged: _deferEditing
+                          ? null
+                          : (bool? value) {
+                              setState(() {
+                                isWaitingForRapidAntigen = value!;
+                              });
+                            },
                     ),
                   ),
                 ),

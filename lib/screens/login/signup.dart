@@ -51,7 +51,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
       _loadingGoogleButton = true;
     });
 
-    await context.read<AccountsProvider>().signInWithGoogle();
+    await context.read<AccountsProvider>().signInWithGoogle(context);
     if (context.mounted) {
       var status = context.read<AccountsProvider>().status;
       loginErr = status != AccountsStatus.success &&
@@ -117,7 +117,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
         condition: _conditionsList,
         allergies: _allergiesList,
       );
-      await context.read<AccountsProvider>().signUp(_isGoogle,
+      await context.read<AccountsProvider>().signUp(context, _isGoogle,
           email: emailController.text,
           password: passwordController.text,
           userInfo: IskolarInfo.toJson(userInfo));
