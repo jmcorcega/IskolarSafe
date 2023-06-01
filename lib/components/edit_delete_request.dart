@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -10,6 +12,7 @@ import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/providers/entries_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
+import 'package:iskolarsafe/college_data.dart';
 
 class EditDeleteRequests extends StatefulWidget {
   static const String routeName = "/edit-delete";
@@ -21,86 +24,99 @@ class EditDeleteRequests extends StatefulWidget {
 }
 
 class _EditDeleteRequestsState extends State<EditDeleteRequests> {
+  static final IskolarInfo fakeInfo2 = IskolarInfo(
+    status: IskolarHealthStatus.notWell,
+    firstName: "Juan",
+    lastName: "Tamad",
+    userName: "jtamad",
+    studentNumber: "0000-00000",
+    course: "BS Computer Science",
+    college: CollegeData.colleges[1],
+    condition: ["Hypertension", "Diabetes"],
+    allergies: ["Allergy 1", "Allergy 2"],
+  );
+  static final IskolarInfo fakeInfo3 = IskolarInfo(
+    status: IskolarHealthStatus.notWell,
+    firstName: "Jane",
+    lastName: "Doe",
+    userName: "jdoe",
+    studentNumber: "0000-00000",
+    course: "BS Computer Science",
+    college: CollegeData.colleges[1],
+    condition: [],
+    allergies: [],
+  );
+
+  static final IskolarInfo fakeInfo4 = IskolarInfo(
+    status: IskolarHealthStatus.notWell,
+    firstName: "Mark",
+    lastName: "Mark",
+    userName: "mmark",
+    studentNumber: "0000-00000",
+    course: "BS Computer Science",
+    college: CollegeData.colleges[1],
+    condition: [],
+    allergies: [],
+  );
   final List<Map<dynamic, dynamic>> _listNames = [
     {
-      "name": "Mang Juan",
-      "studentNo": "20205678",
-      "course": "BS Stat",
-      "college": "CAS",
-      "hasSymptoms": false,
-      "isQuarantined": true,
-      "isUnderMonitoring": false,
-      "hasEditRequest": true,
-      "editRequest": {
-        'fluSymptoms': {
-          "orig": FluSymptom.none,
-          "changed": FluSymptom.feverish
-        },
-        'respiratorySymptoms': {
-          "orig": RespiratorySymptom.cough,
-          "changed": RespiratorySymptom.cough
-        },
-        'otherSymptoms': {
-          "orig": OtherSymptom.none,
-          "changed": OtherSymptom.none
-        },
-        'exposed': {"orig": false, "changed": true},
-        'waitingForRtPcr': {"orig": false, "changed": false},
-        'waitingForRapidAntigen': {"orig": false, "changed": false}
-      },
-      "hasDeleteRequest": true
+      "userInfo": fakeInfo2,
+      "fluSymptoms": [FluSymptom.none],
+      "respiratorySymptoms": [RespiratorySymptom.none],
+      "otherSymptoms": [OtherSymptom.none],
+      "exposed": true,
+      "waitingForRtPcr": false,
+      "waitingForRapidAntigen": false,
+      "forDeletion": false,
+      "verdict": IskolarHealthStatus.notWell,
+      "updated": {
+        "userInfo": fakeInfo2,
+        "fluSymptoms": [FluSymptom.feverish],
+        "respiratorySymptoms": [RespiratorySymptom.none],
+        "otherSymptoms": [OtherSymptom.none],
+        "exposed": true,
+        "waitingForRtPcr": true,
+        "waitingForRapidAntigen": false,
+        "verdict": IskolarHealthStatus.notWell,
+      }
     },
     {
-      "name": "Maam Juana",
-      "studentNo": "20219658",
-      "course": "BS Chemistry",
-      "college": "CAS",
-      "hasSymptoms": false,
-      "isQuarantined": true,
-      "isUnderMonitoring": false,
-      "hasEditRequest": false,
-      'editRequest': null,
-      "hasDeleteRequest": false
+      "userInfo": fakeInfo3,
+      "fluSymptoms": [FluSymptom.feverish],
+      "respiratorySymptoms": [RespiratorySymptom.none],
+      "otherSymptoms": [OtherSymptom.none],
+      "exposed": false,
+      "waitingForRtPcr": false,
+      "waitingForRapidAntigen": false,
+      "forDeletion": true,
+      "verdict": IskolarHealthStatus.notWell,
     },
     {
-      "name": "Mami Juan",
-      "studentNo": "20205348",
-      "course": "BS Stat",
-      "college": "CAS",
-      "hasSymptoms": true,
-      "isQuarantined": false,
-      "isUnderMonitoring": true,
-      "hasEditRequest": true,
-      "editRequest": {
-        'fluSymptom': FluSymptom.none,
-        'respiratorySymptoms': RespiratorySymptom.cough,
-        'otherSymptoms': OtherSymptom.lossOfTaste,
-        'exposed': true,
-        'waitingForRtPcr': false,
-        'waitingForRapidAntigen': false
-      },
-      "hasDeleteRequest": false
-    },
-    {
-      "name": "Marie Claire",
-      "studentNo": "20213241",
-      "course": "BS Stat",
-      "college": "CAS",
-      "hasSymptoms": true,
-      "isQuarantined": false,
-      "isUnderMonitoring": true,
-      "hasEditRequest": false,
-      "hasDeleteRequest": true,
-      "deleteRequest": {
-        'fluSymptom': FluSymptom.none,
-        'respiratorySymptoms': RespiratorySymptom.cough,
-        'otherSymptoms': OtherSymptom.lossOfTaste,
-        'exposed': true,
-        'waitingForRtPcr': false,
-        'waitingForRapidAntigen': false
-      },
-    },
+      "userInfo": fakeInfo4,
+      "fluSymptoms": [FluSymptom.none],
+      "respiratorySymptoms": [RespiratorySymptom.colds],
+      "otherSymptoms": [OtherSymptom.none],
+      "exposed": false,
+      "waitingForRtPcr": true,
+      "waitingForRapidAntigen": false,
+      "forDeletion": false,
+      "verdict": IskolarHealthStatus.notWell,
+      "updated": {
+        "userInfo": fakeInfo4,
+        "fluSymptoms": [FluSymptom.musclePains],
+        "respiratorySymptoms": [
+          RespiratorySymptom.cough,
+          RespiratorySymptom.colds
+        ],
+        "otherSymptoms": [OtherSymptom.none],
+        "exposed": false,
+        "waitingForRtPcr": false,
+        "waitingForRapidAntigen": false,
+        "verdict": IskolarHealthStatus.monitored,
+      }
+    }
   ];
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -146,15 +162,49 @@ class _EditDeleteRequestsState extends State<EditDeleteRequests> {
     return ListView.builder(
         itemCount: _listNames.length,
         itemBuilder: ((context, index) {
-          return _editDeleteListTile(type, _listNames[index]["hasEditRequest"],
-              _listNames[index]["hasDeleteRequest"], _listNames[index]["name"]);
+          return _editDeleteListTile(type, _listNames[index]["forDeletion"],
+              "${_listNames[index]["userInfo"].firstName} ${_listNames[index]["userInfo"].lastName}");
         }));
   }
 
-  Widget _editDeleteListTile(
-      String type, bool hasEditRequest, bool hasDeleteRequest, String name) {
+  Widget _approveRejectButtons() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 110.0,
+          height: 27.0,
+          margin: const EdgeInsets.only(top: 10.0),
+          child: FilledButton.icon(
+            style: FilledButton.styleFrom(
+                padding: EdgeInsets.all(0),
+                backgroundColor: Theme.of(context).colorScheme.primary),
+            onPressed: () {},
+            icon: const Icon(Symbols.done, size: 18.0),
+            label: const Text("Approve"),
+          ),
+        ),
+        SizedBox(width: 12.0),
+        Container(
+          width: 110.0,
+          height: 27.0,
+          margin: const EdgeInsets.only(top: 10.0),
+          child: OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+                padding: EdgeInsets.all(0),
+                foregroundColor: Theme.of(context).colorScheme.tertiary),
+            onPressed: () {},
+            icon: const Icon(Symbols.close_rounded),
+            label: const Text("Reject"),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _editDeleteListTile(String type, bool forDeletion, String name) {
     if (type == "edit") {
-      if (hasEditRequest) {
+      if (!forDeletion) {
         return ListTile(
           onTap: () {
             showModalBottomSheet(
@@ -185,62 +235,14 @@ class _EditDeleteRequestsState extends State<EditDeleteRequests> {
           ),
           minLeadingWidth: 44.0,
           title: _editDeleteRequest(name, type),
-          subtitle: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                width: 110.0,
-                child: FilledButton.icon(
-                  style: FilledButton.styleFrom(
-                      padding: EdgeInsets.all(0),
-                      backgroundColor: Theme.of(context).colorScheme.primary),
-                  onPressed: () {},
-                  icon: const Icon(Symbols.done, size: 18.0),
-                  label: const Text("Approve"),
-                ),
-              ),
-              SizedBox(width: 12.0),
-              SizedBox(
-                width: 110.0,
-                child: OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.all(0),
-                      foregroundColor: Theme.of(context).colorScheme.tertiary),
-                  onPressed: () {},
-                  icon: const Icon(Symbols.close_rounded),
-                  label: const Text("Reject"),
-                ),
-              ),
-            ],
-          ),
+          subtitle: _approveRejectButtons(),
         );
       }
     } else {
-      if (hasDeleteRequest) {
+      if (forDeletion) {
         return ListTile(
-          onTap: () {
-            // showDialog<String>(
-            //     context: context,
-            //     builder: (BuildContext context) =>
-            //         Container(height: 150, width: 300, child: EditRequest()));
-
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              builder: (context) => DraggableScrollableSheet(
-                  initialChildSize: 0.45,
-                  maxChildSize: 0.95,
-                  minChildSize: 0.4,
-                  expand: false,
-                  builder: (context, scrollController) {
-                    return SingleChildScrollView(
-                      controller: scrollController,
-                      child: EditRequest(),
-                    );
-                  }),
-            );
-          },
-          contentPadding: EdgeInsets.symmetric(horizontal: 24.0),
+          onTap: () {},
+          contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
           leading: SizedBox(
             height: double.infinity,
             child: CircleAvatar(
@@ -252,34 +254,7 @@ class _EditDeleteRequestsState extends State<EditDeleteRequests> {
           ),
           minLeadingWidth: 44.0,
           title: _editDeleteRequest(name, type),
-          subtitle: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                width: 110.0,
-                child: FilledButton.icon(
-                  style: FilledButton.styleFrom(
-                      padding: EdgeInsets.all(0),
-                      backgroundColor: Theme.of(context).colorScheme.primary),
-                  onPressed: () {},
-                  icon: const Icon(Symbols.done, size: 18.0),
-                  label: const Text("Approve"),
-                ),
-              ),
-              SizedBox(width: 12.0),
-              SizedBox(
-                width: 110.0,
-                child: OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.all(0),
-                      foregroundColor: Theme.of(context).colorScheme.tertiary),
-                  onPressed: () {},
-                  icon: const Icon(Symbols.close_rounded),
-                  label: const Text("Reject"),
-                ),
-              ),
-            ],
-          ),
+          subtitle: _approveRejectButtons(),
         );
       }
     }
