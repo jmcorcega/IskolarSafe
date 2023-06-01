@@ -162,7 +162,10 @@ class _EditDeleteRequestsState extends State<EditDeleteRequests> {
     return ListView.builder(
         itemCount: _listNames.length,
         itemBuilder: ((context, index) {
-          return _editDeleteListTile(type, _listNames[index]["forDeletion"],
+          return _editDeleteListTile(
+              _listNames[index],
+              type,
+              _listNames[index]["forDeletion"],
               "${_listNames[index]["userInfo"].firstName} ${_listNames[index]["userInfo"].lastName}");
         }));
   }
@@ -202,7 +205,8 @@ class _EditDeleteRequestsState extends State<EditDeleteRequests> {
     );
   }
 
-  Widget _editDeleteListTile(String type, bool forDeletion, String name) {
+  Widget _editDeleteListTile(
+      Map<dynamic, dynamic> info, String type, bool forDeletion, String name) {
     if (type == "edit") {
       if (!forDeletion) {
         return ListTile(
@@ -218,7 +222,7 @@ class _EditDeleteRequestsState extends State<EditDeleteRequests> {
                   builder: (context, scrollController) {
                     return SingleChildScrollView(
                       controller: scrollController,
-                      child: EditRequest(),
+                      child: EditRequest(info: info),
                     );
                   }),
             );
@@ -351,13 +355,10 @@ Widget _buttons(context) {
 }
 
 class EditRequest extends StatelessWidget {
-  EditRequest({super.key});
+  final Map<dynamic, dynamic> info;
+  EditRequest({super.key, required this.info});
 
   final _entryFormState = GlobalKey<FormState>();
-
-  List<FluSymptom> fluSymptoms = [];
-  List<RespiratorySymptom> respiratorySymptoms = [];
-  List<OtherSymptom> otherSymptoms = [];
 
   bool? isExposed;
   bool? isWaitingForRtPcr;
@@ -366,48 +367,54 @@ class EditRequest extends StatelessWidget {
   bool _deferEditing = false;
   IskolarInfo? userInfo;
 
-  IskolarHealthStatus getVerdict() {
-    if (fluSymptoms.length > 1) return IskolarHealthStatus.notWell;
-    if (respiratorySymptoms.length > 1) return IskolarHealthStatus.notWell;
-    if (otherSymptoms.length > 1) return IskolarHealthStatus.notWell;
+  // IskolarHealthStatus getVerdict() {
+  //   if (fluSymptoms.length > 1) return IskolarHealthStatus.notWell;
+  //   if (respiratorySymptoms.length > 1) return IskolarHealthStatus.notWell;
+  //   if (otherSymptoms.length > 1) return IskolarHealthStatus.notWell;
 
-    if (!fluSymptoms.contains(FluSymptom.none)) {
-      return IskolarHealthStatus.notWell;
-    }
+  //   if (!fluSymptoms.contains(FluSymptom.none)) {
+  //     return IskolarHealthStatus.notWell;
+  //   }
 
-    if (!respiratorySymptoms.contains(RespiratorySymptom.none)) {
-      return IskolarHealthStatus.notWell;
-    }
+  //   if (!respiratorySymptoms.contains(RespiratorySymptom.none)) {
+  //     return IskolarHealthStatus.notWell;
+  //   }
 
-    if (!otherSymptoms.contains(OtherSymptom.none)) {
-      return IskolarHealthStatus.notWell;
-    }
+  //   if (!otherSymptoms.contains(OtherSymptom.none)) {
+  //     return IskolarHealthStatus.notWell;
+  //   }
 
-    return IskolarHealthStatus.healthy;
-  }
+  //   return IskolarHealthStatus.healthy;
+  // }
 
-  void saveEntry() async {
-    if (_entryFormState.currentState!.validate()) {
-      // Save the form
-      _entryFormState.currentState?.save();
+  // void saveEntry() async {
+  //   if (_entryFormState.currentState!.validate()) {
+  //     // Save the form
+  //     _entryFormState.currentState?.save();
 
-      HealthEntry newEntry = HealthEntry(
-        userInfo: userInfo!,
-        userId: userInfo!.id!,
-        dateGenerated: DateTime.now(),
-        fluSymptoms: fluSymptoms,
-        respiratorySymptoms: respiratorySymptoms,
-        otherSymptoms: otherSymptoms,
-        exposed: isExposed!,
-        waitingForRtPcr: isWaitingForRtPcr!,
-        waitingForRapidAntigen: isWaitingForRapidAntigen!,
-        verdict: getVerdict(),
-      );
-    }
-  }
+  //     HealthEntry newEntry = HealthEntry(
+  //       userInfo: userInfo!,
+  //       userId: userInfo!.id!,
+  //       dateGenerated: DateTime.now(),
+  //       fluSymptoms: fluSymptoms,
+  //       respiratorySymptoms: respiratorySymptoms,
+  //       otherSymptoms: otherSymptoms,
+  //       exposed: isExposed!,
+  //       waitingForRtPcr: isWaitingForRtPcr!,
+  //       waitingForRapidAntigen: isWaitingForRapidAntigen!,
+  //       verdict: getVerdict(),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
+    List<FluSymptom> fluSymptoms =
+        info["fluSymptoms"] + info["updated"]["fluSymptoms"];
+    List<RespiratorySymptom> respiratorySymptoms =
+        info["respiratorySymptoms"] + info["updated"]["respiratorySymptoms"];
+    List<OtherSymptom> otherSymptoms =
+        info["otherSymptoms"] + info["updated"]["otherSymptoms"];
     return Form(
       key: _entryFormState,
       child: SingleChildScrollView(
@@ -458,26 +465,10 @@ class EditRequest extends StatelessWidget {
                 children: FluSymptom.values.map((FluSymptom symptom) {
                   String name = FluSymptom.getName(symptom);
                   return FilterChip(
-                    label: Text(name),
-                    selected: fluSymptoms.contains(symptom),
-                    onSelected:
-                        // chipEnabled(symptom)
-                        //     ? (bool selected) {
-                        //         setState(() {
-                        //           if (selected) {
-                        //             if (symptom == FluSymptom.none) {
-                        //               fluSymptoms.clear();
-                        //             }
-
-                        //             fluSymptoms.add(symptom);
-                        //           } else {
-                        //             fluSymptoms.remove(symptom);
-                        //           }
-                        //         });
-                        // }
-                        // :
-                        null,
-                  );
+                      label: Text(name),
+                      selectedColor: _changeFluChipColor(symptom),
+                      selected: fluSymptoms.contains(symptom),
+                      onSelected: (bool selected) {});
                 }).toList(),
               ),
               const SizedBox(height: 20.0),
@@ -515,25 +506,10 @@ class EditRequest extends StatelessWidget {
                     RespiratorySymptom.values.map((RespiratorySymptom symptom) {
                   String name = RespiratorySymptom.getName(symptom);
                   return FilterChip(
-                    label: Text(name),
-                    selected: respiratorySymptoms.contains(symptom),
-                    onSelected:
-                        // chipEnabled(symptom)
-                        //     ? (bool selected) {
-                        //         setState(() {
-                        //           if (selected) {
-                        //             if (symptom == RespiratorySymptom.none) {
-                        //               respiratorySymptoms.clear();
-                        //             }
-                        //             respiratorySymptoms.add(symptom);
-                        //           } else {
-                        //             respiratorySymptoms.remove(symptom);
-                        //           }
-                        //         });
-                        //       }
-                        //     :
-                        null,
-                  );
+                      label: Text(name),
+                      selectedColor: _changeRespiratoryChipColor(symptom),
+                      selected: respiratorySymptoms.contains(symptom),
+                      onSelected: (bool selected) {});
                 }).toList(),
               ),
               const SizedBox(height: 20.0),
@@ -570,25 +546,10 @@ class EditRequest extends StatelessWidget {
                 children: OtherSymptom.values.map((OtherSymptom symptom) {
                   String name = OtherSymptom.getName(symptom);
                   return FilterChip(
-                    label: Text(name),
-                    selected: otherSymptoms.contains(symptom),
-                    onSelected:
-                        // chipEnabled(symptom)
-                        //     ? (bool selected) {
-                        //         setState(() {
-                        //           if (symptom == OtherSymptom.none) {
-                        //             otherSymptoms.clear();
-                        //           }
-                        //           if (selected) {
-                        //             otherSymptoms.add(symptom);
-                        //           } else {
-                        //             otherSymptoms.remove(symptom);
-                        //           }
-                        //         });
-                        //       }
-                        //     :
-                        null,
-                  );
+                      label: Text(name),
+                      selectedColor: _changeOtherChipColor(symptom),
+                      selected: otherSymptoms.contains(symptom),
+                      onSelected: (bool selected) {});
                 }).toList(),
               ),
               const SizedBox(height: 20.0),
@@ -628,9 +589,15 @@ class EditRequest extends StatelessWidget {
                   Expanded(
                     child: ListTile(
                       title: const Text('No'),
+                      textColor: _changeRadioColor(false, false,
+                          info["exposed"], info["updated"]["exposed"]),
                       leading: Radio<bool>(
+                        activeColor: _changeRadioColor(true, false,
+                            info["exposed"], info["updated"]["exposed"]),
                         value: false,
-                        groupValue: isExposed,
+                        groupValue: (!info["exposed"])
+                            ? info["exposed"]
+                            : info["updated"]["exposed"],
                         onChanged: (bool? value) {
                           // setState(() {
                           //   isExposed = value!;
@@ -642,9 +609,15 @@ class EditRequest extends StatelessWidget {
                   Expanded(
                     child: ListTile(
                       title: const Text('Yes'),
+                      textColor: _changeRadioColor(false, true, info["exposed"],
+                          info["updated"]["exposed"]),
                       leading: Radio<bool>(
+                        activeColor: _changeRadioColor(true, true,
+                            info["exposed"], info["updated"]["exposed"]),
                         value: true,
-                        groupValue: isExposed,
+                        groupValue: (info["exposed"])
+                            ? info["exposed"]
+                            : info["updated"]["exposed"],
                         onChanged: (bool? value) {
                           // setState(() {
                           //   isExposed = value!;
@@ -692,9 +665,21 @@ class EditRequest extends StatelessWidget {
                   Expanded(
                     child: ListTile(
                       title: const Text('No'),
+                      textColor: _changeRadioColor(
+                          false,
+                          false,
+                          info["waitingForRtPcr"],
+                          info["updated"]["waitingForRtPcr"]),
                       leading: Radio<bool>(
+                        activeColor: _changeRadioColor(
+                            true,
+                            false,
+                            info["waitingForRtPcr"],
+                            info["updated"]["waitingForRtPcr"]),
                         value: false,
-                        groupValue: isWaitingForRtPcr,
+                        groupValue: (!info["waitingForRtPcr"])
+                            ? info["waitingForRtPcr"]
+                            : info["updated"]["waitingForRtPcr"],
                         onChanged: (bool? value) {
                           // setState(() {
                           //   isWaitingForRtPcr = value!;
@@ -706,9 +691,21 @@ class EditRequest extends StatelessWidget {
                   Expanded(
                     child: ListTile(
                       title: const Text('Yes'),
+                      textColor: _changeRadioColor(
+                          false,
+                          true,
+                          info["waitingForRtPcr"],
+                          info["updated"]["waitingForRtPcr"]),
                       leading: Radio<bool>(
+                        activeColor: _changeRadioColor(
+                            true,
+                            true,
+                            info["waitingForRtPcr"],
+                            info["updated"]["waitingForRtPcr"]),
                         value: true,
-                        groupValue: isWaitingForRtPcr,
+                        groupValue: (info["waitingForRtPcr"])
+                            ? info["waitingForRtPcr"]
+                            : info["updated"]["waitingForRtPcr"],
                         onChanged: (bool? value) {
                           // setState(() {
                           //   isWaitingForRtPcr = value!;
@@ -757,9 +754,21 @@ class EditRequest extends StatelessWidget {
                   Expanded(
                     child: ListTile(
                       title: const Text('No'),
+                      textColor: _changeRadioColor(
+                          false,
+                          false,
+                          info["waitingForRapidAntigen"],
+                          info["updated"]["waitingForRapidAntigen"]),
                       leading: Radio<bool>(
+                        activeColor: _changeRadioColor(
+                            true,
+                            false,
+                            info["waitingForRapidAntigen"],
+                            info["updated"]["waitingForRapidAntigen"]),
                         value: false,
-                        groupValue: isWaitingForRapidAntigen,
+                        groupValue: (!info["waitingForRapidAntigen"])
+                            ? info["waitingForRapidAntigen"]
+                            : info["updated"]["waitingForRapidAntigen"],
                         onChanged: (bool? value) {
                           // setState(() {
                           //   isWaitingForRapidAntigen = value!;
@@ -771,9 +780,21 @@ class EditRequest extends StatelessWidget {
                   Expanded(
                     child: ListTile(
                       title: const Text('Yes'),
+                      textColor: _changeRadioColor(
+                          false,
+                          true,
+                          info["waitingForRapidAntigen"],
+                          info["updated"]["waitingForRapidAntigen"]),
                       leading: Radio<bool>(
+                        activeColor: _changeRadioColor(
+                            true,
+                            true,
+                            info["waitingForRapidAntigen"],
+                            info["updated"]["waitingForRapidAntigen"]),
                         value: true,
-                        groupValue: isWaitingForRtPcr,
+                        groupValue: (info["waitingForRapidAntigen"])
+                            ? info["waitingForRapidAntigen"]
+                            : info["updated"]["waitingForRapidAntigen"],
                         onChanged: (bool? value) {},
                       ),
                     ),
@@ -788,5 +809,61 @@ class EditRequest extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _changeFluChipColor(FluSymptom symptom) {
+    for (FluSymptom orig in info["fluSymptoms"]) {
+      if (symptom == orig) {
+        return Colors.red;
+      }
+    }
+
+    for (FluSymptom updated in info["updated"]["fluSymptoms"]) {
+      if (symptom == updated) {
+        return Colors.green;
+      }
+    }
+    return Colors.transparent;
+  }
+
+  Color _changeRespiratoryChipColor(RespiratorySymptom symptom) {
+    for (RespiratorySymptom orig in info["respiratorySymptoms"]) {
+      if (symptom == orig) {
+        return Colors.red;
+      }
+    }
+
+    for (RespiratorySymptom updated in info["updated"]["respiratorySymptoms"]) {
+      if (symptom == updated) {
+        return Colors.green;
+      }
+    }
+    return Colors.transparent;
+  }
+
+  Color _changeOtherChipColor(OtherSymptom symptom) {
+    for (OtherSymptom orig in info["otherSymptoms"]) {
+      if (symptom == orig) {
+        return Colors.red;
+      }
+    }
+
+    for (OtherSymptom updated in info["updated"]["otherSymptoms"]) {
+      if (symptom == updated) {
+        return Colors.green;
+      }
+    }
+    return Colors.transparent;
+  }
+
+  Color _changeRadioColor(bool radio, bool value, bool orig, bool updated) {
+    if (orig != updated) {
+      if (orig == value) {
+        return Colors.red;
+      } else if (updated == value) {
+        return Colors.green;
+      }
+    }
+    return (radio) ? Color(0xFF8A1538) : Colors.black;
   }
 }
