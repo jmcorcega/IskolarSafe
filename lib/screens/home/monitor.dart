@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:iskolarsafe/components/screen_placeholder.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
@@ -25,33 +26,6 @@ class Monitor extends StatefulWidget {
 
 class _MonitorState extends State<Monitor> {
   var noUnderMonitoring = true;
-
-  Widget _buildEmptyScreen() {
-    return Center(
-      // Show a message where the user can add an entry if list is empty
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            width: MediaQuery.of(context).size.width * 0.75,
-            "assets/images/illust_no_monitored.svg",
-            fit: BoxFit.cover,
-          ),
-          const SizedBox(height: 12.0),
-          Text(
-            "No users under monitoring",
-            style: Theme.of(context).textTheme.titleMedium!.apply(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onBackground
-                      .withOpacity(0.75),
-                ),
-          ),
-          const SizedBox(height: 16.0),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +52,10 @@ class _MonitorState extends State<Monitor> {
             } else if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return _buildEmptyScreen();
+              return ScreenPlaceholder(
+                asset: "assets/images/illust_no_monitored.svg",
+                text: "No users under monitoring",
+              );
             }
             return ListView.builder(
                 shrinkWrap: true,
