@@ -8,6 +8,7 @@ import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/health_confirm_dialog.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
+import 'package:iskolarsafe/components/screen_placeholder.dart';
 import 'package:iskolarsafe/components/user_details.dart';
 import 'package:iskolarsafe/dummy_info.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
@@ -25,28 +26,6 @@ class Quarantine extends StatefulWidget {
 }
 
 class _QuarantineState extends State<Quarantine> {
-  Widget _buildEmptyScreen() {
-    return Center(
-      // Show a message where the user can add an entry if list is empty
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Symbols.masks_rounded,
-              size: 72.0,
-              color:
-                  Theme.of(context).colorScheme.onBackground.withOpacity(0.75)),
-          const SizedBox(height: 8.0),
-          Text("No users under quarantine",
-              style: Theme.of(context).textTheme.titleMedium!.apply(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onBackground
-                      .withOpacity(0.75))),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> students =
@@ -76,7 +55,12 @@ class _QuarantineState extends State<Quarantine> {
                       ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return Expanded(child: _buildEmptyScreen());
+                    return const Expanded(
+                      child: ScreenPlaceholder(
+                        asset: "assets/images/illust_no_quarantine.svg",
+                        text: "No users under quarantine",
+                      ),
+                    );
                   }
 
                   return ListView.builder(
