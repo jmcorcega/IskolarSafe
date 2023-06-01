@@ -47,45 +47,62 @@ class _HomeState extends State<Home> {
     return _buildHomeScreen(context);
   }
 
-  Scaffold showHome(BuildContext context) {
-    return Scaffold(
-      body: [
-        Entries(),
-        Logs(),
-        Search(),
-        Quarantine(),
-        Monitor()
-      ][_selectedTabIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedTabIndex,
-        onDestinationSelected: (int index) {
-          setState(() {
-            _selectedTabIndex = index;
-          });
-        },
-        destinations: const <NavigationDestination>[
-          NavigationDestination(
-            icon: Icon(Symbols.home_rounded),
-            label: 'My Entries',
-          ),
-          NavigationDestination(
-            icon: Icon(Symbols.quick_reference_all_rounded),
-            label: 'Logs',
-          ),
-          NavigationDestination(
-            icon: Icon(Symbols.face_rounded),
-            label: 'Students',
-          ),
-          NavigationDestination(
-            icon: Icon(Symbols.medical_mask_rounded),
-            label: 'Quarantine',
-          ),
-          NavigationDestination(
-            icon: Icon(Symbols.coronavirus_rounded),
-            label: 'Monitor',
-          ),
-        ],
+  Scaffold _buildHomeScreen(BuildContext context) {
+    IskolarType userType = context.read<AccountsProvider>().userInfo!.type;
+    List<Widget> screens = [Entries()];
+    List<NavigationDestination> destinations = [
+      NavigationDestination(
+        icon: Icon(Symbols.home_rounded),
+        label: 'My Entries',
       ),
+    ];
+
+    if (userType != IskolarType.student) {
+      screens.add(Logs());
+      destinations.add(
+        NavigationDestination(
+          icon: Icon(Symbols.quick_reference_all_rounded),
+          label: 'Logs',
+        ),
+      );
+
+      if (userType == IskolarType.admin) {
+        screens.add(Search());
+        screens.add(Quarantine());
+        screens.add(Monitor());
+
+        destinations.addAll(
+          [
+            NavigationDestination(
+              icon: Icon(Symbols.face_rounded),
+              label: 'Students',
+            ),
+            NavigationDestination(
+              icon: Icon(Symbols.medical_mask_rounded),
+              label: 'Quarantine',
+            ),
+            NavigationDestination(
+              icon: Icon(Symbols.coronavirus_rounded),
+              label: 'Monitor',
+            ),
+          ],
+        );
+      }
+    }
+
+    return Scaffold(
+      body: screens[_selectedTabIndex],
+      bottomNavigationBar: userType == IskolarType.student
+          ? null
+          : NavigationBar(
+              selectedIndex: _selectedTabIndex,
+              onDestinationSelected: (int index) {
+                setState(() {
+                  _selectedTabIndex = index;
+                });
+              },
+              destinations: destinations,
+            ),
     );
   }
 }
