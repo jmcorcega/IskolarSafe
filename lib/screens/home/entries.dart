@@ -174,25 +174,6 @@ class _EntriesState extends State<Entries> {
                                   .apply(color: _getColor(entry.verdict)),
                             ),
                             onTap: () {
-                              // showModalBottomSheet(
-                              //   context: context,
-                              //   isScrollControlled: true,
-                              //   builder: (context) =>
-                              //       DraggableScrollableSheet(
-                              //           initialChildSize: 0.45,
-                              //           maxChildSize: 0.95,
-                              //           minChildSize: 0.4,
-                              //           expand: false,
-                              //           builder:
-                              //               (context, scrollController) {
-                              //             return SingleChildScrollView(
-                              //               controller: scrollController,
-                              //               child: EntryModal(
-                              //                 entry: entry,
-                              //               ),
-                              //             );
-                              //           }),
-                              // );
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -279,7 +260,15 @@ class _EntriesState extends State<Entries> {
                           .labelMedium!
                           .apply(color: _getColor(entry.verdict)),
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditDeleteEntry(
+                              entry: entry,
+                            ),
+                          ));
+                    },
                   );
                 }),
           );
