@@ -2,6 +2,7 @@ import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
+import 'package:iskolarsafe/theme.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:iskolarsafe/models/entry_model.dart';
 
@@ -823,7 +824,8 @@ class EditRequest extends StatelessWidget {
         return Colors.green;
       }
     }
-    return Colors.transparent;
+
+    return Colors.red;
   }
 
   Color _changeRespiratoryChipColor(RespiratorySymptom symptom) {
@@ -838,7 +840,8 @@ class EditRequest extends StatelessWidget {
         return Colors.green;
       }
     }
-    return Colors.transparent;
+
+    return Colors.red;
   }
 
   Color _changeOtherChipColor(OtherSymptom symptom) {
@@ -853,7 +856,8 @@ class EditRequest extends StatelessWidget {
         return Colors.green;
       }
     }
-    return Colors.transparent;
+
+    return Colors.red;
   }
 
   Color _changeRadioColor(bool radio, bool value, bool orig, bool updated) {
@@ -863,7 +867,11 @@ class EditRequest extends StatelessWidget {
       } else if (updated == value) {
         return Colors.green;
       }
+    } else {
+      if (orig == value) {
+        return Colors.red;
+      }
     }
-    return (radio) ? Color(0xFF8A1538) : Colors.black;
+    return (radio) ? Colors.red : Colors.black;
   }
 }

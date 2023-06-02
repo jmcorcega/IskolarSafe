@@ -10,17 +10,21 @@ import 'package:provider/provider.dart';
 
 class EditDeleteEntry extends StatefulWidget {
   // static const String routeName = "/entry/new";
-  late HealthEntry entry;
-  EditDeleteEntry({Key? key, required this.entry}) : super(key: key);
+  final HealthEntry entry;
+  const EditDeleteEntry({Key? key, required this.entry}) : super(key: key);
 
   @override
-  _EditDeleteEntryState createState() => _EditDeleteEntryState();
+  _EditDeleteEntryState createState() => _EditDeleteEntryState(entry: entry);
 }
 
 class _EditDeleteEntryState extends State<EditDeleteEntry> {
   late final IskolarInfo? _userInfo = context.read<AccountsProvider>().userInfo;
   final _entryFormState = GlobalKey<FormState>();
 
+  final HealthEntry entry;
+
+  _EditDeleteEntryState({required this.entry});
+  // final List<FluSymptom>? origFluSymptoms = [];
   List<FluSymptom> fluSymptoms = [];
   List<RespiratorySymptom> respiratorySymptoms = [];
   List<OtherSymptom> otherSymptoms = [];
@@ -98,7 +102,9 @@ class _EditDeleteEntryState extends State<EditDeleteEntry> {
     return true;
   }
 
-  bool _checkChanges() {
+  bool _checkChanges(List<FluSymptom> origFluSymptoms) {
+    print(
+        "change ${fluSymptoms} \t orig ${origFluSymptoms} \t CHANGESSSSSSSSSS \t ${DeepCollectionEquality().equals(fluSymptoms, origFluSymptoms!)}");
     if (const DeepCollectionEquality()
             .equals(fluSymptoms, widget.entry.fluSymptoms!) ==
         false) {
@@ -106,10 +112,10 @@ class _EditDeleteEntryState extends State<EditDeleteEntry> {
     }
 
     if (const DeepCollectionEquality()
-            .equals(respiratorySymptoms, widget.entry.respiratorySymptoms!) ==
+            .equals(respiratorySymptoms, entry.respiratorySymptoms!) ==
         false) return true;
     if (const DeepCollectionEquality()
-            .equals(otherSymptoms, widget.entry.otherSymptoms!) ==
+            .equals(otherSymptoms, entry.otherSymptoms!) ==
         false) return true;
     if (isExposed != widget.entry.exposed) return true;
     if (isWaitingForRtPcr != widget.entry.waitingForRtPcr) return true;
@@ -120,7 +126,7 @@ class _EditDeleteEntryState extends State<EditDeleteEntry> {
     return false;
   }
 
-  Widget _buttons() {
+  Widget _buttons(List<FluSymptom> origFluSymptoms) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -130,7 +136,7 @@ class _EditDeleteEntryState extends State<EditDeleteEntry> {
             minimumSize: const Size(225.0, 47.5),
           ),
           onPressed: () {
-            if (_checkChanges()) {
+            if (_checkChanges(origFluSymptoms)) {
               showDialog<String>(
                 context: context,
                 builder: (BuildContext context) => AlertDialog(
@@ -208,14 +214,6 @@ class _EditDeleteEntryState extends State<EditDeleteEntry> {
 
   @override
   Widget build(BuildContext context) {
-    fluSymptoms = widget.entry.fluSymptoms!;
-    respiratorySymptoms = widget.entry.respiratorySymptoms!;
-    otherSymptoms = widget.entry.otherSymptoms!;
-    isExposed = isExposed ?? widget.entry.exposed;
-    isWaitingForRtPcr = isWaitingForRtPcr ?? widget.entry.waitingForRtPcr;
-    isWaitingForRapidAntigen =
-        isWaitingForRapidAntigen ?? widget.entry.waitingForRapidAntigen;
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -230,6 +228,14 @@ class _EditDeleteEntryState extends State<EditDeleteEntry> {
   }
 
   Widget buildForm(BuildContext context) {
+    final List<FluSymptom> origFluSymptoms = entry.fluSymptoms!;
+    fluSymptoms = origFluSymptoms;
+    respiratorySymptoms = entry.respiratorySymptoms!;
+    otherSymptoms = entry.otherSymptoms!;
+    isExposed = isExposed ?? entry.exposed;
+    isWaitingForRtPcr = isWaitingForRtPcr ?? entry.waitingForRtPcr;
+    isWaitingForRapidAntigen =
+        isWaitingForRapidAntigen ?? entry.waitingForRapidAntigen;
     return Form(
       key: _entryFormState,
       child: SingleChildScrollView(
@@ -590,7 +596,7 @@ class _EditDeleteEntryState extends State<EditDeleteEntry> {
               ],
             ),
             const SizedBox(height: 72.0),
-            _buttons(),
+            _buttons(origFluSymptoms),
             const SizedBox(height: 72.0),
           ],
         ),
