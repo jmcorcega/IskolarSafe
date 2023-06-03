@@ -80,8 +80,7 @@ class AccountsProvider with ChangeNotifier {
 
   Future<void> updateStatus(
       IskolarHealthStatus status, IskolarInfo user) async {
-    String stat = IskolarHealthStatus.toJson(status);
-    await _accounts.updateHealthStatus(stat, user);
+    await _accounts.updateHealthStatus(status, user);
 
     notifyListeners();
   }

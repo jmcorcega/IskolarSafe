@@ -69,10 +69,30 @@ class AccountsAPI {
   }
 
   //update users' health status
-  Future<bool> updateHealthStatus(String status, IskolarInfo user) async {
+  Future<bool> updateHealthStatus(
+      IskolarHealthStatus status, IskolarInfo user) async {
     try {
-      await _db.collection(_storeName).doc(user.id).update({"status": status});
+      int dateQuarantined = 0;
+      int dateMonitored = 0;
 
+      switch (status) {
+        case IskolarHealthStatus.quarantined:
+          dateQuarantined =
+              Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
+          break;
+        case IskolarHealthStatus.monitored:
+          dateMonitored =
+              Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
+          break;
+        default:
+          break;
+      }
+
+      await _db.collection(_storeName).doc(user.id).update({
+        "status": IskolarHealthStatus.toJson(status),
+        "dateQuarantined": dateQuarantined,
+        "dateMonitored": dateMonitored,
+      });
       return true;
     } on FirebaseException catch (e) {
       // print("${e.code} : ${e.message} ");
