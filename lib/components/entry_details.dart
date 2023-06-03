@@ -691,7 +691,7 @@ class HealthEntryDetails extends StatelessWidget {
           ),
           onPressed: () => RequestConfirmDialog.confirmDialog(
             context: context,
-            user: user,
+            entry: entry,
             type: entry.forDeletion
                 ? RequestConfirmDialogType.approveDelete
                 : RequestConfirmDialogType.approveEdit,
@@ -708,7 +708,7 @@ class HealthEntryDetails extends StatelessWidget {
           ),
           onPressed: () => RequestConfirmDialog.confirmDialog(
             context: context,
-            user: user,
+            entry: entry,
             type: entry.forDeletion
                 ? RequestConfirmDialogType.rejectDelete
                 : RequestConfirmDialogType.rejectEdit,

@@ -44,6 +44,53 @@ class HealthEntriesAPI {
     }
   }
 
+  // Update entry in the firestore
+  Future<bool> updateEntry(Map<String, dynamic> entry) async {
+    try {
+      await store.collection(_storeName).doc(entry['id']).update(entry);
+      await store
+          .collection(_storeName)
+          .doc(entry['id'])
+          .update({"updated": null});
+
+      return true;
+    } on FirebaseException catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return false;
+    }
+  }
+
+  // Update entry in the firestore
+  Future<bool> deleteEntry(Map<String, dynamic> entry) async {
+    try {
+      await store.collection(_storeName).doc(entry['id']).delete();
+      return true;
+    } on FirebaseException catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return false;
+    }
+  }
+
+  // Reject an entry request in the firestore
+  Future<bool> rejectRequest(Map<String, dynamic> entry) async {
+    try {
+      await store
+          .collection(_storeName)
+          .doc(entry['id'])
+          .update({"updated": null, "forDeletion": false});
+      return true;
+    } on FirebaseException catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return false;
+    }
+  }
+
   // Edit entry in the firestore
   Future<bool> editEntry(Map<String, dynamic> entry) async {
     try {

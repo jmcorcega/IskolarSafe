@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:iskolarsafe/models/entry_model.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
+import 'package:iskolarsafe/providers/entries_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
@@ -13,10 +15,10 @@ enum RequestConfirmDialogType {
 }
 
 class _RequestConfirmDialog extends StatelessWidget {
-  final IskolarInfo userInfo;
+  final HealthEntry entry;
   final RequestConfirmDialogType type;
   final bool isModal;
-  const _RequestConfirmDialog(this.userInfo, this.type, this.isModal);
+  const _RequestConfirmDialog(this.entry, this.type, this.isModal);
 
   String getTitle() {
     switch (type) {
@@ -105,20 +107,47 @@ class _RequestConfirmDialog extends StatelessWidget {
             Navigator.pop(context);
             switch (type) {
               case RequestConfirmDialogType.approveEdit:
-                // TODO: Approve edit
-                if (isModal) Navigator.pop(context);
+                context.read<HealthEntryProvider>().updateEntry(entry.updated!);
+                if (context.mounted &&
+                    context.read<HealthEntryProvider>().status) {
+                  Fluttertoast.showToast(
+                    msg: "Edit request approved successfully.",
+                  );
+                  if (isModal) Navigator.pop(context);
+                } else {
+                  Fluttertoast.showToast(
+                    msg: "An error has occured. Please try again later.",
+                  );
+                }
                 break;
               case RequestConfirmDialogType.approveDelete:
-                // TODO: Approve delete
-                if (isModal) Navigator.pop(context);
+                context.read<HealthEntryProvider>().deleteEntry(entry);
+                if (context.mounted &&
+                    context.read<HealthEntryProvider>().status) {
+                  Fluttertoast.showToast(
+                    msg: "Delete request approved successfully.",
+                  );
+                  if (isModal) Navigator.pop(context);
+                } else {
+                  Fluttertoast.showToast(
+                    msg: "An error has occured. Please try again later.",
+                  );
+                }
                 break;
               case RequestConfirmDialogType.rejectEdit:
-                // TODO: Reject edit
-                if (isModal) Navigator.pop(context);
-                break;
               case RequestConfirmDialogType.rejectDelete:
-                // TODO: Reject delete
-                if (isModal) Navigator.pop(context);
+                context.read<HealthEntryProvider>().rejectRequest(entry);
+                if (context.mounted &&
+                    context.read<HealthEntryProvider>().status) {
+                  Fluttertoast.showToast(
+                    msg: "Request rejected successfully.",
+                  );
+                  if (isModal) Navigator.pop(context);
+                } else {
+                  Fluttertoast.showToast(
+                    msg: "An error has occured. Please try again later.",
+                  );
+                }
                 break;
             }
           },
@@ -133,13 +162,13 @@ class _RequestConfirmDialog extends StatelessWidget {
 class RequestConfirmDialog {
   static void confirmDialog(
       {required BuildContext context,
-      required IskolarInfo user,
+      required HealthEntry entry,
       required RequestConfirmDialogType type,
       bool modal = false}) {
     showDialog<String>(
       context: context,
       builder: (BuildContext context) =>
-          _RequestConfirmDialog(user, type, modal),
+          _RequestConfirmDialog(entry, type, modal),
     );
   }
 }

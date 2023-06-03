@@ -39,6 +39,24 @@ class HealthEntryProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Updates an entry to the database.
+  Future<void> updateEntry(HealthEntry entry) async {
+    _status = await api.updateEntry(HealthEntry.toJson(entry));
+    notifyListeners();
+  }
+
+  /// Deletes an entry to the database.
+  Future<void> deleteEntry(HealthEntry entry) async {
+    _status = await api.deleteEntry(HealthEntry.toJson(entry));
+    notifyListeners();
+  }
+
+  /// Rejects an entry request in the database.
+  Future<void> rejectRequest(HealthEntry entry) async {
+    _status = await api.rejectRequest(HealthEntry.toJson(entry));
+    notifyListeners();
+  }
+
   /// Edits an entry to the database.
   Future<void> editEntry(HealthEntry entry) async {
     _status = await api.editEntry(HealthEntry.toJson(entry));

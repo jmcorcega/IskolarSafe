@@ -122,7 +122,7 @@ class _RequestsState extends State<Requests> {
               backgroundColor: Theme.of(context).colorScheme.primary),
           onPressed: () => RequestConfirmDialog.confirmDialog(
             context: context,
-            user: entry.userInfo,
+            entry: entry,
             type: entry.forDeletion
                 ? RequestConfirmDialogType.approveDelete
                 : RequestConfirmDialogType.approveEdit,
@@ -137,7 +137,7 @@ class _RequestsState extends State<Requests> {
               foregroundColor: Theme.of(context).colorScheme.tertiary),
           onPressed: () => RequestConfirmDialog.confirmDialog(
             context: context,
-            user: entry.userInfo,
+            entry: entry,
             type: entry.forDeletion
                 ? RequestConfirmDialogType.rejectDelete
                 : RequestConfirmDialogType.rejectEdit,
