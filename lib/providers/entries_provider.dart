@@ -44,4 +44,10 @@ class HealthEntryProvider with ChangeNotifier {
     _status = await api.editEntry(HealthEntry.toJson(entry));
     notifyListeners();
   }
+
+  /// Edits an entry to the database.
+  Future<void> requestDeletion(HealthEntry entry) async {
+    _status = await api.requestDeletion(entry);
+    notifyListeners();
+  }
 }

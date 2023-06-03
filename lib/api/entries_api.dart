@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:iskolarsafe/models/entry_model.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 
 class HealthEntriesAPI {
@@ -50,6 +51,23 @@ class HealthEntriesAPI {
           .collection(_storeName)
           .doc(entry['id'])
           .update({"updated": entry});
+
+      return true;
+    } on FirebaseException catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return false;
+    }
+  }
+
+  // Edit entry for deletion in the firestore
+  Future<bool> requestDeletion(HealthEntry entry) async {
+    try {
+      await store
+          .collection(_storeName)
+          .doc(entry.id)
+          .update({"forDeletion": true});
 
       return true;
     } on FirebaseException catch (e) {
