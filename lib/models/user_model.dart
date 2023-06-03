@@ -98,6 +98,9 @@ class IskolarInfo {
   IskolarType type;
   IskolarHealthStatus status;
 
+  DateTime? dateQuarantined;
+  DateTime? dateMonitored;
+
   IskolarInfo({
     this.id,
     required this.firstName,
@@ -110,6 +113,8 @@ class IskolarInfo {
     required this.allergies,
     this.type = IskolarType.student,
     this.status = IskolarHealthStatus.healthy,
+    this.dateQuarantined,
+    this.dateMonitored,
     this.photoUrl,
   });
 
@@ -130,6 +135,10 @@ class IskolarInfo {
       allergies:
           (json['allergies'] as List).map((item) => item as String).toList(),
       status: IskolarHealthStatus.fromJson(json['status']),
+      dateQuarantined:
+          DateTime.fromMillisecondsSinceEpoch(json['dateQuarantined'] ?? 0),
+      dateMonitored:
+          DateTime.fromMillisecondsSinceEpoch(json['dateMonitored'] ?? 0),
     );
   }
 
@@ -154,6 +163,12 @@ class IskolarInfo {
       'condition': user.condition,
       'allergies': user.allergies,
       'status': IskolarHealthStatus.toJson(user.status),
+      'dateQuarantined': user.dateQuarantined != null
+          ? Timestamp.fromDate(user.dateQuarantined!).millisecondsSinceEpoch
+          : null,
+      'dateMonitored': user.dateMonitored != null
+          ? Timestamp.fromDate(user.dateMonitored!).millisecondsSinceEpoch
+          : null,
     };
   }
 }
