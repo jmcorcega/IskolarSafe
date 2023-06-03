@@ -8,6 +8,13 @@ extension StringExtension on String {
             "${element[0].toUpperCase()}${element.substring(1).toLowerCase()}")
         .join(" ");
   }
+
+  String capitalizeFirstLetter() {
+    if (trim().isEmpty) {
+      return '';
+    }
+    return "${substring(0, 1).toUpperCase()}${substring(1)}";
+  }
 }
 
 /// https://stackoverflow.com/a/61867272

@@ -22,7 +22,8 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: ((context) => AccountsProvider())),
-        ChangeNotifierProvider(create: ((context) => HealthEntryProvider())),
+        ChangeNotifierProvider(
+            create: ((context) => HealthEntryProvider(context))),
       ],
       child: const IskolarSafeApp(),
     ),

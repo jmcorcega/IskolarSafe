@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/models/entry_model.dart';
 import 'package:iskolarsafe/models/user_model.dart';
@@ -7,25 +8,26 @@ import 'package:iskolarsafe/providers/entries_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
-class NewEntry extends StatefulWidget {
-  static const String routeName = "/entry/new";
-  const NewEntry({Key? key}) : super(key: key);
+class EditDeleteEntry extends StatefulWidget {
+  // static const String routeName = "/entry/new";
+  late HealthEntry entry;
+  EditDeleteEntry({Key? key, required this.entry}) : super(key: key);
 
   @override
-  _NewEntryState createState() => _NewEntryState();
+  _EditDeleteEntryState createState() => _EditDeleteEntryState();
 }
 
-class _NewEntryState extends State<NewEntry> {
-  late final IskolarInfo? userInfo = context.read<AccountsProvider>().userInfo;
+class _EditDeleteEntryState extends State<EditDeleteEntry> {
+  late final IskolarInfo? _userInfo = context.read<AccountsProvider>().userInfo;
   final _entryFormState = GlobalKey<FormState>();
 
   List<FluSymptom> fluSymptoms = [];
   List<RespiratorySymptom> respiratorySymptoms = [];
   List<OtherSymptom> otherSymptoms = [];
 
-  bool isExposed = false;
-  bool isWaitingForRtPcr = false;
-  bool isWaitingForRapidAntigen = false;
+  bool? isExposed;
+  bool? isWaitingForRtPcr;
+  bool? isWaitingForRapidAntigen;
 
   bool _deferEditing = false;
 
@@ -53,50 +55,23 @@ class _NewEntryState extends State<NewEntry> {
     setState(() {
       _deferEditing = true;
     });
+
     if (_entryFormState.currentState!.validate()) {
       // Save the form
       _entryFormState.currentState?.save();
 
       HealthEntry newEntry = HealthEntry(
-        userInfo: userInfo!,
-        userId: userInfo!.id!,
+        userInfo: _userInfo!,
+        userId: _userInfo!.id!,
         dateGenerated: DateTime.now(),
         fluSymptoms: fluSymptoms,
         respiratorySymptoms: respiratorySymptoms,
         otherSymptoms: otherSymptoms,
-        exposed: isExposed,
-        waitingForRtPcr: isWaitingForRtPcr,
-        waitingForRapidAntigen: isWaitingForRapidAntigen,
+        exposed: isExposed!,
+        waitingForRtPcr: isWaitingForRtPcr!,
+        waitingForRapidAntigen: isWaitingForRapidAntigen!,
         verdict: getVerdict(),
       );
-
-      if (newEntry.verdict == IskolarHealthStatus.notWell) {
-        await context
-            .read<AccountsProvider>()
-            .updateStatus(IskolarHealthStatus.monitored, userInfo!);
-      }
-
-      if (context.mounted) {
-        await context.read<HealthEntryProvider>().addEntry(newEntry);
-        if (context.mounted) {
-          var status = context.read<HealthEntryProvider>().status;
-
-          if (status) {
-            const snackBar = SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text('New entry added successfully.'),
-            );
-
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            Navigator.pop(context);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text('An error has occured. Try again later.'),
-            ));
-          }
-        }
-      }
     }
 
     setState(() {
@@ -109,8 +84,6 @@ class _NewEntryState extends State<NewEntry> {
     bool respiratoryNone =
         respiratorySymptoms.contains(RespiratorySymptom.none);
     bool otherNone = otherSymptoms.contains(OtherSymptom.none);
-
-    if (_deferEditing) return false;
 
     if (symptom == FluSymptom.none ||
         symptom == RespiratorySymptom.none ||
@@ -125,32 +98,138 @@ class _NewEntryState extends State<NewEntry> {
     return true;
   }
 
+  bool _checkChanges() {
+    if (const DeepCollectionEquality()
+            .equals(fluSymptoms, widget.entry.fluSymptoms!) ==
+        false) {
+      return true;
+    }
+
+    if (const DeepCollectionEquality()
+            .equals(respiratorySymptoms, widget.entry.respiratorySymptoms!) ==
+        false) return true;
+    if (const DeepCollectionEquality()
+            .equals(otherSymptoms, widget.entry.otherSymptoms!) ==
+        false) return true;
+    if (isExposed != widget.entry.exposed) return true;
+    if (isWaitingForRtPcr != widget.entry.waitingForRtPcr) return true;
+    if (isWaitingForRapidAntigen != widget.entry.waitingForRapidAntigen) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Widget _buttons() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        OutlinedButton.icon(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.primary,
+            minimumSize: const Size(225.0, 47.5),
+          ),
+          onPressed: () {
+            if (_checkChanges()) {
+              showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  content: Text("Are you sure you want to edit your entry?",
+                      style: Theme.of(context).textTheme.bodyMedium),
+                  actions: <Widget>[
+                    TextButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Symbols.close_rounded),
+                      label: const Text('Cancel'),
+                    ),
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Theme.of(context).colorScheme.primary,
+                        minimumSize: const Size(225.0, 47.5),
+                      ),
+                      onPressed: () {},
+                      icon: const Icon(Symbols.scan_delete_rounded),
+                      label: const Text('Send Edit Request'),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text("No changes made! Edit Request not sent!")));
+              Navigator.pop(context);
+            }
+          },
+          icon: const Icon(Symbols.edit_document_rounded),
+          label: const Text("Send Edit Request"),
+        ),
+        const SizedBox(height: 12.0),
+        FilledButton.icon(
+          style: FilledButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            minimumSize: const Size(225.0, 47.5),
+          ),
+          onPressed: () {
+            showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                content: Text("Are you sure you want to delete your entry?",
+                    style: Theme.of(context).textTheme.bodyMedium),
+                actions: <Widget>[
+                  TextButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Symbols.close_rounded),
+                    label: const Text('Cancel'),
+                  ),
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.primary,
+                      minimumSize: const Size(225.0, 47.5),
+                    ),
+                    onPressed: () {},
+                    icon: const Icon(Symbols.scan_delete_rounded),
+                    label: const Text('Send Delete Request'),
+                  ),
+                ],
+              ),
+            );
+          },
+          icon: const Icon(Symbols.scan_delete_rounded, size: 18.0),
+          label: const Text("Send Delete Request"),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    fluSymptoms = widget.entry.fluSymptoms!;
+    respiratorySymptoms = widget.entry.respiratorySymptoms!;
+    otherSymptoms = widget.entry.otherSymptoms!;
+    isExposed = isExposed ?? widget.entry.exposed;
+    isWaitingForRtPcr = isWaitingForRtPcr ?? widget.entry.waitingForRtPcr;
+    isWaitingForRapidAntigen =
+        isWaitingForRapidAntigen ?? widget.entry.waitingForRapidAntigen;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: const AppBarHeader(
           icon: Symbols.add_circle_rounded,
-          title: "New Entry",
+          title: "Entry",
           hasAction: false,
         ),
       ),
-      body: _buildForm(context),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor:
-            _deferEditing ? Theme.of(context).colorScheme.background : null,
-        foregroundColor: _deferEditing
-            ? Theme.of(context).colorScheme.onBackground.withOpacity(0.75)
-            : null,
-        onPressed: _deferEditing ? null : saveEntry,
-        label: const Text("Submit entry"),
-        icon: const Icon(Symbols.send_rounded),
-      ),
+      body: buildForm(context),
     );
   }
 
-  Widget _buildForm(BuildContext context) {
+  Widget buildForm(BuildContext context) {
     return Form(
       key: _entryFormState,
       child: SingleChildScrollView(
@@ -357,13 +436,11 @@ class _NewEntryState extends State<NewEntry> {
                     leading: Radio<bool>(
                       value: false,
                       groupValue: isExposed,
-                      onChanged: _deferEditing
-                          ? null
-                          : (bool? value) {
-                              setState(() {
-                                isExposed = value!;
-                              });
-                            },
+                      onChanged: (bool? value) {
+                        setState(() {
+                          isExposed = value!;
+                        });
+                      },
                     ),
                   ),
                 ),
@@ -373,13 +450,11 @@ class _NewEntryState extends State<NewEntry> {
                     leading: Radio<bool>(
                       value: true,
                       groupValue: isExposed,
-                      onChanged: _deferEditing
-                          ? null
-                          : (bool? value) {
-                              setState(() {
-                                isExposed = value!;
-                              });
-                            },
+                      onChanged: (bool? value) {
+                        setState(() {
+                          isExposed = value!;
+                        });
+                      },
                     ),
                   ),
                 ),
@@ -425,13 +500,11 @@ class _NewEntryState extends State<NewEntry> {
                     leading: Radio<bool>(
                       value: false,
                       groupValue: isWaitingForRtPcr,
-                      onChanged: _deferEditing
-                          ? null
-                          : (bool? value) {
-                              setState(() {
-                                isWaitingForRtPcr = value!;
-                              });
-                            },
+                      onChanged: (bool? value) {
+                        setState(() {
+                          isWaitingForRtPcr = value!;
+                        });
+                      },
                     ),
                   ),
                 ),
@@ -441,13 +514,11 @@ class _NewEntryState extends State<NewEntry> {
                     leading: Radio<bool>(
                       value: true,
                       groupValue: isWaitingForRtPcr,
-                      onChanged: _deferEditing
-                          ? null
-                          : (bool? value) {
-                              setState(() {
-                                isWaitingForRtPcr = value!;
-                              });
-                            },
+                      onChanged: (bool? value) {
+                        setState(() {
+                          isWaitingForRtPcr = value!;
+                        });
+                      },
                     ),
                   ),
                 ),
@@ -494,13 +565,11 @@ class _NewEntryState extends State<NewEntry> {
                     leading: Radio<bool>(
                       value: false,
                       groupValue: isWaitingForRapidAntigen,
-                      onChanged: _deferEditing
-                          ? null
-                          : (bool? value) {
-                              setState(() {
-                                isWaitingForRapidAntigen = value!;
-                              });
-                            },
+                      onChanged: (bool? value) {
+                        setState(() {
+                          isWaitingForRapidAntigen = value!;
+                        });
+                      },
                     ),
                   ),
                 ),
@@ -510,18 +579,18 @@ class _NewEntryState extends State<NewEntry> {
                     leading: Radio<bool>(
                       value: true,
                       groupValue: isWaitingForRapidAntigen,
-                      onChanged: _deferEditing
-                          ? null
-                          : (bool? value) {
-                              setState(() {
-                                isWaitingForRapidAntigen = value!;
-                              });
-                            },
+                      onChanged: (bool? value) {
+                        setState(() {
+                          isWaitingForRapidAntigen = value!;
+                        });
+                      },
                     ),
                   ),
                 ),
               ],
             ),
+            const SizedBox(height: 72.0),
+            _buttons(),
             const SizedBox(height: 72.0),
           ],
         ),

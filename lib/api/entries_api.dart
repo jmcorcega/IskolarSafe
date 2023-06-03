@@ -10,17 +10,11 @@ class HealthEntriesAPI {
 
   // Get all entries from the database
   Stream<QuerySnapshot> getAllEntries(IskolarInfo userInfo) {
-    // Students can only access their own entries, which
-    // requires special handling for Cloud Firestore
-    if (userInfo.type == IskolarType.student) {
-      return store
-          .collection(_storeName)
-          .where('userId', isEqualTo: userInfo.id)
-          .orderBy('dateGenerated', descending: true)
-          .snapshots();
-    }
-
-    return store.collection(_storeName).snapshots();
+    return store
+        .collection(_storeName)
+        .where('userId', isEqualTo: userInfo.id)
+        .orderBy('dateGenerated', descending: true)
+        .snapshots();
   }
 
   // Add entry to the firestore

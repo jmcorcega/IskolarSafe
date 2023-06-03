@@ -49,6 +49,48 @@ class AccountsAPI {
     }
   }
 
+  // Gets all data from collection("users")
+  Stream<QuerySnapshot> getAllUsers() {
+    return _db.collection(_storeName).snapshots();
+  }
+
+  Stream<QuerySnapshot> getUsersUnderQuarantine() {
+    return _db
+        .collection(_storeName)
+        .where("status", isEqualTo: "quarantined")
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getUsersUnderMonitoring() {
+    return _db
+        .collection(_storeName)
+        .where("status", isEqualTo: "monitored")
+        .snapshots();
+  }
+
+  //update users' health status
+  Future<bool> updateHealthStatus(String status, IskolarInfo user) async {
+    try {
+      await _db.collection(_storeName).doc(user.id).update({"status": status});
+
+      return true;
+    } on FirebaseException catch (e) {
+      // print("${e.code} : ${e.message} ");
+      return false;
+    }
+  }
+
+  Future<bool> updateUserType(
+      Map<String, dynamic> userInfo, IskolarType type) async {
+    try {
+      userInfo["type"] = IskolarType.toJson(type);
+      await _db.collection(_storeName).doc(userInfo["id"]).update(userInfo);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<bool> updateUserInfo(
       {required Map<String, dynamic> userInfo, File? photoFile}) async {
     try {

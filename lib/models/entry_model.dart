@@ -26,13 +26,13 @@ enum FluSymptom {
 
     for (var i in js) {
       switch (i) {
-        case "FluSymptom.none":
+        case "none":
           list.add(FluSymptom.none);
           break;
-        case "FluSymptom.feverish":
+        case "feverish":
           list.add(FluSymptom.musclePains);
           break;
-        case "FluSymptom.colds":
+        case "colds":
           list.add(FluSymptom.musclePains);
           break;
       }

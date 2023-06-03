@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/models/user_model.dart';
+import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
 
 enum HealthConfirmDialogType {
   endMonitoring,
@@ -104,12 +106,22 @@ class _HealthConfirmDialog extends StatelessWidget {
               case HealthConfirmDialogType.endMonitoring:
               case HealthConfirmDialogType.endQuarantine:
                 // TODO: Set status to healthy
+                // userInfo.status = IskolarHealthStatus.healthy;
+                context
+                    .read<AccountsProvider>()
+                    .updateStatus(IskolarHealthStatus.healthy, userInfo);
                 break;
               case HealthConfirmDialogType.startMonitoring:
                 // TODO: Set status to monitoring
+                context
+                    .read<AccountsProvider>()
+                    .updateStatus(IskolarHealthStatus.monitored, userInfo);
                 break;
               case HealthConfirmDialogType.startQuarantine:
                 // TODO: Set status to quarantined
+                context
+                    .read<AccountsProvider>()
+                    .updateStatus(IskolarHealthStatus.quarantined, userInfo);
                 break;
             }
           },

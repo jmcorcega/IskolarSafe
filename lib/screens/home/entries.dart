@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
+import 'package:iskolarsafe/components/screen_placeholder.dart';
+import 'package:iskolarsafe/providers/accounts_provider.dart';
+import 'package:iskolarsafe/screens/home/edit_delete_entry.dart';
 import 'package:iskolarsafe/components/profile_modal.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
 import 'package:iskolarsafe/extensions.dart';
@@ -68,9 +71,14 @@ class _EntriesState extends State<Entries> {
 
   @override
   Widget build(BuildContext context) {
+    Stream<QuerySnapshot> entryStream =
+        context.watch<HealthEntryProvider>().entries;
+    IskolarInfo? userInfo = context.read<AccountsProvider>().userInfo;
+
     return Scaffold(
       appBar: AppBar(
-        leading: EditRequestButton(),
+        leading:
+            userInfo!.type == IskolarType.student ? null : EditRequestButton(),
         centerTitle: true,
         title: const AppBarHeader(
           icon: Symbols.home_rounded,
@@ -81,68 +89,125 @@ class _EntriesState extends State<Entries> {
           AppOptions(),
         ],
       ),
-      body: FutureBuilder(
-        future: context.read<HealthEntryProvider>().refetchEntries(),
+      body: StreamBuilder(
+        stream: entryStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return _buildNoInternetScreen();
+            return const ScreenPlaceholder(
+              asset: "assets/images/illust_no_connection.svg",
+              text: "An error has occured. Try again later.",
+            );
           } else if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(),
             );
+          } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return ScreenPlaceholder(
+              asset: "assets/images/illust_no_entry.svg",
+              text: "Add your very first entry today",
+              button: TextButton.icon(
+                onPressed: () {
+                  Navigator.pushNamed(context, NewEntry.routeName);
+                },
+                icon: const Icon(Symbols.add_rounded),
+                label: const Text("New entry"),
+              ),
+            );
           }
 
-          Stream<QuerySnapshot> entryStream =
-              context.watch<HealthEntryProvider>().entries;
-          return StreamBuilder(
-            stream: entryStream,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return _buildNoInternetScreen();
-              } else if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return _buildEmptyScreen();
-              }
+          _canShowMyProfile = HealthEntry.fromJson(
+                  snapshot.data?.docs.first.data() as Map<String, dynamic>)
+              .dateGenerated
+              .isToday();
 
-              _canShowMyProfile = HealthEntry.fromJson(
-                      snapshot.data?.docs.first.data() as Map<String, dynamic>)
-                  .dateGenerated
-                  .isToday();
-
-              return Scaffold(
-                floatingActionButton: _canShowMyProfile
-                    ? FloatingActionButton.extended(
-                        onPressed: () {
-                          _showProfileModal(
-                              context,
-                              snapshot.data?.docs.first.data()
-                                  as Map<String, dynamic>);
-                        },
-                        label: const Text("My profile"),
-                        icon: const Icon(Symbols.person_filled_rounded),
-                      )
-                    : FloatingActionButton.extended(
-                        onPressed: () {
-                          Navigator.pushNamed(context, NewEntry.routeName);
-                        },
-                        label: const Text("New entry"),
-                        icon: const Icon(Symbols.add_rounded),
-                      ),
-                body: ListView.builder(
-                    // Build the list using ListView.builder
-                    itemCount: snapshot.data?.docs.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      HealthEntry entry = HealthEntry.fromJson(
-                          snapshot.data?.docs[index].data()
+          return Scaffold(
+            floatingActionButton: _canShowMyProfile
+                ? FloatingActionButton.extended(
+                    onPressed: () {
+                      _showProfileModal(
+                          context,
+                          snapshot.data?.docs.first.data()
                               as Map<String, dynamic>);
-                      entry.id = snapshot.data?.docs[index].id;
+                    },
+                    label: const Text("My profile"),
+                    icon: const Icon(Symbols.person_filled_rounded),
+                  )
+                : FloatingActionButton.extended(
+                    onPressed: () {
+                      Navigator.pushNamed(context, NewEntry.routeName);
+                    },
+                    label: const Text("New entry"),
+                    icon: const Icon(Symbols.add_rounded),
+                  ),
+            body: ListView.builder(
+                // Build the list using ListView.builder
+                itemCount: snapshot.data?.docs.length,
+                itemBuilder: (BuildContext context, int index) {
+                  HealthEntry entry = HealthEntry.fromJson(
+                      snapshot.data?.docs[index].data()
+                          as Map<String, dynamic>);
+                  entry.id = snapshot.data?.docs[index].id;
 
-                      if (index == 0) {
-                        if (_canShowMyProfile) {
-                          return Padding(
+                  if (index == 0) {
+                    if (_canShowMyProfile) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                        child: Card(
+                          child: ListTile(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12.0)),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 24.0,
+                              vertical: 8.0,
+                            ),
+                            leading: _getIcon(entry.verdict),
+                            title: Text(entry.dateGenerated
+                                .relativeTime(context)
+                                .capitalizeFirstLetter()),
+                            subtitle: Text(
+                              _getStatusString(entry.verdict),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .apply(color: _getColor(entry.verdict)),
+                            ),
+                            onTap: () {
+                              // showModalBottomSheet(
+                              //   context: context,
+                              //   isScrollControlled: true,
+                              //   builder: (context) =>
+                              //       DraggableScrollableSheet(
+                              //           initialChildSize: 0.45,
+                              //           maxChildSize: 0.95,
+                              //           minChildSize: 0.4,
+                              //           expand: false,
+                              //           builder:
+                              //               (context, scrollController) {
+                              //             return SingleChildScrollView(
+                              //               controller: scrollController,
+                              //               child: EntryModal(
+                              //                 entry: entry,
+                              //               ),
+                              //             );
+                              //           }),
+                              // );
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditDeleteEntry(
+                                      entry: entry,
+                                    ),
+                                  ));
+                            },
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Column(
+                        children: [
+                          Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 18.0),
                             child: Card(
@@ -155,129 +220,70 @@ class _EntriesState extends State<Entries> {
                                   horizontal: 24.0,
                                   vertical: 8.0,
                                 ),
-                                leading: _getIcon(entry.verdict),
-                                title: Text(
-                                    entry.dateGenerated.relativeTime(context)),
+                                leading: Icon(
+                                  Symbols.circle_rounded,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withOpacity(0.75),
+                                ),
+                                title: Text("No Entry Today"),
                                 subtitle: Text(
-                                  _getStatusString(entry.verdict),
+                                  "Add entry today to generate QR code",
                                   style: Theme.of(context)
                                       .textTheme
                                       .labelMedium!
-                                      .apply(color: _getColor(entry.verdict)),
+                                      .apply(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withOpacity(0.75),
+                                      ),
                                 ),
                                 onTap: () {},
                               ),
                             ),
-                          );
-                        } else {
-                          return Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 18.0),
-                                child: Card(
-                                  child: ListTile(
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(12.0)),
-                                    ),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 24.0,
-                                      vertical: 8.0,
-                                    ),
-                                    leading: Icon(
-                                      Symbols.circle_rounded,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface
-                                          .withOpacity(0.75),
-                                    ),
-                                    title: Text("No Entry Today"),
-                                    subtitle: Text(
-                                      "Add entry today to generate QR code",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelMedium!
-                                          .apply(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface
-                                                .withOpacity(0.75),
-                                          ),
-                                    ),
-                                    onTap: () {},
-                                  ),
-                                ),
-                              ),
-                              ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 24.0),
-                                leading: _getIcon(entry.verdict),
-                                title: Text(
-                                    entry.dateGenerated.relativeTime(context)),
-                                subtitle: Text(
-                                  _getStatusString(entry.verdict),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelMedium!
-                                      .apply(color: _getColor(entry.verdict)),
-                                ),
-                                onTap: () {},
-                              )
-                            ],
-                          );
-                        }
-                      }
-
-                      return ListTile(
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 24.0),
-                        leading: _getIcon(entry.verdict),
-                        title: Text(entry.dateGenerated.relativeTime(context)),
-                        subtitle: Text(
-                          _getStatusString(entry.verdict),
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelMedium!
-                              .apply(color: _getColor(entry.verdict)),
-                        ),
-                        onTap: () {},
+                          ),
+                          ListTile(
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 24.0),
+                            leading: _getIcon(entry.verdict),
+                            title: Text(entry.dateGenerated
+                                .relativeTime(context)
+                                .capitalizeFirstLetter()),
+                            subtitle: Text(
+                              _getStatusString(entry.verdict),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .apply(color: _getColor(entry.verdict)),
+                            ),
+                            onTap: () {},
+                          )
+                        ],
                       );
-                    }),
-              );
-            },
+                    }
+                  }
+
+                  return ListTile(
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 24.0),
+                    leading: _getIcon(entry.verdict),
+                    title: Text(entry.dateGenerated
+                        .relativeTime(context)
+                        .capitalizeFirstLetter()),
+                    subtitle: Text(
+                      _getStatusString(entry.verdict),
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelMedium!
+                          .apply(color: _getColor(entry.verdict)),
+                    ),
+                    onTap: () {},
+                  );
+                }),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildEmptyScreen() {
-    return Center(
-      // Show a message where the user can add an entry if list is empty
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.bookmark_add_outlined,
-              size: 64.0,
-              color:
-                  Theme.of(context).colorScheme.onBackground.withOpacity(0.75)),
-          const SizedBox(height: 16.0),
-          Text("Create your first entry!",
-              style: Theme.of(context).textTheme.titleLarge!.apply(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onBackground
-                      .withOpacity(0.75))),
-          const SizedBox(height: 20.0),
-          TextButton.icon(
-            onPressed: () {
-              Navigator.pushNamed(context, NewEntry.routeName);
-            },
-            icon: const Icon(Icons.add_outlined),
-            label: const Text("New Entry"),
-          )
-        ],
       ),
     );
   }
@@ -299,26 +305,5 @@ class _EntriesState extends State<Entries> {
             );
           }),
     );
-  }
-
-  Widget _buildNoInternetScreen() {
-    return Center(
-        // Show a message where the user can add an entry if list is empty
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(Icons.wifi_off_outlined,
-            size: 64.0,
-            color:
-                Theme.of(context).colorScheme.onBackground.withOpacity(0.75)),
-        const SizedBox(height: 16.0),
-        Text("Connect to the internet to get entries",
-            style: Theme.of(context).textTheme.titleLarge!.apply(
-                color: Theme.of(context)
-                    .colorScheme
-                    .onBackground
-                    .withOpacity(0.75))),
-      ],
-    ));
   }
 }

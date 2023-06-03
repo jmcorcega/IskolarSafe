@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,12 +9,12 @@ import 'package:iskolarsafe/components/health_badge.dart';
 import 'package:iskolarsafe/components/health_confirm_dialog.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
+import '../providers/accounts_provider.dart';
 
 class _UserDetails extends StatelessWidget {
   final IskolarInfo userInfo;
-  const _UserDetails({
-    required this.userInfo,
-  });
+  const _UserDetails({required this.userInfo});
 
   static const Size _buttonSize = Size(225.0, 47.5);
 
@@ -28,16 +30,22 @@ class _UserDetails extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 48,
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                child: Text(
-                  "U".substring(0, 1),
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                      fontSize: 38.0),
-                ),
-              ),
+              (userInfo.photoUrl != null)
+                  ? CircleAvatar(
+                      radius: 48,
+                      foregroundImage:
+                          CachedNetworkImageProvider(userInfo.photoUrl!),
+                    )
+                  : CircleAvatar(
+                      radius: 48,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      child: Text(
+                        userInfo.firstName.substring(0, 1),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.inversePrimary,
+                            fontSize: 38.0),
+                      ),
+                    ),
               const SizedBox(width: 20.0),
               Expanded(
                 child: Column(
@@ -117,6 +125,15 @@ class _UserDetails extends StatelessWidget {
               );
             }
           },
+        ),
+        FutureBuilder(
+          future: _setUserType(context, userInfo),
+          builder: ((context, snapshot) {
+            if (snapshot.hasData) {
+              return snapshot.data!;
+            }
+            return Container();
+          }),
         ),
         Divider(height: 1.0),
         ListTile(
@@ -209,6 +226,54 @@ class _UserDetails extends StatelessWidget {
     );
   }
 
+  Future<Widget> _setUserType(BuildContext context, IskolarInfo info) async {
+    // This widget should not appear when the current authorized user is not an administrator.
+    IskolarInfo? cond = context.read<AccountsProvider>().userInfo;
+    if (context.mounted) {
+      User? currentUser = context.read<AccountsProvider>().user;
+      if (cond!.type == IskolarType.admin && currentUser!.uid != info.id) {
+        return Column(
+          children: [
+            Divider(height: 1.0),
+            ListTile(
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 32.0,
+                vertical: 4.0,
+              ),
+              leading: Icon(Symbols.key_rounded),
+              title: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.3,
+                child: DropdownButtonFormField<IskolarType>(
+                  value: info.type,
+                  onChanged: (value) async {
+                    await context
+                        .read<AccountsProvider>()
+                        .updateType(info, value!);
+                    value = value;
+                  },
+                  decoration: InputDecoration.collapsed(hintText: ''),
+                  items: IskolarType.values
+                      .map<DropdownMenuItem<IskolarType>>((IskolarType type) {
+                    return DropdownMenuItem<IskolarType>(
+                      value: type,
+                      child: Text(IskolarType.toStr(type)),
+                    );
+                  }).toList(),
+                ),
+              ),
+              subtitle: Text(
+                "User type",
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+            ),
+          ],
+        );
+      }
+    }
+
+    return Container();
+  }
+
   Widget _getBottomButtons(BuildContext context, IskolarHealthStatus status) {
     switch (status) {
       case IskolarHealthStatus.quarantined:
@@ -221,10 +286,9 @@ class _UserDetails extends StatelessWidget {
                 minimumSize: _buttonSize,
               ),
               onPressed: () => HealthConfirmDialog.confirmDialog(
-                context: context,
-                user: userInfo,
-                type: HealthConfirmDialogType.endQuarantine,
-              ),
+                  context: context,
+                  user: userInfo,
+                  type: HealthConfirmDialogType.endQuarantine),
               icon: const Icon(Symbols.cancel_rounded),
               label: const Text("Remove from Quarantine"),
             )
@@ -240,10 +304,9 @@ class _UserDetails extends StatelessWidget {
                 minimumSize: _buttonSize,
               ),
               onPressed: () => HealthConfirmDialog.confirmDialog(
-                context: context,
-                user: userInfo,
-                type: HealthConfirmDialogType.endMonitoring,
-              ),
+                  context: context,
+                  user: userInfo,
+                  type: HealthConfirmDialogType.endMonitoring),
               icon: const Icon(Symbols.close_rounded, size: 18.0),
               label: const Text("End Monitoring"),
             ),
@@ -254,10 +317,9 @@ class _UserDetails extends StatelessWidget {
                 minimumSize: _buttonSize,
               ),
               onPressed: () => HealthConfirmDialog.confirmDialog(
-                context: context,
-                user: userInfo,
-                type: HealthConfirmDialogType.startQuarantine,
-              ),
+                  context: context,
+                  user: userInfo,
+                  type: HealthConfirmDialogType.startQuarantine),
               icon: const Icon(Symbols.medical_mask_rounded),
               label: const Text("Move to Quarantine"),
             ),
@@ -273,10 +335,9 @@ class _UserDetails extends StatelessWidget {
                 minimumSize: _buttonSize,
               ),
               onPressed: () => HealthConfirmDialog.confirmDialog(
-                context: context,
-                user: userInfo,
-                type: HealthConfirmDialogType.startMonitoring,
-              ),
+                  context: context,
+                  user: userInfo,
+                  type: HealthConfirmDialogType.startMonitoring),
               icon: const Icon(Symbols.add_rounded, size: 18.0),
               label: const Text("Add to Monitoring"),
             ),
@@ -287,10 +348,9 @@ class _UserDetails extends StatelessWidget {
                 minimumSize: _buttonSize,
               ),
               onPressed: () => HealthConfirmDialog.confirmDialog(
-                context: context,
-                user: userInfo,
-                type: HealthConfirmDialogType.startQuarantine,
-              ),
+                  context: context,
+                  user: userInfo,
+                  type: HealthConfirmDialogType.startQuarantine),
               icon: const Icon(Symbols.medical_mask_rounded),
               label: const Text("Move to Quarantine"),
             ),

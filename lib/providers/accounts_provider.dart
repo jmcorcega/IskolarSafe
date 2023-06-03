@@ -1,22 +1,30 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:iskolarsafe/api/accounts_api.dart';
 import 'package:iskolarsafe/models/user_model.dart';
+import 'package:iskolarsafe/providers/entries_provider.dart';
+import 'package:provider/provider.dart';
 
 class AccountsProvider with ChangeNotifier {
   late AccountsAPI _accounts;
   late Stream<User?> _userStream;
+  late Stream<QuerySnapshot> _studentStream;
   late AccountsStatus _authStatus;
   late User? _user;
   late bool _userInfoAvailable;
+  late IskolarInfo? _userInfo;
 
+  // Getters
   Stream<User?> get stream => _userStream;
-
+  Stream<QuerySnapshot> get students => _accounts.getAllUsers();
+  Stream<QuerySnapshot> get quarantined => _accounts.getUsersUnderQuarantine();
+  Stream<QuerySnapshot> get monitored => _accounts.getUsersUnderMonitoring();
   User? get user => _user;
-  Future<IskolarInfo?> get userInfo => _accounts.getUserInfo(_user);
+  IskolarInfo? get userInfo => _userInfo;
   AccountsStatus get status => _authStatus;
   bool get editStatus => _userInfoAvailable;
 
@@ -25,14 +33,31 @@ class AccountsProvider with ChangeNotifier {
     _accounts = AccountsAPI();
     _userStream = _accounts.getUserStream();
     _user = _accounts.user;
-    if (_user != null) {
-      _authStatus = AccountsStatus.success;
-    }
     _userInfoAvailable = true;
+    _fetchUserInfo();
+
+    if (_user == null) {
+      _authStatus = AccountsStatus.userNotLoggedIn;
+      _userInfoAvailable = false;
+    }
+
+    fetchStudents();
+  }
+
+  fetchStudents() {
+    _studentStream = _accounts.getAllUsers();
     notifyListeners();
   }
 
-  Future<void> signUp(bool isGoogle,
+  _fetchUserInfo() async {
+    _userInfo = await _accounts.getUserInfo(_user);
+    if (_userInfo != null) {
+      _authStatus = AccountsStatus.success;
+    }
+    notifyListeners();
+  }
+
+  Future<void> signUp(BuildContext context, bool isGoogle,
       {required String email,
       required String password,
       required Map<String, dynamic> userInfo}) async {
@@ -48,6 +73,23 @@ class AccountsProvider with ChangeNotifier {
     // Fetch user information
     _userStream = _accounts.getUserStream();
     _user = _accounts.user;
+    _userInfo = await _accounts.getUserInfo(_user);
+    if (context.mounted) {
+      context.read<HealthEntryProvider>().fetchEntries(context);
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> updateType(IskolarInfo userInfo, IskolarType newType) async {
+    await _accounts.updateUserType(IskolarInfo.toJson(userInfo), newType);
+    notifyListeners();
+  }
+
+  Future<void> updateStatus(
+      IskolarHealthStatus status, IskolarInfo user) async {
+    String stat = IskolarHealthStatus.toJson(status);
+    await _accounts.updateHealthStatus(stat, user);
 
     notifyListeners();
   }
@@ -57,23 +99,29 @@ class AccountsProvider with ChangeNotifier {
     _userInfoAvailable =
         await _accounts.updateUserInfo(userInfo: userInfo, photoFile: photo);
     _user = _accounts.user;
+    await _fetchUserInfo();
     notifyListeners();
 
     _userInfoAvailable = true;
   }
 
-  Future<void> signInWithEmail(
+  Future<void> signInWithEmail(BuildContext context,
       {required String email, required String password}) async {
     _authStatus =
         await _accounts.signInWithEmail(email: email, password: password);
 
     // Fetch user information
     _user = _accounts.user;
+    _userInfo = await _accounts.getUserInfo(_user);
+    _userInfoAvailable = true;
+    if (context.mounted) {
+      context.read<HealthEntryProvider>().fetchEntries(context);
+    }
 
     notifyListeners();
   }
 
-  Future<void> signInWithGoogle() async {
+  Future<void> signInWithGoogle(BuildContext context) async {
     // Start the sign-in process
     GoogleSignInAccount? credentials = await GoogleSignIn().signIn();
     if (credentials == null) {
@@ -95,6 +143,11 @@ class AccountsProvider with ChangeNotifier {
 
     // Fetch user information
     _user = _accounts.user;
+    _userInfo = await _accounts.getUserInfo(_user);
+    _userInfoAvailable = true;
+    if (context.mounted) {
+      context.read<HealthEntryProvider>().fetchEntries(context);
+    }
 
     notifyListeners();
   }
@@ -113,6 +166,8 @@ class AccountsProvider with ChangeNotifier {
 
     _authStatus = AccountsStatus.userNotLoggedIn;
     _user = null;
+    _userInfo = null;
+    _userInfoAvailable = false;
     notifyListeners();
   }
 }
