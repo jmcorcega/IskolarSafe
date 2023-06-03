@@ -2,6 +2,7 @@ import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
+import 'package:iskolarsafe/extensions.dart';
 import 'package:iskolarsafe/theme.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:iskolarsafe/models/entry_model.dart';
@@ -181,21 +182,21 @@ class _EditDeleteRequestsState extends State<EditDeleteRequests> {
           margin: const EdgeInsets.only(top: 10.0),
           child: FilledButton.icon(
             style: FilledButton.styleFrom(
-                padding: EdgeInsets.all(0),
+                padding: const EdgeInsets.all(0),
                 backgroundColor: Theme.of(context).colorScheme.primary),
             onPressed: () {},
             icon: const Icon(Symbols.done, size: 18.0),
             label: const Text("Approve"),
           ),
         ),
-        SizedBox(width: 12.0),
+        const SizedBox(width: 12.0),
         Container(
           width: 110.0,
           height: 27.0,
           margin: const EdgeInsets.only(top: 10.0),
           child: OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
-                padding: EdgeInsets.all(0),
+                padding: const EdgeInsets.all(0),
                 foregroundColor: Theme.of(context).colorScheme.tertiary),
             onPressed: () {},
             icon: const Icon(Symbols.close_rounded),
@@ -228,7 +229,7 @@ class _EditDeleteRequestsState extends State<EditDeleteRequests> {
                   }),
             );
           },
-          contentPadding: EdgeInsets.symmetric(horizontal: 24.0),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
           leading: SizedBox(
             height: double.infinity,
             child: CircleAvatar(
@@ -426,16 +427,16 @@ class EditRequest extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 12.0),
+              const SizedBox(height: 18.0),
               Center(
                 child: Text("Entry",
                     style: Theme.of(context)
                         .textTheme
                         .headlineLarge!
-                        .apply(fontWeightDelta: 2)),
+                        .apply(fontWeightDelta: 1)),
               ),
               // Flu-like symptoms
-              const SizedBox(height: 12.0),
+              const SizedBox(height: 24.0),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -467,7 +468,7 @@ class EditRequest extends StatelessWidget {
                   String name = FluSymptom.getName(symptom);
                   return FilterChip(
                       label: Text(name),
-                      selectedColor: _changeFluChipColor(symptom),
+                      selectedColor: _changeChipColor(context, symptom),
                       selected: fluSymptoms.contains(symptom),
                       onSelected: (bool selected) {});
                 }).toList(),
@@ -508,7 +509,7 @@ class EditRequest extends StatelessWidget {
                   String name = RespiratorySymptom.getName(symptom);
                   return FilterChip(
                       label: Text(name),
-                      selectedColor: _changeRespiratoryChipColor(symptom),
+                      selectedColor: _changeChipColor(context, symptom),
                       selected: respiratorySymptoms.contains(symptom),
                       onSelected: (bool selected) {});
                 }).toList(),
@@ -548,7 +549,7 @@ class EditRequest extends StatelessWidget {
                   String name = OtherSymptom.getName(symptom);
                   return FilterChip(
                       label: Text(name),
-                      selectedColor: _changeOtherChipColor(symptom),
+                      selectedColor: _changeChipColor(context, symptom),
                       selected: otherSymptoms.contains(symptom),
                       onSelected: (bool selected) {});
                 }).toList(),
@@ -590,10 +591,10 @@ class EditRequest extends StatelessWidget {
                   Expanded(
                     child: ListTile(
                       title: const Text('No'),
-                      textColor: _changeRadioColor(false, false,
+                      textColor: _changeRadioColor(context, false, false,
                           info["exposed"], info["updated"]["exposed"]),
                       leading: Radio<bool>(
-                        activeColor: _changeRadioColor(true, false,
+                        activeColor: _changeRadioColor(context, true, false,
                             info["exposed"], info["updated"]["exposed"]),
                         value: false,
                         groupValue: (!info["exposed"])
@@ -610,10 +611,10 @@ class EditRequest extends StatelessWidget {
                   Expanded(
                     child: ListTile(
                       title: const Text('Yes'),
-                      textColor: _changeRadioColor(false, true, info["exposed"],
-                          info["updated"]["exposed"]),
+                      textColor: _changeRadioColor(context, false, true,
+                          info["exposed"], info["updated"]["exposed"]),
                       leading: Radio<bool>(
-                        activeColor: _changeRadioColor(true, true,
+                        activeColor: _changeRadioColor(context, true, true,
                             info["exposed"], info["updated"]["exposed"]),
                         value: true,
                         groupValue: (info["exposed"])
@@ -667,12 +668,14 @@ class EditRequest extends StatelessWidget {
                     child: ListTile(
                       title: const Text('No'),
                       textColor: _changeRadioColor(
+                          context,
                           false,
                           false,
                           info["waitingForRtPcr"],
                           info["updated"]["waitingForRtPcr"]),
                       leading: Radio<bool>(
                         activeColor: _changeRadioColor(
+                            context,
                             true,
                             false,
                             info["waitingForRtPcr"],
@@ -693,12 +696,14 @@ class EditRequest extends StatelessWidget {
                     child: ListTile(
                       title: const Text('Yes'),
                       textColor: _changeRadioColor(
+                          context,
                           false,
                           true,
                           info["waitingForRtPcr"],
                           info["updated"]["waitingForRtPcr"]),
                       leading: Radio<bool>(
                         activeColor: _changeRadioColor(
+                            context,
                             true,
                             true,
                             info["waitingForRtPcr"],
@@ -756,12 +761,14 @@ class EditRequest extends StatelessWidget {
                     child: ListTile(
                       title: const Text('No'),
                       textColor: _changeRadioColor(
+                          context,
                           false,
                           false,
                           info["waitingForRapidAntigen"],
                           info["updated"]["waitingForRapidAntigen"]),
                       leading: Radio<bool>(
                         activeColor: _changeRadioColor(
+                            context,
                             true,
                             false,
                             info["waitingForRapidAntigen"],
@@ -782,12 +789,14 @@ class EditRequest extends StatelessWidget {
                     child: ListTile(
                       title: const Text('Yes'),
                       textColor: _changeRadioColor(
+                          context,
                           false,
                           true,
                           info["waitingForRapidAntigen"],
                           info["updated"]["waitingForRapidAntigen"]),
                       leading: Radio<bool>(
                         activeColor: _changeRadioColor(
+                            context,
                             true,
                             true,
                             info["waitingForRapidAntigen"],
@@ -812,66 +821,43 @@ class EditRequest extends StatelessWidget {
     );
   }
 
-  Color _changeFluChipColor(FluSymptom symptom) {
-    for (FluSymptom orig in info["fluSymptoms"]) {
-      if (symptom == orig) {
-        return Colors.red;
-      }
-    }
+  Color _changeChipColor(BuildContext context, dynamic symptom) {
+    Color original = Theme.of(context).colorScheme.tertiaryContainer;
+    Color changed = Theme.of(context).colorScheme.inversePrimary;
 
-    for (FluSymptom updated in info["updated"]["fluSymptoms"]) {
+    for (dynamic updated in info["updated"]
+        ["${symptom.runtimeType.toString().lowercaseFirstLetter()}s"]) {
       if (symptom == updated) {
-        return Colors.green;
+        return changed;
       }
     }
 
-    return Colors.red;
+    for (dynamic orig
+        in info["${symptom.runtimeType.toString().lowercaseFirstLetter()}s"]) {
+      if (symptom == orig) {
+        return original;
+      }
+    }
+
+    return original;
   }
 
-  Color _changeRespiratoryChipColor(RespiratorySymptom symptom) {
-    for (RespiratorySymptom orig in info["respiratorySymptoms"]) {
-      if (symptom == orig) {
-        return Colors.red;
-      }
-    }
+  Color _changeRadioColor(
+      BuildContext context, bool radio, bool value, bool orig, bool updated) {
+    Color original = Theme.of(context).colorScheme.tertiary;
+    Color changed = Theme.of(context).colorScheme.primary;
 
-    for (RespiratorySymptom updated in info["updated"]["respiratorySymptoms"]) {
-      if (symptom == updated) {
-        return Colors.green;
-      }
-    }
-
-    return Colors.red;
-  }
-
-  Color _changeOtherChipColor(OtherSymptom symptom) {
-    for (OtherSymptom orig in info["otherSymptoms"]) {
-      if (symptom == orig) {
-        return Colors.red;
-      }
-    }
-
-    for (OtherSymptom updated in info["updated"]["otherSymptoms"]) {
-      if (symptom == updated) {
-        return Colors.green;
-      }
-    }
-
-    return Colors.red;
-  }
-
-  Color _changeRadioColor(bool radio, bool value, bool orig, bool updated) {
     if (orig != updated) {
       if (orig == value) {
-        return Colors.red;
+        return changed;
       } else if (updated == value) {
-        return Colors.green;
+        return original;
       }
     } else {
       if (orig == value) {
-        return Colors.red;
+        return changed;
       }
     }
-    return (radio) ? Colors.red : Colors.black;
+    return (radio) ? changed : Theme.of(context).colorScheme.onBackground;
   }
 }
