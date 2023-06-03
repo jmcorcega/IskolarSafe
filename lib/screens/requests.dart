@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/entry_details.dart';
+import 'package:iskolarsafe/components/request_confirm_dialog.dart';
 import 'package:iskolarsafe/components/screen_placeholder.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:iskolarsafe/providers/entries_provider.dart';
@@ -112,14 +113,21 @@ class _RequestsState extends State<Requests> {
     );
   }
 
-  Widget _approveRejectButtons() {
+  Widget _approveRejectButtons(HealthEntry entry) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         FilledButton.icon(
           style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary),
-          onPressed: () {},
+          onPressed: () => RequestConfirmDialog.confirmDialog(
+            context: context,
+            user: entry.userInfo,
+            type: entry.forDeletion
+                ? RequestConfirmDialogType.approveDelete
+                : RequestConfirmDialogType.approveEdit,
+            modal: false,
+          ),
           icon: const Icon(Symbols.done, size: 18.0),
           label: const Text("Approve"),
         ),
@@ -127,7 +135,14 @@ class _RequestsState extends State<Requests> {
         OutlinedButton.icon(
           style: OutlinedButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.tertiary),
-          onPressed: () {},
+          onPressed: () => RequestConfirmDialog.confirmDialog(
+            context: context,
+            user: entry.userInfo,
+            type: entry.forDeletion
+                ? RequestConfirmDialogType.rejectDelete
+                : RequestConfirmDialogType.rejectEdit,
+            modal: false,
+          ),
           icon: const Icon(Symbols.close_rounded),
           label: const Text("Reject"),
         ),
@@ -176,7 +191,7 @@ class _RequestsState extends State<Requests> {
         ),
         minLeadingWidth: 44.0,
         title: name,
-        subtitle: _approveRejectButtons(),
+        subtitle: _approveRejectButtons(entry),
         isThreeLine: true,
       );
     }
@@ -206,7 +221,7 @@ class _RequestsState extends State<Requests> {
       ),
       minLeadingWidth: 44.0,
       title: name,
-      subtitle: _approveRejectButtons(),
+      subtitle: _approveRejectButtons(entry),
     );
   }
 }
