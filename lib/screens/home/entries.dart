@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
-import 'package:iskolarsafe/components/entry_details.dart';
+import 'package:iskolarsafe/components/entry.dart';
 import 'package:iskolarsafe/components/screen_placeholder.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/components/profile_modal.dart';
@@ -14,7 +14,6 @@ import 'package:iskolarsafe/providers/entries_provider.dart';
 import 'package:iskolarsafe/screens/entry_editor.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
-import 'package:relative_time/relative_time.dart';
 
 class Entries extends StatefulWidget {
   static const String routeName = "/";
@@ -29,80 +28,34 @@ class _EntriesState extends State<Entries> {
   bool _canShowMyProfile = false;
   bool hasInternet = true;
 
-  void _showEntryModal(BuildContext context, HealthEntry entry) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.45,
-          maxChildSize: 0.95,
-          minChildSize: 0.4,
-          expand: false,
-          builder: (context, scrollController) {
-            return SingleChildScrollView(
-              controller: scrollController,
-              child: HealthEntryDetails(entry: entry),
-            );
-          }),
+  Widget _buildNoEntryCard(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+      child: Card(
+        child: ListTile(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12.0)),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 24.0,
+            vertical: 8.0,
+          ),
+          leading: Icon(
+            Symbols.circle_rounded,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.75),
+          ),
+          title: const Text("No Entry Today"),
+          subtitle: Text(
+            "Add entry today to generate QR code",
+            style: Theme.of(context).textTheme.labelMedium!.apply(
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.75),
+                ),
+          ),
+          onTap: () {},
+        ),
+      ),
     );
-  }
-
-  Widget _getIcon(IskolarHealthStatus status) {
-    var color = _getColor(status);
-    switch (status) {
-      case IskolarHealthStatus.quarantined:
-        return Icon(Symbols.medical_mask_rounded, color: color);
-      case IskolarHealthStatus.monitored:
-        return Icon(Symbols.coronavirus_rounded, color: color);
-      case IskolarHealthStatus.notWell:
-        return Icon(Symbols.sick_rounded, color: color);
-      default:
-        return Icon(Symbols.check_circle_filled, color: color);
-    }
-  }
-
-  Color? _getColor(IskolarHealthStatus status) {
-    switch (status) {
-      case IskolarHealthStatus.quarantined:
-        return Colors.red[400];
-      case IskolarHealthStatus.monitored:
-        return Colors.yellow[800];
-      case IskolarHealthStatus.notWell:
-        return Colors.orange[800];
-      default:
-        return Colors.green;
-    }
-  }
-
-  String _getStatusString(IskolarHealthStatus status) {
-    switch (status) {
-      case IskolarHealthStatus.quarantined:
-        return "Quarantined";
-      case IskolarHealthStatus.monitored:
-        return "Under Monitoring";
-      case IskolarHealthStatus.notWell:
-        return "Reported Sick";
-      default:
-        return "Safe for Entry";
-    }
-  }
-
-  Widget? _getTrailingIcon(BuildContext context, HealthEntry entry) {
-    if (entry.updated == null) return null;
-
-    Color iconColor =
-        Theme.of(context).colorScheme.secondary.withAlpha((255 * 0.5).toInt());
-    if (entry.forDeletion) {
-      return Icon(
-        Symbols.scan_delete_rounded,
-        color: iconColor,
-      );
-    } else {
-      return Icon(
-        Symbols.edit_document_rounded,
-        color: iconColor,
-      );
-    }
   }
 
   @override
@@ -189,110 +142,20 @@ class _EntriesState extends State<Entries> {
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 18.0),
                         child: Card(
-                          child: ListTile(
-                            shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(12.0)),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 24.0,
-                              vertical: 8.0,
-                            ),
-                            leading: _getIcon(entry.verdict),
-                            trailing: _getTrailingIcon(context, entry),
-                            title: Text(entry.dateGenerated
-                                .relativeTime(context)
-                                .capitalizeFirstLetter()),
-                            subtitle: Text(
-                              _getStatusString(entry.verdict),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelMedium!
-                                  .apply(color: _getColor(entry.verdict)),
-                            ),
-                            onTap: () => _showEntryModal(context, entry),
-                          ),
+                          child: Entry(entry: entry, card: true),
                         ),
                       );
                     } else {
                       return Column(
                         children: [
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 18.0),
-                            child: Card(
-                              child: ListTile(
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(12.0)),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 24.0,
-                                  vertical: 8.0,
-                                ),
-                                leading: Icon(
-                                  Symbols.circle_rounded,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
-                                      .withOpacity(0.75),
-                                ),
-                                title: Text("No Entry Today"),
-                                subtitle: Text(
-                                  "Add entry today to generate QR code",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelMedium!
-                                      .apply(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withOpacity(0.75),
-                                      ),
-                                ),
-                                onTap: () {},
-                              ),
-                            ),
-                          ),
-                          ListTile(
-                            contentPadding:
-                                const EdgeInsets.symmetric(horizontal: 24.0),
-                            leading: _getIcon(entry.verdict),
-                            trailing: _getTrailingIcon(context, entry),
-                            title: Text(entry.dateGenerated
-                                .relativeTime(context)
-                                .capitalizeFirstLetter()),
-                            subtitle: Text(
-                              _getStatusString(entry.verdict),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelMedium!
-                                  .apply(color: _getColor(entry.verdict)),
-                            ),
-                            onTap: () => _showEntryModal(context, entry),
-                          )
+                          _buildNoEntryCard(context),
+                          Entry(entry: entry, card: false),
                         ],
                       );
                     }
                   }
 
-                  return ListTile(
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 24.0),
-                    leading: _getIcon(entry.verdict),
-                    trailing: _getTrailingIcon(context, entry),
-                    title: Text(entry.dateGenerated
-                        .relativeTime(context)
-                        .capitalizeFirstLetter()),
-                    subtitle: Text(
-                      _getStatusString(entry.verdict),
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium!
-                          .apply(color: _getColor(entry.verdict)),
-                    ),
-                    onTap: () => _showEntryModal(context, entry),
-                  );
+                  return Entry(entry: entry, card: false);
                 }),
           );
         },
