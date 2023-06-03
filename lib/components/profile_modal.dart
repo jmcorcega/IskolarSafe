@@ -20,7 +20,12 @@ class _ProfileModal extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const SizedBox(height: 64.0),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+          ),
+        ),
         (entry.verdict == IskolarHealthStatus.healthy)
             ? QrImageView(
                 backgroundColor: Colors.white,
@@ -122,13 +127,13 @@ class _ProfileModal extends StatelessWidget {
             }
           },
         ),
-        Divider(height: 1.0),
+        const Divider(height: 1.0),
         ListTile(
-          contentPadding: EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             horizontal: 32.0,
             vertical: 4.0,
           ),
-          leading: Icon(Symbols.badge_rounded),
+          leading: const Icon(Symbols.badge_rounded),
           title: Text(user.studentNumber),
           subtitle: Text(
             "Student number",
@@ -143,13 +148,13 @@ class _ProfileModal extends StatelessWidget {
             }
           },
         ),
-        Divider(height: 1.0),
+        const Divider(height: 1.0),
         ListTile(
-          contentPadding: EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             horizontal: 32.0,
             vertical: 4.0,
           ),
-          leading: Icon(Symbols.school_rounded),
+          leading: const Icon(Symbols.school_rounded),
           title: Text(user.course),
           subtitle: Text(
             "Course",
@@ -164,13 +169,13 @@ class _ProfileModal extends StatelessWidget {
             }
           },
         ),
-        Divider(height: 1.0),
+        const Divider(height: 1.0),
         ListTile(
-          contentPadding: EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             horizontal: 32.0,
             vertical: 4.0,
           ),
-          leading: Icon(Symbols.domain_rounded),
+          leading: const Icon(Symbols.domain_rounded),
           title: Text(user.college),
           subtitle: Text(
             "College",
@@ -185,14 +190,14 @@ class _ProfileModal extends StatelessWidget {
             }
           },
         ),
-        user.condition.isNotEmpty ? Divider(height: 1.0) : Container(),
+        user.condition.isNotEmpty ? const Divider(height: 1.0) : Container(),
         user.condition.isNotEmpty
             ? ListTile(
-                contentPadding: EdgeInsets.symmetric(
+                contentPadding: const EdgeInsets.symmetric(
                   horizontal: 32.0,
                   vertical: 4.0,
                 ),
-                leading: Icon(Symbols.monitor_heart_rounded),
+                leading: const Icon(Symbols.monitor_heart_rounded),
                 title: Wrap(
                   spacing: 5.0,
                   children: user.condition.map((String condition) {
@@ -207,14 +212,14 @@ class _ProfileModal extends StatelessWidget {
                 ),
               )
             : Container(),
-        Divider(height: 1.0),
+        const Divider(height: 1.0),
         user.allergies.isNotEmpty
             ? ListTile(
-                contentPadding: EdgeInsets.symmetric(
+                contentPadding: const EdgeInsets.symmetric(
                   horizontal: 32.0,
                   vertical: 4.0,
                 ),
-                leading: Icon(Symbols.masks_rounded),
+                leading: const Icon(Symbols.masks_rounded),
                 title: Wrap(
                   spacing: 5.0,
                   children: user.allergies.map((String allergy) {
@@ -229,7 +234,7 @@ class _ProfileModal extends StatelessWidget {
                 ),
               )
             : Container(),
-        user.allergies.isNotEmpty ? Divider(height: 1.0) : Container(),
+        user.allergies.isNotEmpty ? const Divider(height: 1.0) : Container(),
       ],
     );
   }
@@ -243,8 +248,8 @@ class ProfileModal {
       isScrollControlled: true,
       builder: (context) => DraggableScrollableSheet(
           snap: true,
-          initialChildSize: 0.65,
-          minChildSize: 0.65,
+          initialChildSize: 0.8,
+          minChildSize: 0.8,
           maxChildSize: 0.95,
           expand: false,
           builder: (context, scrollController) {

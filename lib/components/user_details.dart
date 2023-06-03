@@ -24,7 +24,12 @@ class _UserDetails extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: 24.0),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+          ),
+        ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 32.0),
           child: Row(
