@@ -30,11 +30,18 @@ class HealthEntryProvider with ChangeNotifier {
 
   // Getters
   Stream<QuerySnapshot> get entries => _entryStream;
+  Stream<QuerySnapshot> get requests => api.getEntriesWithRequests();
   bool get status => _status;
 
-  /// Adds a new slam book entry to the database.
+  /// Adds a new health entry to the database.
   Future<void> addEntry(HealthEntry entry) async {
     _status = await api.uploadEntry(HealthEntry.toJson(entry));
+    notifyListeners();
+  }
+
+  /// Edits an entry to the database.
+  Future<void> editEntry(HealthEntry entry) async {
+    _status = await api.editEntry(HealthEntry.toJson(entry));
     notifyListeners();
   }
 }

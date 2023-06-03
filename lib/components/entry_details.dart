@@ -49,13 +49,8 @@ class HealthEntryDetails extends StatelessWidget {
                       ? Container()
                       : IconButton(
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditDeleteEntry(
-                                    entry: entry,
-                                  ),
-                                ));
+                            Navigator.pushNamed(context, EntryEditor.routeName,
+                                arguments: entry);
                           },
                           icon: const Icon(Symbols.edit_rounded),
                         ),
