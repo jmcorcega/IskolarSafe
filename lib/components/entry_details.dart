@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iskolarsafe/components/health_badge.dart';
 import 'package:iskolarsafe/extensions.dart';
 import 'package:iskolarsafe/models/entry_model.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
+import 'package:iskolarsafe/providers/entries_provider.dart';
 import 'package:iskolarsafe/screens/entry_editor.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +17,61 @@ class HealthEntryDetails extends StatelessWidget {
   HealthEntryDetails({super.key, required this.entry});
 
   final _entryFormState = GlobalKey<FormState>();
+
+  void _showDeleteRequestDialog(BuildContext context) {
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        insetPadding: const EdgeInsets.symmetric(
+          horizontal: 28.0,
+        ),
+        icon: const Icon(Symbols.scan_delete_rounded, size: 48.0),
+        title: const Text("Confirm delete request"),
+        content: const Text(
+          "Are you sure you want to request an officer to delete this entry?",
+          textAlign: TextAlign.center,
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
+        actionsAlignment: MainAxisAlignment.spaceEvenly,
+        actions: <Widget>[
+          TextButton.icon(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Symbols.close_rounded),
+            label: const Text('Cancel'),
+          ),
+          TextButton.icon(
+            onPressed: () async {
+              await context.read<HealthEntryProvider>().requestDeletion(entry);
+              if (context.mounted) {
+                var status = context.read<HealthEntryProvider>().status;
+
+                if (status) {
+                  var snackBar = const SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    content: Text(
+                        'Request was successful. Please wait for an officer to approve your request.'),
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                } else {
+                  Fluttertoast.showToast(
+                    msg: "An error has occured. Try again later.",
+                  );
+                }
+              }
+            },
+            icon: const Icon(Symbols.scan_delete_rounded),
+            label: const Text('Request'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +103,15 @@ class HealthEntryDetails extends StatelessWidget {
               AppBar(
                 backgroundColor: Colors.transparent,
                 actions: [
-                  entry.updated != null
+                  entry.updated != null || entry.forDeletion == true
+                      ? Container()
+                      : IconButton(
+                          onPressed: () {
+                            _showDeleteRequestDialog(context);
+                          },
+                          icon: const Icon(Symbols.delete_rounded),
+                        ),
+                  entry.updated != null || entry.forDeletion == true
                       ? Container()
                       : IconButton(
                           onPressed: () {
