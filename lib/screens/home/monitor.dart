@@ -22,7 +22,10 @@ class Monitor extends StatefulWidget {
   State<Monitor> createState() => _MonitorState();
 }
 
-class _MonitorState extends State<Monitor> {
+class _MonitorState extends State<Monitor> with AutomaticKeepAliveClientMixin {
+  @override
+  bool wantKeepAlive = true;
+
   var noUnderMonitoring = true;
 
   @override

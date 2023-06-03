@@ -20,7 +20,10 @@ class Logs extends StatefulWidget {
   State<Logs> createState() => _LogsState();
 }
 
-class _LogsState extends State<Logs> {
+class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
+  @override
+  bool wantKeepAlive = true;
+
   TextEditingController _search = new TextEditingController();
 
   final List<IskolarInfo> _iskolarInfo = DummyInfo.fakeInfoList;

@@ -20,7 +20,10 @@ class Search extends StatefulWidget {
   State<Search> createState() => _SearchState();
 }
 
-class _SearchState extends State<Search> {
+class _SearchState extends State<Search> with AutomaticKeepAliveClientMixin {
+  @override
+  bool wantKeepAlive = true;
+
   @override
   Widget build(BuildContext context) {
     // return FutureBuilder(

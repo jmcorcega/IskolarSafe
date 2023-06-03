@@ -25,7 +25,11 @@ class Quarantine extends StatefulWidget {
   State<Quarantine> createState() => _QuarantineState();
 }
 
-class _QuarantineState extends State<Quarantine> {
+class _QuarantineState extends State<Quarantine>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool wantKeepAlive = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -24,7 +24,10 @@ class Entries extends StatefulWidget {
   State<Entries> createState() => _EntriesState();
 }
 
-class _EntriesState extends State<Entries> {
+class _EntriesState extends State<Entries> with AutomaticKeepAliveClientMixin {
+  @override
+  bool wantKeepAlive = true;
+
   bool _canShowMyProfile = false;
   bool hasInternet = true;
 
