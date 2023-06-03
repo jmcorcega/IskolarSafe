@@ -27,8 +27,6 @@ class _MonitorState extends State<Monitor> {
 
   @override
   Widget build(BuildContext context) {
-    Stream<QuerySnapshot> students =
-        context.watch<AccountsProvider>().monitored;
     return Scaffold(
       appBar: AppBar(
         leading: EditRequestButton(),
@@ -43,7 +41,7 @@ class _MonitorState extends State<Monitor> {
         ],
       ),
       body: StreamBuilder(
-          stream: students,
+          stream: context.watch<AccountsProvider>().monitored,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Center(child: Text("Error encountered ${snapshot.error}"));
