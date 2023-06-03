@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iskolarsafe/components/edit_delete_request.dart';
+import 'package:iskolarsafe/screens/requests.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class EditRequestButton extends StatelessWidget {
@@ -18,7 +18,7 @@ class EditRequestButton extends StatelessWidget {
         ),
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const EditDeleteRequests()));
+              MaterialPageRoute(builder: (context) => const Requests()));
         },
         child: (numRequests > 0)
             ? Badge(
