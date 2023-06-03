@@ -103,11 +103,13 @@ class _RequestConfirmDialog extends StatelessWidget {
           label: const Text('Cancel'),
         ),
         TextButton.icon(
-          onPressed: () {
+          onPressed: () async {
             Navigator.pop(context);
             switch (type) {
               case RequestConfirmDialogType.approveEdit:
-                context.read<HealthEntryProvider>().updateEntry(entry.updated!);
+                await context
+                    .read<HealthEntryProvider>()
+                    .updateEntry(entry.updated!);
                 if (context.mounted &&
                     context.read<HealthEntryProvider>().status) {
                   Fluttertoast.showToast(
@@ -121,7 +123,7 @@ class _RequestConfirmDialog extends StatelessWidget {
                 }
                 break;
               case RequestConfirmDialogType.approveDelete:
-                context.read<HealthEntryProvider>().deleteEntry(entry);
+                await context.read<HealthEntryProvider>().deleteEntry(entry);
                 if (context.mounted &&
                     context.read<HealthEntryProvider>().status) {
                   Fluttertoast.showToast(
@@ -136,7 +138,7 @@ class _RequestConfirmDialog extends StatelessWidget {
                 break;
               case RequestConfirmDialogType.rejectEdit:
               case RequestConfirmDialogType.rejectDelete:
-                context.read<HealthEntryProvider>().rejectRequest(entry);
+                await context.read<HealthEntryProvider>().rejectRequest(entry);
                 if (context.mounted &&
                     context.read<HealthEntryProvider>().status) {
                   Fluttertoast.showToast(
