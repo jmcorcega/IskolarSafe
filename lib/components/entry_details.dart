@@ -1,11 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/health_badge.dart';
 import 'package:iskolarsafe/extensions.dart';
 import 'package:iskolarsafe/models/entry_model.dart';
 import 'package:iskolarsafe/models/user_model.dart';
-import 'package:iskolarsafe/screens/edit_delete_entry.dart';
+import 'package:iskolarsafe/providers/accounts_provider.dart';
+import 'package:iskolarsafe/screens/entry_editor.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
 import 'package:relative_time/relative_time.dart';
 
 class HealthEntryDetails extends StatelessWidget {
@@ -14,14 +16,13 @@ class HealthEntryDetails extends StatelessWidget {
 
   final _entryFormState = GlobalKey<FormState>();
 
-  bool? isExposed;
-  bool? isWaitingForRtPcr;
-  bool? isWaitingForRapidAntigen;
-
-  IskolarInfo? userInfo;
-
   @override
   Widget build(BuildContext context) {
+    IskolarInfo? user = context.read<AccountsProvider>().userInfo;
+    bool isOfficer =
+        user!.type != IskolarType.student && entry.userInfo.id != user.id;
+    bool isUpdating = entry.updated != null;
+
     List<FluSymptom> fluSymptoms = entry.fluSymptoms!;
     List<RespiratorySymptom> respiratorySymptoms = entry.respiratorySymptoms!;
     List<OtherSymptom> otherSymptoms = entry.otherSymptoms!;
@@ -63,19 +64,24 @@ class HealthEntryDetails extends StatelessWidget {
                   children: [
                     Center(
                       child: Column(children: [
-                        HealthBadge(entry.verdict),
+                        _buildProfile(context, user),
+                        const SizedBox(height: 12.0),
                         Text(
                           "Generated ${entry.dateGenerated.relativeTime(context).capitalizeFirstLetter()}",
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelLarge!
-                              .copyWith(
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .labelLarge!
-                                      .color!
-                                      .withAlpha((255 * 0.5).toInt())),
+                          style:
+                              Theme.of(context).textTheme.labelLarge!.copyWith(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge!
+                                        .color!
+                                        .withAlpha((255 * 0.5).toInt()),
+                                  ),
                         ),
+                        HealthBadge(isOfficer && isUpdating
+                            ? entry.updated!.verdict
+                            : isUpdating
+                                ? null
+                                : entry.verdict),
                       ]),
                     ),
                     const SizedBox(height: 28.0),
@@ -481,7 +487,7 @@ class HealthEntryDetails extends StatelessWidget {
                         ),
                       ],
                     ),
-                    _buildButtons(context),
+                    _buildButtons(context, user),
                     const SizedBox(height: 72.0),
                   ],
                 ),
@@ -560,8 +566,49 @@ class HealthEntryDetails extends StatelessWidget {
     return (radio) ? changed : Theme.of(context).colorScheme.onBackground;
   }
 
-  Widget _buildButtons(context) {
-    if (entry.updated == null) {
+  Widget _buildProfile(context, IskolarInfo user) {
+    if (entry.updated == null) return Container();
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        user.photoUrl != null
+            ? CircleAvatar(
+                foregroundImage: CachedNetworkImageProvider(user.photoUrl!),
+              )
+            : CircleAvatar(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                child: Text(
+                  user.firstName.substring(0, 1),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                ),
+              ),
+        const SizedBox(width: 16.0),
+        Wrap(
+          direction: Axis.vertical,
+          children: [
+            Text(
+              "${user.firstName} ${user.lastName}",
+              style: Theme.of(context)
+                  .textTheme
+                  .labelLarge!
+                  .apply(fontSizeDelta: 2),
+            ),
+            Text(user.studentNumber,
+                style: Theme.of(context)
+                    .textTheme
+                    .labelMedium!
+                    .apply(fontWeightDelta: -1)),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildButtons(context, IskolarInfo user) {
+    if (entry.updated == null || user.type == IskolarType.student) {
       return Container();
     }
 
