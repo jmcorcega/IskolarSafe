@@ -66,7 +66,7 @@ class _SearchState extends State<Search> {
               centerTitle: true,
               title: const AppBarHeader(
                 icon: Symbols.face,
-                title: "Students",
+                title: "Users",
                 hasAction: false,
               ),
               bottom: PreferredSize(

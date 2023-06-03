@@ -77,7 +77,7 @@ class _HomeState extends State<Home> {
           [
             NavigationDestination(
               icon: Icon(Symbols.face_rounded),
-              label: 'Students',
+              label: 'Users',
             ),
             NavigationDestination(
               icon: Icon(Symbols.medical_mask_rounded),
