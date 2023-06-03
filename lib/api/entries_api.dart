@@ -68,6 +68,10 @@ class HealthEntriesAPI {
           .collection(_storeName)
           .doc(entry.id)
           .update({"forDeletion": true});
+      await store
+          .collection(_storeName)
+          .doc(entry.id)
+          .update({"updated": HealthEntry.toJson(entry)});
 
       return true;
     } on FirebaseException catch (e) {
