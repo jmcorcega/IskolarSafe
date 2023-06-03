@@ -1,5 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages
-
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:iskolarsafe/screens/home/logs.dart';
+import 'package:iskolarsafe/models/user_model.dart';
 
 class QRScanner extends StatefulWidget {
   static const String routeName = "/scanner";
@@ -20,6 +20,8 @@ class _QRScannerState extends State<QRScanner> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
   Barcode? barcode;
+  bool isScanning = true;
+
   @override
   void dispose() {
     controller?.dispose();
@@ -81,28 +83,37 @@ class _QRScannerState extends State<QRScanner> {
     });
 
     controller.scannedDataStream.listen((barcode) {
+      if (!isScanning) {
+        return;
+      }
       setState(() {
         this.barcode = barcode;
       });
 
-      if (barcode != null) {
+      if (barcode.code != null) {
+        isScanning = false;
+        controller.pauseCamera();
+
         showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (BuildContext context) => buildResult(context),
-        );
+        ).then((_) {
+          isScanning = true;
+          controller.resumeCamera();
+        });
       }
     });
   }
 
   Widget buildResult(BuildContext context) {
     return AlertDialog(
-      title: Text("Result"),
       content: Text("${barcode!.code}"),
       actions: <Widget>[
         TextButton(
           child: Text("Back"),
           onPressed: () {
-            Navigator.of(context).pop(); // Close the dialog
+            Navigator.of(context).pop();
           },
         ),
       ],
