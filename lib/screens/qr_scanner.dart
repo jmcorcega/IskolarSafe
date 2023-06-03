@@ -1,10 +1,12 @@
 // ignore_for_file: depend_on_referenced_packages
+
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:iskolarsafe/screens/home/logs.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 class QRScanner extends StatefulWidget {
   static const String routeName = "/scanner";
@@ -15,8 +17,25 @@ class QRScanner extends StatefulWidget {
 }
 
 class _QRScannerState extends State<QRScanner> {
-  QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  QRViewController? controller;
+  Barcode? barcode;
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  void reassemble() async {
+    super.reassemble();
+
+    if (Platform.isAndroid) {
+      await controller!.pauseCamera();
+    }
+    controller!.resumeCamera();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,6 +62,12 @@ class _QRScannerState extends State<QRScanner> {
             child: QRView(
               key: qrKey,
               onQRViewCreated: _onQRViewCreated,
+              overlay: QrScannerOverlayShape(
+                  cutOutSize: MediaQuery.of(context).size.width * 0.8,
+                  borderLength: 20,
+                  borderWidth: 10,
+                  borderRadius: 10,
+                  borderColor: Theme.of(context).colorScheme.primary),
             ),
           ),
         ],
@@ -54,15 +79,33 @@ class _QRScannerState extends State<QRScanner> {
     setState(() {
       this.controller = controller;
     });
-    controller.scannedDataStream.listen((scanData) {
-      // Handle the scanned QR code data
-      print(scanData.code);
+
+    controller.scannedDataStream.listen((barcode) {
+      setState(() {
+        this.barcode = barcode;
+      });
+
+      if (barcode != null) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => buildResult(context),
+        );
+      }
     });
   }
 
-  @override
-  void dispose() {
-    controller?.dispose();
-    super.dispose();
+  Widget buildResult(BuildContext context) {
+    return AlertDialog(
+      title: Text("Result"),
+      content: Text("${barcode!.code}"),
+      actions: <Widget>[
+        TextButton(
+          child: Text("Back"),
+          onPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+        ),
+      ],
+    );
   }
 }
