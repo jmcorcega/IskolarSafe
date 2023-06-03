@@ -4,10 +4,12 @@ import 'package:iskolarsafe/firebase_options.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/providers/building_logs_provider.dart';
 import 'package:iskolarsafe/providers/entries_provider.dart';
+import 'package:iskolarsafe/providers/preferences_provider.dart';
 import 'package:iskolarsafe/routes.dart';
 import 'package:iskolarsafe/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:relative_time/relative_time.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   // Ensure widgets have been initialized
@@ -22,6 +24,9 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+            create: ((context) =>
+                PreferencesProvider(SharedPreferences.getInstance()))),
         ChangeNotifierProvider(create: ((context) => AccountsProvider())),
         ChangeNotifierProvider(
             create: ((context) => HealthEntryProvider(context))),
