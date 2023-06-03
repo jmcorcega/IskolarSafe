@@ -30,9 +30,9 @@ enum FluSymptom {
           list.add(FluSymptom.none);
           break;
         case "feverish":
-          list.add(FluSymptom.musclePains);
+          list.add(FluSymptom.feverish);
           break;
-        case "colds":
+        case "musclePains":
           list.add(FluSymptom.musclePains);
           break;
       }
@@ -192,13 +192,6 @@ class HealthEntry {
           ? HealthEntry.fromJson(json['updated'])
           : null,
     );
-  }
-
-  static List<HealthEntry> fromJsonArray(String jsonData) {
-    final Iterable<dynamic> data = jsonDecode(jsonData);
-    return data
-        .map<HealthEntry>((dynamic d) => HealthEntry.fromJson(d))
-        .toList();
   }
 
   static Map<String, dynamic> toJson(HealthEntry entry) {
