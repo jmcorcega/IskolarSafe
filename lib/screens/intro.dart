@@ -16,11 +16,9 @@ class Intro extends StatelessWidget {
     return FutureBuilder(
       future: context.watch<PreferencesProvider>().getBool("is_shown_intro"),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: Center(),
           );
         }
 
