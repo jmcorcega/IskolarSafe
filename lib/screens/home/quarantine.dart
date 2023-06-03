@@ -49,11 +49,9 @@ class _QuarantineState extends State<Quarantine> {
           } else if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Expanded(
-              child: ScreenPlaceholder(
-                asset: "assets/images/illust_no_quarantine.svg",
-                text: "No users under quarantine",
-              ),
+            return const ScreenPlaceholder(
+              asset: "assets/images/illust_no_quarantine.svg",
+              text: "No users under quarantine",
             );
           }
 
