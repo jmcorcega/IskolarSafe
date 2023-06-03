@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -14,7 +15,8 @@ enum HealthConfirmDialogType {
 class _HealthConfirmDialog extends StatelessWidget {
   final IskolarInfo userInfo;
   final HealthConfirmDialogType type;
-  const _HealthConfirmDialog(this.userInfo, this.type);
+  final bool isModal;
+  const _HealthConfirmDialog(this.userInfo, this.type, this.isModal);
 
   String getTitle() {
     switch (type) {
@@ -89,7 +91,8 @@ class _HealthConfirmDialog extends StatelessWidget {
         getMessage(),
         textAlign: TextAlign.center,
       ),
-      contentPadding: EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
       actionsAlignment: MainAxisAlignment.spaceEvenly,
       actions: <Widget>[
         TextButton.icon(
@@ -105,23 +108,31 @@ class _HealthConfirmDialog extends StatelessWidget {
             switch (type) {
               case HealthConfirmDialogType.endMonitoring:
               case HealthConfirmDialogType.endQuarantine:
-                // TODO: Set status to healthy
-                // userInfo.status = IskolarHealthStatus.healthy;
                 context
                     .read<AccountsProvider>()
                     .updateStatus(IskolarHealthStatus.healthy, userInfo);
+                Fluttertoast.showToast(
+                  msg: "New status set successfully.",
+                );
+                if (isModal) Navigator.pop(context);
                 break;
               case HealthConfirmDialogType.startMonitoring:
-                // TODO: Set status to monitoring
                 context
                     .read<AccountsProvider>()
                     .updateStatus(IskolarHealthStatus.monitored, userInfo);
+                Fluttertoast.showToast(
+                  msg: "Started monitoring for ${userInfo.firstName}.",
+                );
+                if (isModal) Navigator.pop(context);
                 break;
               case HealthConfirmDialogType.startQuarantine:
-                // TODO: Set status to quarantined
                 context
                     .read<AccountsProvider>()
                     .updateStatus(IskolarHealthStatus.quarantined, userInfo);
+                Fluttertoast.showToast(
+                  msg: "${userInfo.firstName} moved to quarantined.",
+                );
+                if (isModal) Navigator.pop(context);
                 break;
             }
           },
@@ -137,10 +148,12 @@ class HealthConfirmDialog {
   static void confirmDialog(
       {required BuildContext context,
       required IskolarInfo user,
-      required HealthConfirmDialogType type}) {
+      required HealthConfirmDialogType type,
+      bool modal = false}) {
     showDialog<String>(
       context: context,
-      builder: (BuildContext context) => _HealthConfirmDialog(user, type),
+      builder: (BuildContext context) =>
+          _HealthConfirmDialog(user, type, modal),
     );
   }
 }

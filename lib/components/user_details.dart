@@ -288,7 +288,8 @@ class _UserDetails extends StatelessWidget {
               onPressed: () => HealthConfirmDialog.confirmDialog(
                   context: context,
                   user: userInfo,
-                  type: HealthConfirmDialogType.endQuarantine),
+                  type: HealthConfirmDialogType.endQuarantine,
+                  modal: true),
               icon: const Icon(Symbols.cancel_rounded),
               label: const Text("Remove from Quarantine"),
             )
@@ -306,7 +307,8 @@ class _UserDetails extends StatelessWidget {
               onPressed: () => HealthConfirmDialog.confirmDialog(
                   context: context,
                   user: userInfo,
-                  type: HealthConfirmDialogType.endMonitoring),
+                  type: HealthConfirmDialogType.endMonitoring,
+                  modal: true),
               icon: const Icon(Symbols.close_rounded, size: 18.0),
               label: const Text("End Monitoring"),
             ),
@@ -319,7 +321,8 @@ class _UserDetails extends StatelessWidget {
               onPressed: () => HealthConfirmDialog.confirmDialog(
                   context: context,
                   user: userInfo,
-                  type: HealthConfirmDialogType.startQuarantine),
+                  type: HealthConfirmDialogType.startQuarantine,
+                  modal: true),
               icon: const Icon(Symbols.medical_mask_rounded),
               label: const Text("Move to Quarantine"),
             ),
@@ -337,7 +340,8 @@ class _UserDetails extends StatelessWidget {
               onPressed: () => HealthConfirmDialog.confirmDialog(
                   context: context,
                   user: userInfo,
-                  type: HealthConfirmDialogType.startMonitoring),
+                  type: HealthConfirmDialogType.startMonitoring,
+                  modal: true),
               icon: const Icon(Symbols.add_rounded, size: 18.0),
               label: const Text("Add to Monitoring"),
             ),
@@ -350,7 +354,8 @@ class _UserDetails extends StatelessWidget {
               onPressed: () => HealthConfirmDialog.confirmDialog(
                   context: context,
                   user: userInfo,
-                  type: HealthConfirmDialogType.startQuarantine),
+                  type: HealthConfirmDialogType.startQuarantine,
+                  modal: true),
               icon: const Icon(Symbols.medical_mask_rounded),
               label: const Text("Move to Quarantine"),
             ),
