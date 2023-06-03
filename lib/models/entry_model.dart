@@ -154,6 +154,8 @@ class HealthEntry {
   final bool waitingForRapidAntigen;
 
   final IskolarHealthStatus verdict;
+  final bool forDeletion;
+  final HealthEntry? updated;
 
   HealthEntry({
     this.id,
@@ -167,6 +169,8 @@ class HealthEntry {
     required this.waitingForRtPcr,
     required this.waitingForRapidAntigen,
     required this.verdict,
+    this.forDeletion = false,
+    this.updated,
   });
 
   // Factory constructor to instantiate object from json format
@@ -183,6 +187,10 @@ class HealthEntry {
       waitingForRtPcr: json['waitingForRtPcr'],
       waitingForRapidAntigen: json['waitingForRapidAntigen'],
       verdict: IskolarHealthStatus.fromJson(json['verdict']),
+      forDeletion: json['forDeletion'],
+      updated: json['updated'] != null
+          ? HealthEntry.fromJson(json['updated'])
+          : null,
     );
   }
 
@@ -208,6 +216,9 @@ class HealthEntry {
       'waitingForRtPcr': entry.waitingForRtPcr,
       'waitingForRapidAntigen': entry.waitingForRapidAntigen,
       'verdict': IskolarHealthStatus.toJson(entry.verdict),
+      'forDeletion': entry.forDeletion,
+      'updated':
+          entry.updated != null ? HealthEntry.toJson(entry.updated!) : null,
     };
   }
 }
