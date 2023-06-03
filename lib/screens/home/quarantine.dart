@@ -9,10 +9,12 @@ import 'package:iskolarsafe/components/health_confirm_dialog.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
 import 'package:iskolarsafe/components/screen_placeholder.dart';
 import 'package:iskolarsafe/components/user_details.dart';
+import 'package:iskolarsafe/extensions.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
+import 'package:relative_time/relative_time.dart';
 
 class Quarantine extends StatefulWidget {
   static const String routeName = "/quarantine";
@@ -69,7 +71,7 @@ class _QuarantineState extends State<Quarantine> {
                     user.status != IskolarHealthStatus.healthy),
                 title: Text("${user.firstName} ${user.lastName}"),
                 subtitle: Text(
-                  "Quarantined on: 18/05/2023 11:53am",
+                  "Quarantined ${user.dateQuarantined!.relativeTime(context).capitalizeFirstLetter()}",
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
                 trailing: SizedBox(
