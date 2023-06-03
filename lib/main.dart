@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/firebase_options.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
+import 'package:iskolarsafe/providers/building_logs_provider.dart';
 import 'package:iskolarsafe/providers/entries_provider.dart';
 import 'package:iskolarsafe/routes.dart';
 import 'package:iskolarsafe/theme.dart';
@@ -24,6 +25,8 @@ void main() async {
         ChangeNotifierProvider(create: ((context) => AccountsProvider())),
         ChangeNotifierProvider(
             create: ((context) => HealthEntryProvider(context))),
+        ChangeNotifierProvider(
+            create: ((context) => BuildingLogsProvider(context))),
       ],
       child: const IskolarSafeApp(),
     ),
