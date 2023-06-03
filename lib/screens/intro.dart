@@ -14,7 +14,7 @@ class Intro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: context.watch<PreferencesProvider>().getBool("is_shown_intro"),
+      future: context.read<PreferencesProvider>().getBool("is_shown_intro"),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
