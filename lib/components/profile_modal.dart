@@ -2,16 +2,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/health_badge.dart';
 import 'package:iskolarsafe/models/entry_model.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class ProfileModal extends StatelessWidget {
+class _ProfileModal extends StatelessWidget {
   final Map<String, dynamic> data;
-  const ProfileModal(this.data, {Key? key}) : super(key: key);
+  const _ProfileModal(this.data, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -232,6 +231,28 @@ class ProfileModal extends StatelessWidget {
             : Container(),
         user.allergies.isNotEmpty ? Divider(height: 1.0) : Container(),
       ],
+    );
+  }
+}
+
+class ProfileModal {
+  static void showModal(
+      {required BuildContext context, required Map<String, dynamic> entry}) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+          snap: true,
+          initialChildSize: 0.65,
+          minChildSize: 0.65,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (context, scrollController) {
+            return SingleChildScrollView(
+              controller: scrollController,
+              child: _ProfileModal(entry),
+            );
+          }),
     );
   }
 }

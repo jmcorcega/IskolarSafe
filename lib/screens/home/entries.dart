@@ -112,12 +112,10 @@ class _EntriesState extends State<Entries> {
           return Scaffold(
             floatingActionButton: _canShowMyProfile
                 ? FloatingActionButton.extended(
-                    onPressed: () {
-                      _showProfileModal(
-                          context,
-                          snapshot.data?.docs.first.data()
-                              as Map<String, dynamic>);
-                    },
+                    onPressed: () => ProfileModal.showModal(
+                        context: context,
+                        entry: snapshot.data?.docs.first.data()
+                            as Map<String, dynamic>),
                     label: const Text("My profile"),
                     icon: const Icon(Symbols.person_filled_rounded),
                   )
@@ -160,25 +158,6 @@ class _EntriesState extends State<Entries> {
           );
         },
       ),
-    );
-  }
-
-  void _showProfileModal(BuildContext context, Map<String, dynamic> data) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-          snap: true,
-          initialChildSize: 0.65,
-          minChildSize: 0.65,
-          maxChildSize: 0.95,
-          expand: false,
-          builder: (context, scrollController) {
-            return SingleChildScrollView(
-              controller: scrollController,
-              child: ProfileModal(data),
-            );
-          }),
     );
   }
 }
