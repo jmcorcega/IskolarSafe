@@ -17,11 +17,39 @@ class HealthEntriesAPI {
         .snapshots();
   }
 
+  // Get all entries with edit/delete requests from the database
+  Stream<QuerySnapshot> getEntriesWithRequests() {
+    return store
+        .collection(_storeName)
+        .where(Filter.or(
+          Filter('updated', isNull: false),
+          Filter('forDeletion', isEqualTo: true),
+        ))
+        .snapshots();
+  }
+
   // Add entry to the firestore
   Future<bool> uploadEntry(Map<String, dynamic> entry) async {
     try {
       final ref = await store.collection(_storeName).add(entry);
       await store.collection(_storeName).doc(ref.id).update({'id': ref.id});
+
+      return true;
+    } on FirebaseException catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return false;
+    }
+  }
+
+  // Edit entry in the firestore
+  Future<bool> editEntry(Map<String, dynamic> entry) async {
+    try {
+      await store
+          .collection(_storeName)
+          .doc(entry['id'])
+          .update({"updated": entry});
 
       return true;
     } on FirebaseException catch (e) {
