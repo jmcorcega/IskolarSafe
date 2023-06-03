@@ -6,6 +6,8 @@ import 'package:iskolarsafe/screens/login/signup.dart';
 import 'package:iskolarsafe/screens/new_entry.dart';
 import 'package:iskolarsafe/screens/settings.dart';
 import 'package:iskolarsafe/screens/settings/about.dart';
+import 'package:iskolarsafe/screens/qr_scanner.dart';
+import 'package:iskolarsafe/screens/home/logs.dart';
 
 class IskolarSafeRoutes {
   static Map<String, Widget Function(BuildContext)> routes = {
@@ -14,7 +16,9 @@ class IskolarSafeRoutes {
     NewEntry.routeName: (context) => const NewEntry(),
     EditProfile.routeName: (context) => const EditProfile(),
     Settings.routeName: (context) => const Settings(),
-    About.routeName: (context) => const About()
+    About.routeName: (context) => const About(),
+    QRScanner.routeName: (context) => const QRScanner(),
+    Logs.routeName: (context) => const Logs()
   };
 
   static Route<dynamic>? dynamicRouteHandler(RouteSettings settings) {
