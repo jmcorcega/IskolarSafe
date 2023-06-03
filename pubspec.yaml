@@ -53,6 +53,9 @@ dependencies:
   fluttertoast: ^8.2.2
   relative_time: ^4.0.1
   flutter_svg: ^2.0.6
+  flutter_walkthrough_screen: ^2.0.2
+  svg_provider_cache: ^0.0.1
+  shared_preferences: ^2.1.1
 
 dev_dependencies:
   flutter_test:
