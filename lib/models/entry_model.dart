@@ -187,7 +187,7 @@ class HealthEntry {
       waitingForRtPcr: json['waitingForRtPcr'],
       waitingForRapidAntigen: json['waitingForRapidAntigen'],
       verdict: IskolarHealthStatus.fromJson(json['verdict']),
-      forDeletion: json['forDeletion'],
+      forDeletion: json['forDeletion'] ?? false,
       updated: json['updated'] != null
           ? HealthEntry.fromJson(json['updated'])
           : null,
