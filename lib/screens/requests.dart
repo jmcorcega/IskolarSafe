@@ -107,11 +107,7 @@ class _RequestsState extends State<Requests> {
     return ListView.builder(
       itemCount: entries.length,
       itemBuilder: ((context, index) {
-        HealthEntry entry = entries[index];
-        if (entry.forDeletion && type != RequestType.delete) return null;
-        if (!entry.forDeletion && type != RequestType.update) return null;
-
-        return _buildListTile(entry);
+        return _buildListTile(entries[index]);
       }),
     );
   }
@@ -156,7 +152,23 @@ class _RequestsState extends State<Requests> {
 
     if (entry.forDeletion) {
       return ListTile(
-        onTap: () {},
+        onTap: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder: (context) => DraggableScrollableSheet(
+                initialChildSize: 0.45,
+                maxChildSize: 0.95,
+                minChildSize: 0.4,
+                expand: false,
+                builder: (context, scrollController) {
+                  return SingleChildScrollView(
+                    controller: scrollController,
+                    child: HealthEntryDetails(entry: entry),
+                  );
+                }),
+          );
+        },
         contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
         leading: SizedBox(
           height: double.infinity,
