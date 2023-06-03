@@ -87,6 +87,24 @@ class _EntriesState extends State<Entries> {
     }
   }
 
+  Widget? _getTrailingIcon(BuildContext context, HealthEntry entry) {
+    if (entry.updated == null) return null;
+
+    Color iconColor =
+        Theme.of(context).colorScheme.secondary.withAlpha((255 * 0.5).toInt());
+    if (entry.forDeletion) {
+      return Icon(
+        Symbols.scan_delete_rounded,
+        color: iconColor,
+      );
+    } else {
+      return Icon(
+        Symbols.edit_document_rounded,
+        color: iconColor,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> entryStream =
@@ -181,6 +199,7 @@ class _EntriesState extends State<Entries> {
                               vertical: 8.0,
                             ),
                             leading: _getIcon(entry.verdict),
+                            trailing: _getTrailingIcon(context, entry),
                             title: Text(entry.dateGenerated
                                 .relativeTime(context)
                                 .capitalizeFirstLetter()),
@@ -239,6 +258,7 @@ class _EntriesState extends State<Entries> {
                             contentPadding:
                                 const EdgeInsets.symmetric(horizontal: 24.0),
                             leading: _getIcon(entry.verdict),
+                            trailing: _getTrailingIcon(context, entry),
                             title: Text(entry.dateGenerated
                                 .relativeTime(context)
                                 .capitalizeFirstLetter()),
@@ -260,6 +280,7 @@ class _EntriesState extends State<Entries> {
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 24.0),
                     leading: _getIcon(entry.verdict),
+                    trailing: _getTrailingIcon(context, entry),
                     title: Text(entry.dateGenerated
                         .relativeTime(context)
                         .capitalizeFirstLetter()),
