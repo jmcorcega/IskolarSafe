@@ -12,7 +12,6 @@ import 'package:provider/provider.dart';
 class AccountsProvider with ChangeNotifier {
   late AccountsAPI _accounts;
   late Stream<User?> _userStream;
-  late Stream<QuerySnapshot> _studentStream;
   late AccountsStatus _authStatus;
   late User? _user;
   late bool _userInfoAvailable;
@@ -40,13 +39,6 @@ class AccountsProvider with ChangeNotifier {
       _authStatus = AccountsStatus.userNotLoggedIn;
       _userInfoAvailable = false;
     }
-
-    fetchStudents();
-  }
-
-  fetchStudents() {
-    _studentStream = _accounts.getAllUsers();
-    notifyListeners();
   }
 
   _fetchUserInfo() async {
