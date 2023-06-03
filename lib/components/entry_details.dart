@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iskolarsafe/components/health_badge.dart';
+import 'package:iskolarsafe/components/request_confirm_dialog.dart';
 import 'package:iskolarsafe/extensions.dart';
 import 'package:iskolarsafe/models/entry_model.dart';
 import 'package:iskolarsafe/models/user_model.dart';
@@ -688,39 +689,14 @@ class HealthEntryDetails extends StatelessWidget {
             foregroundColor: Theme.of(context).colorScheme.primary,
             minimumSize: const Size(225.0, 47.5),
           ),
-          onPressed: () {
-            showDialog<String>(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                insetPadding: const EdgeInsets.symmetric(
-                  horizontal: 28.0,
-                ),
-                icon: const Icon(Symbols.edit_rounded, size: 48.0),
-                title: const Text("Confirm edit request"),
-                content: const Text(
-                  "Are you sure you want to approve their edit request?",
-                  textAlign: TextAlign.center,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 48.0, vertical: 24.0),
-                actionsAlignment: MainAxisAlignment.spaceEvenly,
-                actions: <Widget>[
-                  TextButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Symbols.close_rounded),
-                    label: const Text('Cancel'),
-                  ),
-                  TextButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Symbols.edit_document_rounded),
-                    label: const Text('Approve'),
-                  ),
-                ],
-              ),
-            );
-          },
+          onPressed: () => RequestConfirmDialog.confirmDialog(
+            context: context,
+            user: user,
+            type: entry.forDeletion
+                ? RequestConfirmDialogType.approveDelete
+                : RequestConfirmDialogType.approveEdit,
+            modal: true,
+          ),
           icon: const Icon(Symbols.edit_document_rounded),
           label: const Text("Approve"),
         ),
@@ -730,39 +706,14 @@ class HealthEntryDetails extends StatelessWidget {
             backgroundColor: Theme.of(context).colorScheme.primary,
             minimumSize: const Size(225.0, 47.5),
           ),
-          onPressed: () {
-            showDialog<String>(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                insetPadding: const EdgeInsets.symmetric(
-                  horizontal: 28.0,
-                ),
-                icon: const Icon(Symbols.scan_delete_rounded, size: 48.0),
-                title: const Text("Reject edit request"),
-                content: const Text(
-                  "Are you sure you want to reject their edit request?",
-                  textAlign: TextAlign.center,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 48.0, vertical: 24.0),
-                actionsAlignment: MainAxisAlignment.spaceEvenly,
-                actions: <Widget>[
-                  TextButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Symbols.close_rounded),
-                    label: const Text('Cancel'),
-                  ),
-                  TextButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Symbols.scan_delete_rounded),
-                    label: const Text('Reject'),
-                  ),
-                ],
-              ),
-            );
-          },
+          onPressed: () => RequestConfirmDialog.confirmDialog(
+            context: context,
+            user: user,
+            type: entry.forDeletion
+                ? RequestConfirmDialogType.rejectDelete
+                : RequestConfirmDialogType.rejectEdit,
+            modal: true,
+          ),
           icon: const Icon(Symbols.scan_delete_rounded, size: 18.0),
           label: const Text("Reject"),
         ),
