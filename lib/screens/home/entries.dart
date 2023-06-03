@@ -5,7 +5,6 @@ import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/entry_details.dart';
 import 'package:iskolarsafe/components/screen_placeholder.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
-import 'package:iskolarsafe/screens/edit_delete_entry.dart';
 import 'package:iskolarsafe/components/profile_modal.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
 import 'package:iskolarsafe/extensions.dart';
