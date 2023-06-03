@@ -3,7 +3,7 @@ import 'package:iskolarsafe/models/user_model.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class HealthBadge extends StatelessWidget {
-  final IskolarHealthStatus status;
+  final IskolarHealthStatus? status;
   const HealthBadge(this.status, {Key? key}) : super(key: key);
 
   Widget _getIcon() {
@@ -15,8 +15,10 @@ class HealthBadge extends StatelessWidget {
         return Icon(Symbols.coronavirus_rounded, size: iconSize);
       case IskolarHealthStatus.notWell:
         return Icon(Symbols.sick_rounded, size: iconSize);
-      default:
+      case IskolarHealthStatus.healthy:
         return Icon(Symbols.check_circle_filled, size: iconSize);
+      default:
+        return Icon(Symbols.edit_rounded, size: iconSize);
     }
   }
 
@@ -28,8 +30,10 @@ class HealthBadge extends StatelessWidget {
         return Colors.yellow[800];
       case IskolarHealthStatus.notWell:
         return Colors.orange[800];
-      default:
+      case IskolarHealthStatus.healthy:
         return Colors.green;
+      default:
+        return Colors.grey;
     }
   }
 
@@ -41,8 +45,10 @@ class HealthBadge extends StatelessWidget {
         return "Under Monitoring";
       case IskolarHealthStatus.notWell:
         return "Reported Sick";
-      default:
+      case IskolarHealthStatus.healthy:
         return "Safe for Entry";
+      default:
+        return "Under review";
     }
   }
 
