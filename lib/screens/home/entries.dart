@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
+import 'package:iskolarsafe/components/entry_details.dart';
 import 'package:iskolarsafe/components/screen_placeholder.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/screens/edit_delete_entry.dart';
@@ -28,6 +29,24 @@ class Entries extends StatefulWidget {
 class _EntriesState extends State<Entries> {
   bool _canShowMyProfile = false;
   bool hasInternet = true;
+
+  void _showEntryModal(BuildContext context, HealthEntry entry) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+          initialChildSize: 0.45,
+          maxChildSize: 0.95,
+          minChildSize: 0.4,
+          expand: false,
+          builder: (context, scrollController) {
+            return SingleChildScrollView(
+              controller: scrollController,
+              child: HealthEntryDetails(entry: entry),
+            );
+          }),
+    );
+  }
 
   Widget _getIcon(IskolarHealthStatus status) {
     var color = _getColor(status);
@@ -173,15 +192,7 @@ class _EntriesState extends State<Entries> {
                                   .labelMedium!
                                   .apply(color: _getColor(entry.verdict)),
                             ),
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => EditDeleteEntry(
-                                      entry: entry,
-                                    ),
-                                  ));
-                            },
+                            onTap: () => _showEntryModal(context, entry),
                           ),
                         ),
                       );
@@ -239,15 +250,7 @@ class _EntriesState extends State<Entries> {
                                   .labelMedium!
                                   .apply(color: _getColor(entry.verdict)),
                             ),
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => EditDeleteEntry(
-                                      entry: entry,
-                                    ),
-                                  ));
-                            },
+                            onTap: () => _showEntryModal(context, entry),
                           )
                         ],
                       );
@@ -268,15 +271,7 @@ class _EntriesState extends State<Entries> {
                           .labelMedium!
                           .apply(color: _getColor(entry.verdict)),
                     ),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EditDeleteEntry(
-                              entry: entry,
-                            ),
-                          ));
-                    },
+                    onTap: () => _showEntryModal(context, entry),
                   );
                 }),
           );
