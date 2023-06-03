@@ -6,6 +6,7 @@ import 'package:iskolarsafe/api/accounts_api.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/providers/entries_provider.dart';
+import 'package:iskolarsafe/providers/preferences_provider.dart';
 import 'package:iskolarsafe/screens/home/entries.dart';
 import 'package:iskolarsafe/screens/home/monitor.dart';
 import 'package:iskolarsafe/screens/home/logs.dart';
@@ -16,7 +17,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
-  static const String routeName = "/";
+  static const String routeName = "/home";
 
   const Home({super.key});
 
@@ -30,6 +31,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     AccountsStatus? status = context.watch<AccountsProvider>().status;
+    context.read<PreferencesProvider>().setBool("is_shown_intro", true);
 
     if (status == AccountsStatus.userNotLoggedIn) {
       _selectedTabIndex = 0;
