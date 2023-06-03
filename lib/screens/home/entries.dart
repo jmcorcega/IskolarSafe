@@ -12,7 +12,7 @@ import 'package:iskolarsafe/extensions.dart';
 import 'package:iskolarsafe/models/entry_model.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:iskolarsafe/providers/entries_provider.dart';
-import 'package:iskolarsafe/screens/new_entry.dart';
+import 'package:iskolarsafe/screens/entry_editor.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 import 'package:relative_time/relative_time.dart';
@@ -126,7 +126,7 @@ class _EntriesState extends State<Entries> {
               text: "Add your very first entry today",
               button: TextButton.icon(
                 onPressed: () {
-                  Navigator.pushNamed(context, NewEntry.routeName);
+                  Navigator.pushNamed(context, EntryEditor.routeName);
                 },
                 icon: const Icon(Symbols.add_rounded),
                 label: const Text("New entry"),
@@ -153,7 +153,7 @@ class _EntriesState extends State<Entries> {
                   )
                 : FloatingActionButton.extended(
                     onPressed: () {
-                      Navigator.pushNamed(context, NewEntry.routeName);
+                      Navigator.pushNamed(context, EntryEditor.routeName);
                     },
                     label: const Text("New entry"),
                     icon: const Icon(Symbols.add_rounded),

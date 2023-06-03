@@ -7,15 +7,15 @@ import 'package:iskolarsafe/providers/entries_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
-class NewEntry extends StatefulWidget {
-  static const String routeName = "/entry/new";
-  const NewEntry({Key? key}) : super(key: key);
+class EntryEditor extends StatefulWidget {
+  static const String routeName = "/entry/edit";
+  const EntryEditor({Key? key}) : super(key: key);
 
   @override
-  _NewEntryState createState() => _NewEntryState();
+  _EntryEditorState createState() => _EntryEditorState();
 }
 
-class _NewEntryState extends State<NewEntry> {
+class _EntryEditorState extends State<EntryEditor> {
   late final IskolarInfo? userInfo = context.read<AccountsProvider>().userInfo;
   final _entryFormState = GlobalKey<FormState>();
 
