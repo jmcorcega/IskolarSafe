@@ -130,7 +130,7 @@ class HealthEntryDetails extends StatelessWidget {
                   children: [
                     Center(
                       child: Column(children: [
-                        _buildProfile(context, user),
+                        _buildProfile(context, entry.userInfo),
                         const SizedBox(height: 12.0),
                         Text(
                           "Generated ${entry.dateGenerated.relativeTime(context).capitalizeFirstLetter()}",
