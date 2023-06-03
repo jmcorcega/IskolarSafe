@@ -103,19 +103,3 @@ class _QuarantineState extends State<Quarantine> {
     }
   }
 }
-
-class ProfileModal extends StatelessWidget {
-  const ProfileModal({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(height: 64.0),
-        FlutterLogo(size: 150.0),
-        SizedBox(height: 18.0),
-        Text("User's Name", style: Theme.of(context).textTheme.titleLarge),
-      ],
-    );
-  }
-}
