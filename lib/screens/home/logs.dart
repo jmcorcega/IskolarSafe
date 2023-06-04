@@ -1,6 +1,7 @@
 // Name
 // Action (diff color) Monitor Name
 // Date
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
@@ -92,8 +93,8 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
 
           if (!(
            _search == "" ||
-           (user.firstName + user.lastName).replaceAll(" ","").contains(_search.replaceAll(" ","")) ||
-           user.userName.contains(_search) ||
+           (user.firstName + user.lastName).toLowerCase().replaceAll(" ","").contains(_search.replaceAll(" ","")) ||
+           user.userName.toLowerCase().contains(_search) ||
            user.studentNumber.contains(_search)
           )) {
             return Container();
@@ -103,13 +104,21 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
             contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
             leading: SizedBox(
               height: double.infinity,
-              child: CircleAvatar(
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                child: Text(
-                    "${user.firstName.substring(0,1)}",
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary)),
-              ),
+              child: user.photoUrl != null
+                              ? CircleAvatar(
+                                  foregroundImage: CachedNetworkImageProvider(
+                                      user.photoUrl!),
+                                )
+                              : CircleAvatar(
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  child: Text(
+                                      user.firstName.toString().substring(0, 1),
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary)),
+                                ),
             ),
             minLeadingWidth: 44.0,
             title: Text(

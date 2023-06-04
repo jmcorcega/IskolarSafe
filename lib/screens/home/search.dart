@@ -34,6 +34,10 @@ class _SearchState extends State<Search> {
             return const Center(child: CircularProgressIndicator());
           }
 
+    String _search = "";
+
+    return StatefulBuilder(
+      builder: (context, innerSetState) {
           return Scaffold(
             appBar: AppBar(
               leading: EditRequestButton(),
@@ -52,9 +56,11 @@ class _SearchState extends State<Search> {
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Center(
                       child: TextField(
-                        onSubmitted: (value) {
-                          setState(() {});
-                        },
+                        onChanged: (value) => innerSetState(
+                          () {
+                            _search = value.replaceAll(" ","").replaceAll("-","").toLowerCase();
+                          }
+                        ),
                         decoration: const InputDecoration(
                           prefixIcon: Icon(Symbols.search_rounded),
                           border: OutlineInputBorder(),
@@ -79,6 +85,16 @@ class _SearchState extends State<Search> {
                       IskolarInfo user = IskolarInfo.fromJson(
                           snapshot.data!.docs[index].data()
                               as Map<String, dynamic>);
+
+                      if (!(
+                        _search == "" ||
+                        (user.firstName + user.lastName).replaceAll(" ","").toLowerCase().contains(_search.replaceAll(" ","")) ||
+                        user.userName.toLowerCase().contains(_search) ||
+                        user.studentNumber.replaceAll("-","").contains(_search)
+                        )) {
+                        return Container();
+                      }
+                      
                       return ListTile(
                         contentPadding:
                             const EdgeInsets.symmetric(horizontal: 24.0),
@@ -120,6 +136,7 @@ class _SearchState extends State<Search> {
             ),
           );
         }); // });
+      });
   }
 
   /*Widget _buildEmptyScreen() {
