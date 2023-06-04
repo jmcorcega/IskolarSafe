@@ -129,16 +129,21 @@ class _QRScannerState extends State<QRScanner> {
         allergiesData.map((item) => item.toString()).toList();
 
     IskolarInfo details = IskolarInfo(
-      status: IskolarHealthStatus.monitored,
-      firstName: userInfo['firstName'],
-      lastName: userInfo['lastName'],
-      userName: userInfo['userName'],
-      studentNumber: userInfo['studentNumber'],
-      course: userInfo['course'],
-      college: userInfo['college'],
-      condition: conditionList,
-      allergies: allergiesList,
-    );
+        status: IskolarHealthStatus.healthy,
+        firstName: userInfo['firstName'],
+        lastName: userInfo['lastName'],
+        userName: userInfo['userName'],
+        studentNumber: userInfo['studentNumber'],
+        course: userInfo['course'],
+        college: userInfo['college'],
+        condition: conditionList,
+        allergies: allergiesList,
+        type: userInfo['type'] == 'student'
+            ? IskolarType.student
+            : userInfo['type'] == 'monitor'
+                ? IskolarType.monitor
+                : IskolarType.admin,
+        photoUrl: userInfo['photoUrl']);
 
     return AlertDialog(
       insetPadding: const EdgeInsets.symmetric(
