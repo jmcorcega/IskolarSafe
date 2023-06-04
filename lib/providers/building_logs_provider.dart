@@ -11,7 +11,7 @@ import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:provider/provider.dart';
 
 class BuildingLogsProvider with ChangeNotifier {
-  /// Instance of [BuildingLogsAPI] used to interact with the Firestore database.
+  /// Instance of BuildingLogsAPI used to interact with the Firestore database.
   late BuildingLogsAPI api;
 
   /// Stream of all health entries in the database.

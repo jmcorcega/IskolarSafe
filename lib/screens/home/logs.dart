@@ -1,15 +1,16 @@
 // Name
 // Action (diff color) Monitor Name
 // Date
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
 import 'package:iskolarsafe/components/user_details.dart';
-import 'package:iskolarsafe/dummy_info.dart';
 import 'package:iskolarsafe/models/user_model.dart';
+import 'package:iskolarsafe/providers/building_logs_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
 
 class Logs extends StatefulWidget {
   static const String routeName = "/logs";
@@ -26,10 +27,22 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
 
   TextEditingController _search = new TextEditingController();
 
-  final List<IskolarInfo> _iskolarInfo = DummyInfo.fakeInfoList;
-
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    Stream<QuerySnapshot> stream = context.watch<BuildingLogsProvider>().entries;
+    context.read<BuildingLogsProvider>().fetchLogs(context);
+    return StreamBuilder(
+      stream: stream,
+      builder: (context, snapshot) {
+
+      if (snapshot.connectionState == ConnectionState.waiting ||
+          !snapshot.hasData ||
+          snapshot.data == null) 
+        {
+          return const Center(child: CircularProgressIndicator());
+        }
+
     return Scaffold(
       appBar: AppBar(
         leading: EditRequestButton(),
@@ -67,8 +80,12 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
         ],
       ),
       body: ListView.builder(
-        itemCount: _iskolarInfo.length,
+        itemCount: snapshot.data!.docs.length,
         itemBuilder: ((context, index) {
+          Map<String,dynamic> data = snapshot.data!.docs[index].data()
+                              as Map<String, dynamic>;
+          String epoch_date = data["entryDate"];
+          IskolarInfo user = IskolarInfo.fromJson(data["user"]);
           return ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
             leading: SizedBox(
@@ -76,30 +93,30 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
               child: CircleAvatar(
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 child: Text(
-                    "${_iskolarInfo[index].firstName} ${_iskolarInfo[index].lastName}",
+                    "${user.firstName.substring(0,1)}",
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.onPrimary)),
               ),
             ),
             minLeadingWidth: 44.0,
             title: Text(
-              "${_iskolarInfo[index].firstName} ${_iskolarInfo[index].lastName}",
+              "${user.firstName} ${user.lastName}",
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _iskolarInfo[index].studentNumber,
+                  user.studentNumber,
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
                 Text(
-                  "18/05/2023 11:53am",
+                  DateTime.fromMillisecondsSinceEpoch(int.parse(epoch_date)).toString(),
                   style: Theme.of(context).textTheme.labelSmall,
                 ),
               ],
             ),
             isThreeLine: true,
-            onTap: () => UserDetails.showSheet(context, _iskolarInfo[index]),
+            onTap: () => UserDetails.showSheet(context, user),
           );
         }),
       ),
@@ -109,5 +126,6 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
         icon: const Icon(Symbols.qr_code_scanner_rounded),
       ),
     );
+  });
   }
 }

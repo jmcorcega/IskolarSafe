@@ -42,18 +42,6 @@ class _SearchState extends State<Search> {
     return StreamBuilder(
         stream: stream,
         builder: (context, snapshot) {
-          /*
-          if (snapshot.hasError) {
-            return Center(
-              child: Text("Error encountered! ${snapshot.error}"),
-            );
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (!snapshot.hasData) {
-            return _buildEmptyScreen();
-          }*/
           if (snapshot.connectionState == ConnectionState.waiting ||
               !snapshot.hasData ||
               snapshot.data == null) {

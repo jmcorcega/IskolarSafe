@@ -12,8 +12,8 @@ class BuildingLogsAPI {
   Stream<QuerySnapshot> getAllEntries(IskolarInfo userInfo) {
     return store
         .collection(_storeName)
-        .where('monitorId', isEqualTo: userInfo.id)
-        .orderBy('dateGenerated', descending: true)
+        .where('monitorId', isEqualTo: userInfo.id!)
+        .orderBy('entryDate', descending: true)
         .snapshots();
   }
 
