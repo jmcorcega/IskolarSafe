@@ -1,13 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/user_details.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:iskolarsafe/screens/home/logs.dart';
 
 class QRScanner extends StatefulWidget {
   static const String routeName = "/scanner";
@@ -151,53 +149,32 @@ class _QRScannerState extends State<QRScanner> {
     );
 
     return AlertDialog(
-      alignment: Alignment.center,
-      insetPadding: EdgeInsets.symmetric(
-        horizontal: 20.0,
-        vertical: MediaQuery.of(context).size.height * 0.080,
+      insetPadding: const EdgeInsets.symmetric(
+        horizontal: 28.0,
       ),
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: 20.0,
-        vertical: 100.0,
+      icon: Icon(Symbols.face_rounded, size: 48.0),
+      title: Text("User Found!"),
+      content: Text(
+        "Do you want to view the details of ${details.firstName}?",
+        textAlign: TextAlign.center,
       ),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(24.0)),
-      ),
-      title: Row(
-        children: [
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: Icon(Symbols.close_rounded),
-          ),
-        ],
-      ),
-      content: Column(
-        children: [
-          Text("User found!"),
-        ],
-      ),
-      actions: [
-        Row(
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                // Handle button press
-                // Example: Perform an action or navigate to another screen
-                ;
-              },
-              child: Text("Yes"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Handle button press
-                // Example: Perform an action or navigate to another screen
-                UserDetails.showSheet(context, details);
-              },
-              child: Text("No"),
-            ),
-          ],
+      contentPadding: EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
+      actionsAlignment: MainAxisAlignment.spaceEvenly,
+
+      actions: <Widget>[
+        TextButton.icon(
+          onPressed: () {
+            UserDetails.showSheet(context, details);
+          },
+          icon: const Icon(Symbols.check_rounded),
+          label: const Text('Show details'),
+        ),
+        TextButton.icon(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Symbols.close_rounded),
+          label: const Text('Cancel'),
         )
       ], // Display userInfo as a string or an error message
     );
