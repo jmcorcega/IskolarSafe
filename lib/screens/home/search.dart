@@ -23,20 +23,6 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
-    // return FutureBuilder(
-    //future: context.read<AccountsProvider>().refetchStudents(),
-    //  builder: (context, snapshot) {
-    /*if (snapshot.hasError) {
-            return _buildNoInternetScreen();
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }*/
-    // if (snapshot.connectionState == ConnectionState.waiting) {return Text('h', style: TextStyle(fontSize: 100));}
-    // context.watch<AccountsProvider>().fetchStudents();
-    // context.read<AccountsProvider>().fetchStudents();
-
     Stream<QuerySnapshot> stream = context.watch<AccountsProvider>().students;
 
     return StreamBuilder(
