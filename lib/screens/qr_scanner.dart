@@ -178,7 +178,28 @@ class _QRScannerState extends State<QRScanner> {
           Text("User found!"),
         ],
       ),
-      // Display userInfo as a string or an error message
+      actions: [
+        Row(
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                // Handle button press
+                // Example: Perform an action or navigate to another screen
+                ;
+              },
+              child: Text("Yes"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Handle button press
+                // Example: Perform an action or navigate to another screen
+                UserDetails.showSheet(context, details);
+              },
+              child: Text("No"),
+            ),
+          ],
+        )
+      ], // Display userInfo as a string or an error message
     );
   }
 }
