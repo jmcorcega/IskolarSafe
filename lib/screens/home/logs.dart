@@ -25,8 +25,6 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
   @override
   bool wantKeepAlive = true;
 
-  TextEditingController _search = new TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -35,7 +33,6 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
     return StreamBuilder(
       stream: stream,
       builder: (context, snapshot) {
-
       if (snapshot.connectionState == ConnectionState.waiting ||
           !snapshot.hasData ||
           snapshot.data == null) 
@@ -43,6 +40,15 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
           return const Center(child: CircularProgressIndicator());
         }
 
+      return listTileHandler(context, snapshot);
+      }
+    );
+  }
+
+  Widget listTileHandler(BuildContext context, snapshot) {
+     String _search = "";
+    return StatefulBuilder(
+    builder: (context, innerSetState) {
     return Scaffold(
       appBar: AppBar(
         leading: EditRequestButton(),
@@ -61,9 +67,11 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Center(
                 child: TextField(
-                  onSubmitted: (value) {
-                    setState(() {});
-                  },
+                  onChanged: (value) => innerSetState(
+                    () {
+                      _search = value.toLowerCase();
+                    }
+                  ),                  
                   decoration: const InputDecoration(
                     prefixIcon: Icon(Symbols.search_rounded),
                     border: OutlineInputBorder(),
@@ -86,6 +94,11 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
                               as Map<String, dynamic>;
           String epoch_date = data["entryDate"];
           IskolarInfo user = IskolarInfo.fromJson(data["user"]);
+          if (!(_search == "" || (user.firstName + " " + user.lastName).toLowerCase().contains(_search) 
+          || user.userName.toLowerCase().contains(_search) || user.studentNumber.contains(_search))) {
+            return Container();
+          }
+    
           return ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
             leading: SizedBox(
@@ -126,6 +139,6 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
         icon: const Icon(Symbols.qr_code_scanner_rounded),
       ),
     );
-  });
+    });
   }
 }
