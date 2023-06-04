@@ -94,32 +94,27 @@ class _QRScannerState extends State<QRScanner> {
         this.barcode = barcode;
       });
 
-      if (barcode.code != null) {
+      if (barcode.code != null || barcode.code is int) {
         isScanning = false;
         controller.pauseCamera();
 
         Map<String, dynamic>? qrData;
         Map<String, dynamic> userInfo;
-        try {
-          qrData = jsonDecode(barcode.code!) as Map<String, dynamic>;
-        } catch (e) {
-          print("Failed to decode qrcode: $e");
-        }
 
-        if (qrData != null) {
-          userInfo = qrData['userInfo'];
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext context) => buildResult(context, userInfo),
-          ).then((_) {
-            isScanning = true;
-            controller.resumeCamera();
-          });
-        } else {
+        qrData = jsonDecode(barcode.code!) as Map<String, dynamic>;
+
+        userInfo = qrData['userInfo'];
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) => buildResult(context, userInfo),
+        ).then((_) {
           isScanning = true;
           controller.resumeCamera();
-        }
+        });
+      } else {
+        isScanning = true;
+        controller.resumeCamera();
       }
     });
   }
