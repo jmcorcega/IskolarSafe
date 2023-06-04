@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,7 +28,7 @@ class ProfileModal extends StatelessWidget {
             ? QrImageView(
                 backgroundColor: Colors.white,
                 padding: const EdgeInsets.all(18.0),
-                data: data.toString(),
+                data: jsonEncode(data),
                 version: QrVersions.auto,
                 size: MediaQuery.of(context).size.width * 0.75,
               )
