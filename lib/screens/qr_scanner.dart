@@ -94,7 +94,7 @@ class _QRScannerState extends State<QRScanner> {
         this.barcode = barcode;
       });
 
-      if (barcode.code != null || barcode.code is int) {
+      if (barcode.code != null && barcode.code is String) {
         isScanning = false;
         controller.pauseCamera();
 
