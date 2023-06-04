@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/user_details.dart';
 import 'package:iskolarsafe/models/user_model.dart';
+import 'package:iskolarsafe/screens/home/logs.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -48,8 +49,7 @@ class _QRScannerState extends State<QRScanner> {
             Navigator.pop(context);
             Navigator.pushNamed(
               context,
-              QRScanner.routeName,
-              // Pass the userInfo parameter
+              Logs.routeName,
             );
           },
         ),
@@ -111,8 +111,7 @@ class _QRScannerState extends State<QRScanner> {
           showDialog(
             context: context,
             barrierDismissible: false,
-            builder: (BuildContext context) =>
-                buildResult(context, userInfo), // Pass userInfo to buildResult
+            builder: (BuildContext context) => buildResult(context, userInfo),
           ).then((_) {
             isScanning = true;
             controller.resumeCamera();
@@ -126,8 +125,6 @@ class _QRScannerState extends State<QRScanner> {
   }
 
   Widget buildResult(BuildContext context, Map<String, dynamic> userInfo) {
-    // Accept userInfo as a nullable parameter
-    final String username = userInfo['userName'];
     List<dynamic> conditionData = userInfo['condition'] as List<dynamic>;
     List<String> conditionList =
         conditionData.map((item) => item.toString()).toList();
@@ -160,7 +157,6 @@ class _QRScannerState extends State<QRScanner> {
       ),
       contentPadding: EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
       actionsAlignment: MainAxisAlignment.spaceEvenly,
-
       actions: <Widget>[
         TextButton.icon(
           onPressed: () {
@@ -176,7 +172,7 @@ class _QRScannerState extends State<QRScanner> {
           icon: const Icon(Symbols.close_rounded),
           label: const Text('Cancel'),
         )
-      ], // Display userInfo as a string or an error message
+      ],
     );
   }
 }
