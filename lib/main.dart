@@ -9,6 +9,8 @@ import 'package:iskolarsafe/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:relative_time/relative_time.dart';
 
+// import 'package:flutter/rendering.dart';
+
 void main() async {
   // Ensure widgets have been initialized
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +19,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // debugPaintSizeEnabled = true;
 
   // Run the application
   runApp(

@@ -27,6 +27,8 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
   bool wantKeepAlive = true;
 
   String _search = "";
+   String _currentSearchFilter = "";
+  List<String> _searchFilters = ["Date","Name","Course", "College", "Student No"];
 
   @override
   Widget build(BuildContext context) {
@@ -35,16 +37,56 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
     context.read<BuildingLogsProvider>().fetchLogs(context);
     return StreamBuilder(
       stream: stream,
-      builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting ||
-          !snapshot.hasData ||
-          snapshot.data == null) 
+      builder: (context, s) {
+      if (s.connectionState == ConnectionState.waiting ||
+          !s.hasData ||
+          s.data == null) 
         {
           return const Center(child: CircularProgressIndicator());
         }
 
     return StatefulBuilder(
       builder: (context, innerSetState) {
+
+      var snapshot = s.data!.docs;
+              snapshot.sort((a,b) {
+                switch(_currentSearchFilter){
+                  case "Date":
+                    if ((a.data() as Map<String,dynamic>)["entryDate"].toLowerCase().compareTo((b.data() as Map<String,dynamic>)["entryDate"].toLowerCase()) > 0) {
+                      return 1;
+                    } else {
+                      return -1;
+                    }
+                  case "Name":
+                    if ((a.data() as Map<String,dynamic>)["user"]["firstName"].toLowerCase().compareTo((b.data() as Map<String,dynamic>)["user"]["firstName"].toLowerCase()) > 0) {
+                      return 1;
+                    } else {
+                      return -1;
+                    }
+                  case "Course":
+                    if ((a.data() as Map<String,dynamic>)["user"]["course"].toLowerCase().compareTo((b.data() as Map<String,dynamic>)["user"]["course"].toLowerCase()) > 0) {
+                      return 1;
+                    } else {
+                      return -1;
+                    }
+                  case "College":
+                    if ((a.data() as Map<String,dynamic>)["user"]["college"].compareTo((b.data() as Map<String,dynamic>)["user"]["college"]) > 0) {
+                      return 1;
+                    } else {
+                      return -1;
+                    }
+                  case "Student No":
+                    if ((a.data() as Map<String,dynamic>)["user"]["studentNumber"].replaceAll("-","").compareTo((b.data() as Map<String,dynamic>)["user"]["studentNumber"].replaceAll("-","")) > 0) {
+                      return 1;
+                    } else {
+                      return -1;
+                    }
+                  default:
+                    return 0;
+                }
+                    
+              });
+
       return Scaffold(
       appBar: AppBar(
         leading: EditRequestButton(),
@@ -68,11 +110,29 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
                       _search = value.replaceAll(" ","");
                     }
                   ),
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     prefixIcon: Icon(Symbols.search_rounded),
                     border: OutlineInputBorder(),
                     contentPadding: EdgeInsets.symmetric(vertical: 16.0),
                     hintText: "Search for logs",
+                    suffixIcon: PopupMenuButton(
+                            icon: Icon(Icons.sort),
+                            onSelected: (value) {
+                              innerSetState(
+                                () {
+                                  _currentSearchFilter = value;
+                                }
+                              );                              
+                            },
+                            itemBuilder: (context) {
+                              return _searchFilters.map((String choice) {
+                                return PopupMenuItem<String>(
+                                  value: choice,
+                                  child: Text(choice),
+                                );
+                              }).toList();
+                            },
+                          )
                   ),
                 ),
               ),
@@ -84,9 +144,9 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
         ],
       ),
       body: ListView.builder(
-        itemCount: snapshot.data!.docs.length,
+        itemCount: snapshot.length,
         itemBuilder: ((context, index) {
-          Map<String,dynamic> data = snapshot.data!.docs[index].data()
+          Map<String,dynamic> data = snapshot[index].data()
                               as Map<String, dynamic>;
           String epoch_date = data["entryDate"];
           IskolarInfo user = IskolarInfo.fromJson(data["user"]);

@@ -27,17 +27,53 @@ class _SearchState extends State<Search> {
 
     return StreamBuilder(
         stream: stream,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting ||
-              !snapshot.hasData ||
-              snapshot.data == null) {
+        builder: (context, s) {
+          if (s.connectionState == ConnectionState.waiting ||
+              !s.hasData ||
+              s.data == null) {
             return const Center(child: CircularProgressIndicator());
           }
 
     String _search = "";
+    String _currentSearchFilter = "";
+    List<String> _searchFilters = ["Name","Course", "College", "Student No"];
 
     return StatefulBuilder(
       builder: (context, innerSetState) {
+
+        var snapshot = s.data!.docs;
+        snapshot.sort((a,b) {
+          switch(_currentSearchFilter){
+            case "Name":
+              if ((a.data() as Map<String,dynamic>)["firstName"].toLowerCase().compareTo((b.data() as Map<String,dynamic>)["firstName"].toLowerCase()) > 0) {
+                return 1;
+              } else {
+                return -1;
+              }
+            case "Course":
+              if ((a.data() as Map<String,dynamic>)["course"].toLowerCase().compareTo((b.data() as Map<String,dynamic>)["course"].toLowerCase()) > 0) {
+                return 1;
+              } else {
+                return -1;
+              }
+            case "College":
+              if ((a.data() as Map<String,dynamic>)["college"].compareTo((b.data() as Map<String,dynamic>)["college"]) > 0) {
+                return 1;
+              } else {
+                return -1;
+              }
+            case "Student No":
+              if ((a.data() as Map<String,dynamic>)["studentNumber"].replaceAll("-","").compareTo((b.data() as Map<String,dynamic>)["studentNumber"].replaceAll("-","")) > 0) {
+                return 1;
+              } else {
+                return -1;
+              }
+            default:
+              return 0;
+          }
+               
+        });
+
           return Scaffold(
             appBar: AppBar(
               leading: EditRequestButton(),
@@ -61,11 +97,29 @@ class _SearchState extends State<Search> {
                             _search = value.replaceAll(" ","").replaceAll("-","").toLowerCase();
                           }
                         ),
-                        decoration: const InputDecoration(
-                          prefixIcon: Icon(Symbols.search_rounded),
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(vertical: 16.0),
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Symbols.search_rounded),
+                          border: const OutlineInputBorder(),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
                           hintText: "Search for students",
+                          suffixIcon: PopupMenuButton(
+                            icon: Icon(Icons.sort),
+                            onSelected: (value) {
+                              innerSetState(
+                                () {
+                                  _currentSearchFilter = value;
+                                }
+                              );                              
+                            },
+                            itemBuilder: (context) {
+                              return _searchFilters.map((String choice) {
+                                return PopupMenuItem<String>(
+                                  value: choice,
+                                  child: Text(choice),
+                                );
+                              }).toList();
+                            },
+                          )
                         ),
                       ),
                     ),
@@ -80,10 +134,10 @@ class _SearchState extends State<Search> {
               children: [
                 Expanded(
                   child: ListView.builder(
-                    itemCount: snapshot.data!.docs.length,
+                    itemCount: snapshot.length,
                     itemBuilder: ((context, index) {
                       IskolarInfo user = IskolarInfo.fromJson(
-                          snapshot.data!.docs[index].data()
+                          snapshot[index].data()
                               as Map<String, dynamic>);
 
                       if (!(
