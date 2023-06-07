@@ -125,7 +125,7 @@ class AccountsProvider with ChangeNotifier {
     _user = _accounts.user;
     _userInfo = await _accounts.getUserInfo(_user);
     _userInfoAvailable = true;
-    if (context.mounted) {
+    if (context.mounted && _userInfo != null) {
       context.read<HealthEntryProvider>().fetchEntries(context);
     }
 
@@ -156,7 +156,7 @@ class AccountsProvider with ChangeNotifier {
     _user = _accounts.user;
     _userInfo = await _accounts.getUserInfo(_user);
     _userInfoAvailable = true;
-    if (context.mounted) {
+    if (context.mounted && _userInfo != null) {
       context.read<HealthEntryProvider>().fetchEntries(context);
     }
 
