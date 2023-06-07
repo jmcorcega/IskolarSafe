@@ -37,12 +37,14 @@ class AccountsAPI {
   }
 
   Future<IskolarInfo?> getUserInfo(User? user) async {
+    if (user == null) return null;
+
     try {
       _db.settings = _db.settings.copyWith(
         persistenceEnabled: false,
       );
 
-      var info = await _db.collection(_storeName).doc(user!.uid).get();
+      var info = await _db.collection(_storeName).doc(user.uid).get();
 
       Map<String, dynamic>? data = info.data();
       return IskolarInfo.fromJson(data!);
