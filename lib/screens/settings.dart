@@ -49,12 +49,31 @@ class _SettingsState extends State<Settings> {
           ),
           const Divider(),
           ListTile(
-              leading: Icon(Symbols.info_rounded),
-              title: Text("About App"),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, About.routeName);
-              }),
+            leading: Icon(Symbols.info_rounded),
+            title: Text("About App"),
+            onTap: () {
+              showDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (context) => AlertDialog(
+                      alignment: Alignment.topCenter,
+                      insetPadding: EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: MediaQuery.of(context).size.height * 0.085,
+                      ),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(24.0)),
+                      ),
+                      contentPadding: const EdgeInsets.all(0.0),
+                      content: Builder(builder: (context) {
+                        return SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                              children: [Text("lalala")],
+                            ));
+                      })));
+            },
+          ),
           const Divider(),
         ],
       ),

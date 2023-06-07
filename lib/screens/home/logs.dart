@@ -9,6 +9,7 @@ import 'package:iskolarsafe/components/requests_button.dart';
 import 'package:iskolarsafe/components/user_details.dart';
 import 'package:iskolarsafe/dummy_info.dart';
 import 'package:iskolarsafe/models/user_model.dart';
+import 'package:iskolarsafe/screens/qr_scanner.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Logs extends StatefulWidget {
@@ -104,7 +105,10 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
         }),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pop(context);
+          Navigator.pushNamed(context, QRScanner.routeName);
+        },
         label: const Text("Scan user's entry"),
         icon: const Icon(Symbols.qr_code_scanner_rounded),
       ),
