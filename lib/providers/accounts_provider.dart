@@ -46,7 +46,7 @@ class AccountsProvider with ChangeNotifier {
     _userInfo = await _accounts.getUserInfo(_user);
     if (_userInfo != null) {
       _authStatus = AccountsStatus.success;
-    } else if (_user != null && _userInfo != null) {
+    } else if (_user != null && _userInfo == null) {
       _authStatus = AccountsStatus.noInternetConnection;
     }
     notifyListeners();
