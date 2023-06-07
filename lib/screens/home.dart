@@ -30,7 +30,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     AccountsStatus? status = context.watch<AccountsProvider>().status;
-    context.read<PreferencesProvider>().setBool("is_shown_intro", true);
 
     if (status == AccountsStatus.userNotLoggedIn) {
       _selectedTabIndex = 0;

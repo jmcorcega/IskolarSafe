@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:flutter_walkthrough_screen/flutter_walkthrough_screen.dart';
+import 'package:iskolarsafe/components/flutter_walkthrough.dart';
 import 'package:iskolarsafe/providers/preferences_provider.dart';
 import 'package:iskolarsafe/screens/home.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +14,7 @@ class Intro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: context.read<PreferencesProvider>().getBool("is_shown_intro"),
+      future: context.watch<PreferencesProvider>().getBool("is_shown_intro"),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
@@ -30,11 +30,14 @@ class Intro extends StatelessWidget {
 
   Widget _buildIntroScreen(BuildContext context) {
     return IntroScreen(
-      pageRoute: MaterialPageRoute(
-        builder: (context) {
-          return Home();
-        },
-      ),
+      onEnd: (context) {
+        context.read<PreferencesProvider>().setBool("is_shown_intro", true);
+      },
+      colors: [
+        //list of colors for per pages
+        Colors.white,
+        Colors.red,
+      ],
       onbordingDataList: [
         OnbordingData(
           image: Svg('assets/images/illust_welcome_1.svg'),
@@ -144,11 +147,6 @@ class Intro extends StatelessWidget {
             ),
           ),
         ),
-      ],
-      colors: [
-        Theme.of(context).colorScheme.primary,
-        Theme.of(context).colorScheme.secondary,
-        Theme.of(context).colorScheme.tertiary,
       ],
       nextButton: Text(
         "NEXT",
