@@ -110,45 +110,49 @@ class _RequestConfirmDialog extends StatelessWidget {
                 await context
                     .read<HealthEntryProvider>()
                     .updateEntry(entry.updated!);
-                if (context.mounted &&
-                    context.read<HealthEntryProvider>().status) {
-                  Fluttertoast.showToast(
-                    msg: "Edit request approved successfully.",
-                  );
-                  if (isModal) Navigator.pop(context);
-                } else {
-                  Fluttertoast.showToast(
-                    msg: "An error has occured. Please try again later.",
-                  );
+                if (context.mounted) {
+                  if (context.read<HealthEntryProvider>().status) {
+                    Fluttertoast.showToast(
+                      msg: "Edit request approved successfully.",
+                    );
+                    if (isModal) Navigator.pop(context);
+                  } else {
+                    Fluttertoast.showToast(
+                      msg: "An error has occured. Please try again later.",
+                    );
+                  }
                 }
+
                 break;
               case RequestConfirmDialogType.approveDelete:
                 await context.read<HealthEntryProvider>().deleteEntry(entry);
-                if (context.mounted &&
-                    context.read<HealthEntryProvider>().status) {
-                  Fluttertoast.showToast(
-                    msg: "Delete request approved successfully.",
-                  );
-                  if (isModal) Navigator.pop(context);
-                } else {
-                  Fluttertoast.showToast(
-                    msg: "An error has occured. Please try again later.",
-                  );
+                if (context.mounted) {
+                  if (context.read<HealthEntryProvider>().status) {
+                    Fluttertoast.showToast(
+                      msg: "Delete request approved successfully.",
+                    );
+                    if (isModal) Navigator.pop(context);
+                  } else {
+                    Fluttertoast.showToast(
+                      msg: "An error has occured. Please try again later.",
+                    );
+                  }
                 }
                 break;
               case RequestConfirmDialogType.rejectEdit:
               case RequestConfirmDialogType.rejectDelete:
                 await context.read<HealthEntryProvider>().rejectRequest(entry);
-                if (context.mounted &&
-                    context.read<HealthEntryProvider>().status) {
-                  Fluttertoast.showToast(
-                    msg: "Request rejected successfully.",
-                  );
-                  if (isModal) Navigator.pop(context);
-                } else {
-                  Fluttertoast.showToast(
-                    msg: "An error has occured. Please try again later.",
-                  );
+                if (context.mounted) {
+                  if (context.read<HealthEntryProvider>().status) {
+                    Fluttertoast.showToast(
+                      msg: "Request rejected successfully.",
+                    );
+                    if (isModal) Navigator.pop(context);
+                  } else {
+                    Fluttertoast.showToast(
+                      msg: "An error has occured. Please try again later.",
+                    );
+                  }
                 }
                 break;
             }
