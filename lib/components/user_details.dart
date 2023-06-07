@@ -118,7 +118,7 @@ class _UserDetails extends StatelessWidget {
           leading: Icon(Symbols.badge_rounded),
           title: Text(userInfo.studentNumber),
           subtitle: Text(
-            "Student number",
+            "ID number",
             style: Theme.of(context).textTheme.labelSmall,
           ),
           onLongPress: () async {

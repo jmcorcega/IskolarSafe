@@ -138,7 +138,7 @@ class _ProfileModal extends StatelessWidget {
           leading: const Icon(Symbols.badge_rounded),
           title: Text(user.studentNumber),
           subtitle: Text(
-            "Student number",
+            "ID number",
             style: Theme.of(context).textTheme.labelSmall,
           ),
           onLongPress: () async {

@@ -43,7 +43,7 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
     "Name",
     "Course",
     "College",
-    "Student No"
+    "ID Number"
   ];
 
   // Wait until user has scanned a valid entry
@@ -200,7 +200,7 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
                     } else {
                       return -1;
                     }
-                  case "Student No":
+                  case "ID Number":
                     if ((a.data() as Map<String, dynamic>)["user"]
                                 ["studentNumber"]
                             .replaceAll("-", "")

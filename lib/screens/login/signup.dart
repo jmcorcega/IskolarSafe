@@ -415,7 +415,7 @@ class _SignUpState extends State<SignUp> with RouteAware {
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Symbols.badge_rounded),
                   border: OutlineInputBorder(),
-                  labelText: "Student ID Number",
+                  labelText: "ID number",
                 ),
                 enabled: !_deferSignOut,
                 validator: (value) {

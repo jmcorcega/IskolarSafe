@@ -34,7 +34,7 @@ class _SearchState extends State<Search> with AutomaticKeepAliveClientMixin {
     "Name",
     "Course",
     "College",
-    "Student No"
+    "ID Number"
   ];
 
   @override
@@ -85,7 +85,7 @@ class _SearchState extends State<Search> with AutomaticKeepAliveClientMixin {
                   } else {
                     return -1;
                   }
-                case "Student No":
+                case "ID Number":
                   if ((a.data() as Map<String, dynamic>)["studentNumber"]
                           .replaceAll("-", "")
                           .compareTo((b.data()
