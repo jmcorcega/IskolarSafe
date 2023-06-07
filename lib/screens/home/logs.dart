@@ -10,6 +10,7 @@ import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/health_badge.dart';
 import 'package:iskolarsafe/components/log_details.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
+import 'package:iskolarsafe/components/screen_placeholder.dart';
 import 'package:iskolarsafe/extensions.dart';
 import 'package:iskolarsafe/models/building_log_model.dart';
 import 'package:iskolarsafe/models/entry_model.dart';
@@ -298,69 +299,79 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
                     AppOptions(),
                   ],
                 ),
-                body: ListView.builder(
-                  itemCount: snapshot.length,
-                  itemBuilder: ((context, index) {
-                    BuildingLog log = BuildingLog.fromJson(
-                        snapshot[index].data() as Map<String, dynamic>);
-                    IskolarInfo user = log.user;
+                body: snapshot.isEmpty
+                    ? const ScreenPlaceholder(
+                        asset: "assets/images/illust_list_empty.svg",
+                        text: "No entries to display",
+                      )
+                    : ListView.builder(
+                        itemCount: snapshot.length,
+                        itemBuilder: ((context, index) {
+                          BuildingLog log = BuildingLog.fromJson(
+                              snapshot[index].data() as Map<String, dynamic>);
+                          IskolarInfo user = log.user;
 
-                    if (!(_search == "" ||
-                        (user.firstName + user.lastName)
-                            .toLowerCase()
-                            .replaceAll(" ", "")
-                            .contains(_search.replaceAll(" ", "")) ||
-                        user.userName.toLowerCase().contains(_search) ||
-                        user.studentNumber.contains(_search))) {
-                      return Container();
-                    }
+                          if (!(_search == "" ||
+                              (user.firstName + user.lastName)
+                                  .toLowerCase()
+                                  .replaceAll(" ", "")
+                                  .contains(_search.replaceAll(" ", "")) ||
+                              user.userName.toLowerCase().contains(_search) ||
+                              user.studentNumber.contains(_search))) {
+                            return Container();
+                          }
 
-                    return ListTile(
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 24.0,
-                        vertical: 8.0,
+                          return ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 24.0,
+                              vertical: 8.0,
+                            ),
+                            leading: SizedBox(
+                              height: double.infinity,
+                              child: user.photoUrl != null
+                                  ? CircleAvatar(
+                                      foregroundImage:
+                                          CachedNetworkImageProvider(
+                                              user.photoUrl!),
+                                    )
+                                  : CircleAvatar(
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      child: Text(
+                                          user.firstName
+                                              .toString()
+                                              .substring(0, 1),
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimary)),
+                                    ),
+                            ),
+                            minLeadingWidth: 44.0,
+                            title: Text(
+                              "${user.firstName} ${user.lastName}",
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.studentNumber,
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
+                                ),
+                                Text(
+                                  log.entryDate
+                                      .relativeTime(context)
+                                      .capitalizeFirstLetter(),
+                                  style: Theme.of(context).textTheme.labelSmall,
+                                ),
+                              ],
+                            ),
+                            onTap: () =>
+                                LogDetails.showSheet(context, log, user),
+                          );
+                        }),
                       ),
-                      leading: SizedBox(
-                        height: double.infinity,
-                        child: user.photoUrl != null
-                            ? CircleAvatar(
-                                foregroundImage:
-                                    CachedNetworkImageProvider(user.photoUrl!),
-                              )
-                            : CircleAvatar(
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                child: Text(
-                                    user.firstName.toString().substring(0, 1),
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary)),
-                              ),
-                      ),
-                      minLeadingWidth: 44.0,
-                      title: Text(
-                        "${user.firstName} ${user.lastName}",
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            user.studentNumber,
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                          Text(
-                            log.entryDate
-                                .relativeTime(context)
-                                .capitalizeFirstLetter(),
-                            style: Theme.of(context).textTheme.labelSmall,
-                          ),
-                        ],
-                      ),
-                      onTap: () => LogDetails.showSheet(context, log, user),
-                    );
-                  }),
-                ),
                 floatingActionButton: FloatingActionButton.extended(
                   onPressed: _scanOnPressed,
                   label: const Text("Scan user's entry"),
