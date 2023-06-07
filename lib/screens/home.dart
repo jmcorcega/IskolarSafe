@@ -28,11 +28,6 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     AccountsStatus? status = context.watch<AccountsProvider>().status;
 
-    if (status == AccountsStatus.userNotLoggedIn) {
-      _selectedTabIndex = 0;
-      return const Login();
-    }
-
     if (status == AccountsStatus.noInternetConnection) {
       _selectedTabIndex = 0;
       return Scaffold(
@@ -54,13 +49,19 @@ class _HomeState extends State<Home> {
       );
     }
 
-    if (status != AccountsStatus.success) {
+    if (status == AccountsStatus.loggingOut ||
+        status == AccountsStatus.unknown) {
       _selectedTabIndex = 0;
       return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
         ),
       );
+    }
+
+    if (status != AccountsStatus.success) {
+      _selectedTabIndex = 0;
+      return const Login();
     }
 
     // if user is logged in
