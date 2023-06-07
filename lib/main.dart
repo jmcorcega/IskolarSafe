@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:iskolarsafe/firebase_options.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/providers/building_logs_provider.dart';
@@ -24,6 +25,10 @@ void main() async {
 
   // debugPaintSizeEnabled = true;
 
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    systemNavigationBarColor: Colors.transparent,
+  ));
+
   // Run the application
   runApp(
     MultiProvider(
@@ -32,7 +37,8 @@ void main() async {
             create: ((context) =>
                 PreferencesProvider(SharedPreferences.getInstance()))),
         ChangeNotifierProvider(create: ((context) => AccountsProvider())),
-        ChangeNotifierProvider(create: ((context) => BuildingLogsProvider(context))),
+        ChangeNotifierProvider(
+            create: ((context) => BuildingLogsProvider(context))),
         ChangeNotifierProvider(
             create: ((context) => HealthEntryProvider(context))),
         ChangeNotifierProvider(
