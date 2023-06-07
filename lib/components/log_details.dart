@@ -110,7 +110,8 @@ class _LogDetails extends StatelessWidget {
               return Center(
                 child: ScreenPlaceholder(
                   asset: "assets/images/illust_no_connection.svg",
-                  text: "An error has occured. Try again later.",
+                  text:
+                      "An error has occured. The entry may have been deleted.",
                 ),
               );
             }
