@@ -570,8 +570,8 @@ class _EditProfileState extends State<EditProfile> {
             ? Theme.of(context).colorScheme.onBackground.withOpacity(0.75)
             : null,
         onPressed: _deferEditing ? null : updateProfile,
-        label: Text("Save Changes"),
-        icon: Icon(Symbols.save_rounded),
+        label: const Text("Save Changes"),
+        icon: const Icon(Symbols.save_rounded),
       ),
     );
   }

@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:iskolarsafe/screens/settings/about.dart';
 
 class Settings extends StatefulWidget {
   static const String routeName = "/settings";

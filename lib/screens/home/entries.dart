@@ -63,6 +63,7 @@ class _EntriesState extends State<Entries> with AutomaticKeepAliveClientMixin {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     Stream<QuerySnapshot> entryStream =
         context.watch<HealthEntryProvider>().entries;
     IskolarInfo? userInfo = context.read<AccountsProvider>().userInfo;

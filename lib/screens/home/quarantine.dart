@@ -1,7 +1,3 @@
-// NAME -> If clicked, show profile
-// DATE QUARANTINED
-// Remove Quarantine -> When clicked, show pop up
-
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
@@ -32,6 +28,7 @@ class _QuarantineState extends State<Quarantine>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         leading: EditRequestButton(),

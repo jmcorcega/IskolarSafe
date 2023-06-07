@@ -7,7 +7,6 @@ import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
 import 'package:iskolarsafe/components/screen_placeholder.dart';
 import 'package:iskolarsafe/components/user_details.dart';
-import 'package:iskolarsafe/dummy_info.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -265,55 +264,4 @@ class _SearchState extends State<Search> with AutomaticKeepAliveClientMixin {
           }); // });
         });
   }
-
-  /*Widget _buildEmptyScreen() {
-      return Center(
-        // Show a message where the user can add an entry if list is empty
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.bookmark_add_outlined,
-                size: 64.0,
-                color:
-                    Theme.of(context).colorScheme.onBackground.withOpacity(0.75)),
-            const SizedBox(height: 16.0),
-            /*Text("Create your first entry!",
-                style: Theme.of(context).textTheme.titleLarge!.apply(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onBackground
-                        .withOpacity(0.75))),*/
-            const SizedBox(height: 20.0),
-            TextButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, NewEntry.routeName);
-              },
-              icon: const Icon(Icons.add_outlined),
-              label: const Text("New Entry"),
-            )
-          ],
-        ),
-      );
-    }
-
-    Widget _buildNoInternetScreen() {
-    return Center(
-        // Show a message where the user can add an entry if list is empty
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(Icons.wifi_off_outlined,
-            size: 64.0,
-            color:
-                Theme.of(context).colorScheme.onBackground.withOpacity(0.75)),
-        const SizedBox(height: 16.0),
-        Text("Connect to the internet to get students",
-            style: Theme.of(context).textTheme.titleLarge!.apply(
-                color: Theme.of(context)
-                    .colorScheme
-                    .onBackground
-                    .withOpacity(0.75))),
-      ],
-    ));
-  }*/
 }

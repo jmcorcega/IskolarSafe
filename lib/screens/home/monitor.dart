@@ -1,6 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/screen_placeholder.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
@@ -26,15 +23,14 @@ class _MonitorState extends State<Monitor> with AutomaticKeepAliveClientMixin {
   @override
   bool wantKeepAlive = true;
 
-  var noUnderMonitoring = true;
-
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         leading: EditRequestButton(),
         centerTitle: true,
-        title: AppBarHeader(
+        title: const AppBarHeader(
           icon: Symbols.coronavirus_rounded,
           title: "Under Monitoring",
           hasAction: false,
@@ -51,11 +47,12 @@ class _MonitorState extends State<Monitor> with AutomaticKeepAliveClientMixin {
             } else if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return ScreenPlaceholder(
+              return const ScreenPlaceholder(
                 asset: "assets/images/illust_no_monitored.svg",
                 text: "No users under monitoring",
               );
             }
+
             return ListView.builder(
                 shrinkWrap: true,
                 itemCount: snapshot.data?.docs.length,
@@ -64,66 +61,52 @@ class _MonitorState extends State<Monitor> with AutomaticKeepAliveClientMixin {
                       snapshot.data?.docs[index].data()
                           as Map<String, dynamic>);
                   user.id = snapshot.data?.docs[index].id;
-                  if (user.status == IskolarHealthStatus.monitored) {
-                    noUnderMonitoring = false;
-                    return ListTile(
-                      onTap: () => UserDetails.showSheet(context, user),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 24.0),
-                      title: Text(
-                        "${user.firstName} ${user.lastName}",
-                      ),
-                      subtitle: _getHealthStatus(true),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            width: 34.0,
-                            child: FilledButton(
-                              style: FilledButton.styleFrom(
-                                  shape: const CircleBorder(),
-                                  padding: EdgeInsets.all(0),
-                                  backgroundColor:
-                                      Theme.of(context).colorScheme.primary),
-                              onPressed: () =>
-                                  HealthConfirmDialog.confirmDialog(
-                                      context: context,
-                                      user: user,
-                                      type: HealthConfirmDialogType
-                                          .endMonitoring),
-                              child:
-                                  const Icon(Symbols.close_rounded, size: 18.0),
-                            ),
+                  return ListTile(
+                    onTap: () => UserDetails.showSheet(context, user),
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 24.0),
+                    title: Text(
+                      "${user.firstName} ${user.lastName}",
+                    ),
+                    subtitle: _getHealthStatus(true),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 34.0,
+                          child: FilledButton(
+                            style: FilledButton.styleFrom(
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(0),
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary),
+                            onPressed: () => HealthConfirmDialog.confirmDialog(
+                                context: context,
+                                user: user,
+                                type: HealthConfirmDialogType.endMonitoring),
+                            child:
+                                const Icon(Symbols.close_rounded, size: 18.0),
                           ),
-                          SizedBox(width: 12.0),
-                          SizedBox(
-                            width: 34.0,
-                            child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                  shape: const CircleBorder(),
-                                  padding: EdgeInsets.all(0),
-                                  foregroundColor:
-                                      Theme.of(context).colorScheme.tertiary),
-                              onPressed: () =>
-                                  HealthConfirmDialog.confirmDialog(
-                                      context: context,
-                                      user: user,
-                                      type: HealthConfirmDialogType
-                                          .startQuarantine),
-                              child: const Icon(Symbols.medical_mask_rounded),
-                            ),
+                        ),
+                        const SizedBox(width: 12.0),
+                        SizedBox(
+                          width: 34.0,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(0),
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.tertiary),
+                            onPressed: () => HealthConfirmDialog.confirmDialog(
+                                context: context,
+                                user: user,
+                                type: HealthConfirmDialogType.startQuarantine),
+                            child: const Icon(Symbols.medical_mask_rounded),
                           ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  if (noUnderMonitoring == true &&
-                      index == snapshot.data?.docs.length) {
-                    return Center(
-                        child: Text("No Student in Under Monitoring yet!",
-                            style: Theme.of(context).textTheme.titleMedium!));
-                  }
-                  return SizedBox.shrink();
+                        ),
+                      ],
+                    ),
+                  );
                 }));
           }),
     );
@@ -135,8 +118,8 @@ class _MonitorState extends State<Monitor> with AutomaticKeepAliveClientMixin {
     if (status) {
       return Row(
         children: [
-          Icon(Symbols.sick, color: Colors.red, size: 20.0),
-          SizedBox(width: 6.0),
+          const Icon(Symbols.sick, color: Colors.red, size: 20.0),
+          const SizedBox(width: 6.0),
           Text(
             symptoms,
             style: Theme.of(context)
@@ -149,9 +132,9 @@ class _MonitorState extends State<Monitor> with AutomaticKeepAliveClientMixin {
     } else {
       return Row(
         children: [
-          Icon(Symbols.health_and_safety_rounded,
+          const Icon(Symbols.health_and_safety_rounded,
               color: Colors.green, size: 20.0),
-          SizedBox(width: 6.0),
+          const SizedBox(width: 6.0),
           Text(
             safe,
             style: Theme.of(context)

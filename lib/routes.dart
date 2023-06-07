@@ -7,7 +7,6 @@ import 'package:iskolarsafe/screens/login.dart';
 import 'package:iskolarsafe/screens/login/signup.dart';
 import 'package:iskolarsafe/screens/entry_editor.dart';
 import 'package:iskolarsafe/screens/settings.dart';
-import 'package:iskolarsafe/screens/settings/about.dart';
 import 'package:iskolarsafe/screens/qr_scanner.dart';
 import 'package:iskolarsafe/screens/home/logs.dart';
 
@@ -18,7 +17,6 @@ class IskolarSafeRoutes {
     Login.routeName: (context) => const Login(),
     EditProfile.routeName: (context) => const EditProfile(),
     Settings.routeName: (context) => const Settings(),
-    About.routeName: (context) => const About(),
     QRScanner.routeName: (context) => const QRScanner(),
     Logs.routeName: (context) => const Logs()
   };
