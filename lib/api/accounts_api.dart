@@ -15,7 +15,8 @@ enum AccountsStatus {
   unknown,
   userNotLoggedIn,
   needsSignUp,
-  loggingOut
+  loggingOut,
+  noInternetConnection,
 }
 
 class AccountsAPI {
@@ -37,6 +38,10 @@ class AccountsAPI {
 
   Future<IskolarInfo?> getUserInfo(User? user) async {
     try {
+      _db.settings = _db.settings.copyWith(
+        persistenceEnabled: false,
+      );
+
       var info = await _db.collection(_storeName).doc(user!.uid).get();
 
       Map<String, dynamic>? data = info.data();

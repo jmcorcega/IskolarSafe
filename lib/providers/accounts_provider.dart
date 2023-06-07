@@ -45,8 +45,26 @@ class AccountsProvider with ChangeNotifier {
     _userInfo = await _accounts.getUserInfo(_user);
     if (_userInfo != null) {
       _authStatus = AccountsStatus.success;
+    } else {
+      _authStatus = AccountsStatus.noInternetConnection;
     }
     notifyListeners();
+  }
+
+  fetchInfo() {
+    _authStatus = AccountsStatus.unknown;
+    notifyListeners();
+
+    _accounts = AccountsAPI();
+    _userStream = _accounts.getUserStream();
+    _user = _accounts.user;
+    _userInfoAvailable = true;
+    _fetchUserInfo();
+
+    if (_user == null) {
+      _authStatus = AccountsStatus.userNotLoggedIn;
+      _userInfoAvailable = false;
+    }
   }
 
   Future<void> signUp(BuildContext context, bool isGoogle,
