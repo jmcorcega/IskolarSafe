@@ -133,31 +133,35 @@ class AccountsProvider with ChangeNotifier {
   }
 
   Future<void> signInWithGoogle(BuildContext context) async {
-    // Start the sign-in process
-    GoogleSignInAccount? credentials = await GoogleSignIn().signIn();
-    if (credentials == null) {
+    try {
+      // Start the sign-in process
+      GoogleSignInAccount? credentials = await GoogleSignIn().signIn();
+      if (credentials == null) {
+        _authStatus = AccountsStatus.unknown;
+        return;
+      }
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication token = await credentials.authentication;
+
+      // Create a new credential
+      final OAuthCredential auth = GoogleAuthProvider.credential(
+        accessToken: token.accessToken,
+        idToken: token.idToken,
+      );
+
+      // Once signed in, return the UserCredential
+      _authStatus = await _accounts.signInWithGoogle(auth);
+
+      // Fetch user information
+      _user = _accounts.user;
+      _userInfo = await _accounts.getUserInfo(_user);
+      _userInfoAvailable = true;
+      if (context.mounted && _userInfo != null) {
+        context.read<HealthEntryProvider>().fetchEntries(context);
+      }
+    } catch (e) {
       _authStatus = AccountsStatus.unknown;
-      return;
-    }
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication token = await credentials.authentication;
-
-    // Create a new credential
-    final OAuthCredential auth = GoogleAuthProvider.credential(
-      accessToken: token.accessToken,
-      idToken: token.idToken,
-    );
-
-    // Once signed in, return the UserCredential
-    _authStatus = await _accounts.signInWithGoogle(auth);
-
-    // Fetch user information
-    _user = _accounts.user;
-    _userInfo = await _accounts.getUserInfo(_user);
-    _userInfoAvailable = true;
-    if (context.mounted && _userInfo != null) {
-      context.read<HealthEntryProvider>().fetchEntries(context);
     }
 
     notifyListeners();
