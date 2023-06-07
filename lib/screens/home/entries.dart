@@ -70,7 +70,7 @@ class _EntriesState extends State<Entries> with AutomaticKeepAliveClientMixin {
     return Scaffold(
       appBar: AppBar(
         leading:
-            userInfo!.type == IskolarType.student ? null : EditRequestButton(),
+            userInfo!.type != IskolarType.admin ? null : EditRequestButton(),
         centerTitle: true,
         title: const AppBarHeader(
           icon: Symbols.home_rounded,

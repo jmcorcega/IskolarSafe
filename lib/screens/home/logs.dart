@@ -141,6 +141,7 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    IskolarInfo? userInfo = context.read<AccountsProvider>().userInfo;
     Stream<QuerySnapshot> stream =
         context.watch<BuildingLogsProvider>().entries;
     context.read<BuildingLogsProvider>().fetchLogs(context);
@@ -219,7 +220,9 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
 
               return Scaffold(
                 appBar: AppBar(
-                  leading: EditRequestButton(),
+                  leading: userInfo!.type != IskolarType.admin
+                      ? null
+                      : EditRequestButton(),
                   centerTitle: true,
                   title: const AppBarHeader(
                     icon: Symbols.quick_reference_all_rounded,
