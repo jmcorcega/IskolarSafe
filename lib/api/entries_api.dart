@@ -29,6 +29,20 @@ class HealthEntriesAPI {
         .snapshots();
   }
 
+  Future<HealthEntry?> getEntry(String entryId) async {
+    try {
+      var info = await store.collection(_storeName).doc(entryId).get();
+
+      Map<String, dynamic>? data = info.data();
+      return HealthEntry.fromJson(data!);
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return null;
+    }
+  }
+
   // Add entry to the firestore
   Future<bool> uploadEntry(Map<String, dynamic> entry) async {
     try {

@@ -6,13 +6,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
+import 'package:iskolarsafe/components/health_badge.dart';
+import 'package:iskolarsafe/components/log_details.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
 import 'package:iskolarsafe/components/user_details.dart';
+import 'package:iskolarsafe/extensions.dart';
+import 'package:iskolarsafe/models/building_log_model.dart';
+import 'package:iskolarsafe/models/entry_model.dart';
 import 'package:iskolarsafe/models/user_model.dart';
+import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/providers/building_logs_provider.dart';
 import 'package:iskolarsafe/screens/qr_scanner.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
+import 'package:relative_time/relative_time.dart';
 
 class Logs extends StatefulWidget {
   static const String routeName = "/logs";
@@ -36,6 +43,96 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
     "College",
     "Student No"
   ];
+
+  // Wait until user has scanned a valid entry
+  void _scanOnPressed() async {
+    final result = await Navigator.pushNamed(context, QRScanner.routeName);
+
+    // If user has put a valid new entry, add it to the list
+    if (context.mounted && result != null) {
+      var now = DateTime.now();
+      var entry = result as HealthEntry;
+      BuildingLog log = BuildingLog(
+        entryDate: now,
+        monitorId: context.read<AccountsProvider>().userInfo!.id!,
+        entryId: entry.id!,
+        user: entry.userInfo,
+      );
+
+      if (entry.dateGenerated
+          .isBefore(DateTime(now.year, now.month, now.day))) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('QR code is not generated today.'),
+        ));
+      }
+
+      await context.read<BuildingLogsProvider>().addEntry(log);
+
+      // Show snackbar to user if entry added successfully
+      if (context.mounted) {
+        if (context.read<BuildingLogsProvider>().status) {
+          ScaffoldMessenger.of(context)
+            ..removeCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                behavior: SnackBarBehavior.floating,
+                content: Row(
+                  children: [
+                    entry.userInfo.photoUrl != null
+                        ? CircleAvatar(
+                            foregroundImage: CachedNetworkImageProvider(
+                                entry.userInfo.photoUrl!),
+                          )
+                        : CircleAvatar(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            child: Text(
+                                entry.userInfo.firstName
+                                    .toString()
+                                    .substring(0, 1),
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimary)),
+                          ),
+                    const SizedBox(width: 18.0),
+                    Stack(
+                      alignment: AlignmentDirectional.centerStart,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(bottom: 24.0),
+                          child: Text(
+                            "${entry.userInfo.firstName} ${entry.userInfo.lastName}",
+                            style:
+                                Theme.of(context).textTheme.labelLarge!.apply(
+                                      color: Colors.white,
+                                      fontSizeDelta: 4,
+                                    ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top: 24.0),
+                          child: HealthBadge(entry.verdict),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('An error has occured. Try again later.'),
+          ));
+        }
+      }
+    }
+
+    // And update the state to show the new entry
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -173,10 +270,9 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
                 body: ListView.builder(
                   itemCount: snapshot.length,
                   itemBuilder: ((context, index) {
-                    Map<String, dynamic> data =
-                        snapshot[index].data() as Map<String, dynamic>;
-                    String epoch_date = data["entryDate"];
-                    IskolarInfo user = IskolarInfo.fromJson(data["user"]);
+                    BuildingLog log = BuildingLog.fromJson(
+                        snapshot[index].data() as Map<String, dynamic>);
+                    IskolarInfo user = log.user;
 
                     if (!(_search == "" ||
                         (user.firstName + user.lastName)
@@ -189,8 +285,10 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
                     }
 
                     return ListTile(
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 24.0),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 8.0,
+                      ),
                       leading: SizedBox(
                         height: double.infinity,
                         child: user.photoUrl != null
@@ -221,22 +319,19 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
                             style: Theme.of(context).textTheme.labelMedium,
                           ),
                           Text(
-                            DateTime.fromMillisecondsSinceEpoch(
-                                    int.parse(epoch_date))
-                                .toString(),
+                            log.entryDate
+                                .relativeTime(context)
+                                .capitalizeFirstLetter(),
                             style: Theme.of(context).textTheme.labelSmall,
                           ),
                         ],
                       ),
-                      isThreeLine: true,
-                      onTap: () => UserDetails.showSheet(context, user),
+                      onTap: () => LogDetails.showSheet(context, log, user),
                     );
                   }),
                 ),
                 floatingActionButton: FloatingActionButton.extended(
-                  onPressed: () {
-                    Navigator.pushNamed(context, QRScanner.routeName);
-                  },
+                  onPressed: _scanOnPressed,
                   label: const Text("Scan user's entry"),
                   icon: const Icon(Symbols.qr_code_scanner_rounded),
                 ),

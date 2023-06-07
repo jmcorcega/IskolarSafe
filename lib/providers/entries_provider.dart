@@ -31,6 +31,7 @@ class HealthEntryProvider with ChangeNotifier {
   // Getters
   Stream<QuerySnapshot> get entries => _entryStream;
   Stream<QuerySnapshot> get requests => api.getEntriesWithRequests();
+  Future<HealthEntry?> getEntry(String entryId) => api.getEntry(entryId);
   bool get status => _status;
 
   /// Adds a new health entry to the database.

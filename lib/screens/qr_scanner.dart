@@ -60,42 +60,39 @@ class _QRScannerState extends State<QRScanner> {
         ),
       ),
       body: Center(
-        child: Expanded(
-          flex: 5,
-          child: Stack(
-            children: [
-              QRView(
-                key: qrKey,
-                onQRViewCreated: _onQRViewCreated,
-                overlay: QrScannerOverlayShape(
-                    cutOutSize: MediaQuery.of(context).size.width * 0.75,
-                    borderLength: 40,
-                    borderWidth: 10,
-                    borderRadius: 18,
-                    cutOutBottomOffset:
-                        MediaQuery.of(context).size.height * 0.075,
-                    borderColor: Theme.of(context).colorScheme.inversePrimary),
+        child: Stack(
+          children: [
+            QRView(
+              key: qrKey,
+              onQRViewCreated: _onQRViewCreated,
+              overlay: QrScannerOverlayShape(
+                  cutOutSize: MediaQuery.of(context).size.width * 0.75,
+                  borderLength: 40,
+                  borderWidth: 10,
+                  borderRadius: 18,
+                  cutOutBottomOffset:
+                      MediaQuery.of(context).size.height * 0.075,
+                  borderColor: Theme.of(context).colorScheme.inversePrimary),
+            ),
+            Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height * 0.3,
               ),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.3,
-                ),
-                child: Text(
-                  "Point your device to a valid entry QR code.",
-                  style: Theme.of(context).textTheme.labelLarge!.apply(
-                    shadows: [
-                      Shadow(
-                        blurRadius: 1.0,
-                        color: Colors.black.withAlpha((255 * 0.5).toInt()),
-                      ),
-                    ],
-                    color: Colors.white,
-                  ),
+              child: Text(
+                "Point your device to a valid entry QR code.",
+                style: Theme.of(context).textTheme.labelLarge!.apply(
+                  shadows: [
+                    Shadow(
+                      blurRadius: 1.0,
+                      color: Colors.black.withAlpha((255 * 0.5).toInt()),
+                    ),
+                  ],
+                  color: Colors.white,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -140,77 +137,11 @@ class _QRScannerState extends State<QRScanner> {
         }
 
         controller.pauseCamera();
-
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) =>
-              buildResult(context, IskolarInfo.toJson(entry.userInfo)),
-        ).then((_) {
-          isScanning = true;
-          controller.resumeCamera();
-        });
+        Navigator.pop(context, entry);
       } else {
         isScanning = true;
         controller.resumeCamera();
       }
     });
-  }
-
-  Widget buildResult(BuildContext context, Map<String, dynamic> userInfo) {
-    List<dynamic> conditionData = userInfo['condition'] as List<dynamic>;
-    List<String> conditionList =
-        conditionData.map((item) => item.toString()).toList();
-
-    List<dynamic> allergiesData = userInfo['allergies'] as List<dynamic>;
-    List<String> allergiesList =
-        allergiesData.map((item) => item.toString()).toList();
-
-    IskolarInfo details = IskolarInfo(
-        status: IskolarHealthStatus.healthy,
-        firstName: userInfo['firstName'],
-        lastName: userInfo['lastName'],
-        userName: userInfo['userName'],
-        studentNumber: userInfo['studentNumber'],
-        course: userInfo['course'],
-        college: userInfo['college'],
-        condition: conditionList,
-        allergies: allergiesList,
-        type: userInfo['type'] == 'student'
-            ? IskolarType.student
-            : userInfo['type'] == 'monitor'
-                ? IskolarType.monitor
-                : IskolarType.admin,
-        photoUrl: userInfo['photoUrl']);
-
-    return AlertDialog(
-      insetPadding: const EdgeInsets.symmetric(
-        horizontal: 28.0,
-      ),
-      icon: Icon(Symbols.face_rounded, size: 48.0),
-      title: Text("User Found!"),
-      content: Text(
-        "Do you want to view the details of ${details.firstName}?",
-        textAlign: TextAlign.center,
-      ),
-      contentPadding: EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
-      actionsAlignment: MainAxisAlignment.spaceEvenly,
-      actions: <Widget>[
-        TextButton.icon(
-          onPressed: () {
-            UserDetails.showSheet(context, details);
-          },
-          icon: const Icon(Symbols.check_rounded),
-          label: const Text('Show details'),
-        ),
-        TextButton.icon(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Symbols.close_rounded),
-          label: const Text('Cancel'),
-        )
-      ],
-    );
   }
 }
