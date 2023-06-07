@@ -64,6 +64,7 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
           behavior: SnackBarBehavior.floating,
           content: Text('QR code is not generated today.'),
         ));
+        return;
       }
 
       await context.read<BuildingLogsProvider>().addEntry(log);
