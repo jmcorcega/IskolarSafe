@@ -30,6 +30,17 @@ class _EntryEditorState extends State<EntryEditor> {
 
   bool _deferEditing = false;
 
+  bool checkChanges() {
+    HealthEntry? entry = widget.entry;
+    if (entry == null) return true;
+
+    if (isExposed != entry.exposed) return true;
+    if (isWaitingForRtPcr != entry.waitingForRtPcr) return true;
+    if (isWaitingForRapidAntigen != entry.waitingForRapidAntigen) return true;
+
+    return false;
+  }
+
   IskolarHealthStatus getVerdict() {
     if (fluSymptoms.length > 1) return IskolarHealthStatus.notWell;
     if (respiratorySymptoms.length > 1) return IskolarHealthStatus.notWell;
@@ -197,10 +208,50 @@ class _EntryEditorState extends State<EntryEditor> {
       isWaitingForRapidAntigen =
           isWaitingForRapidAntigen || entry.waitingForRapidAntigen;
     }
+    checkChanges();
   }
 
   @override
   Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        if (checkChanges()) {
+          bool shouldPop = false;
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Discard changes'),
+              content: const Text('Are you sure you want to discard changes?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    shouldPop = false;
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    shouldPop = true;
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+
+          return shouldPop;
+        }
+
+        return true;
+      },
+      child: _buildScaffold(context),
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
