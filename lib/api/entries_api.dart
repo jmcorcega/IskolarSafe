@@ -67,7 +67,6 @@ class HealthEntriesAPI {
           .doc(entry['id'])
           .update({"updated": null});
 
-      await Future.delayed(const Duration(seconds: 3));
       return true;
     } on FirebaseException catch (e) {
       if (kDebugMode) {
@@ -81,7 +80,6 @@ class HealthEntriesAPI {
   Future<bool> deleteEntry(Map<String, dynamic> entry) async {
     try {
       await store.collection(_storeName).doc(entry['id']).delete();
-      await Future.delayed(const Duration(seconds: 3));
       return true;
     } on FirebaseException catch (e) {
       if (kDebugMode) {
@@ -98,7 +96,6 @@ class HealthEntriesAPI {
           .collection(_storeName)
           .doc(entry['id'])
           .update({"updated": null, "forDeletion": false});
-      await Future.delayed(const Duration(seconds: 3));
       return true;
     } on FirebaseException catch (e) {
       if (kDebugMode) {
@@ -116,7 +113,6 @@ class HealthEntriesAPI {
           .doc(entry['id'])
           .update({"updated": entry});
 
-      await Future.delayed(const Duration(seconds: 1));
       return true;
     } on FirebaseException catch (e) {
       if (kDebugMode) {
@@ -138,7 +134,6 @@ class HealthEntriesAPI {
           .doc(entry.id)
           .update({"updated": HealthEntry.toJson(entry)});
 
-      await Future.delayed(const Duration(seconds: 1));
       return true;
     } on FirebaseException catch (e) {
       if (kDebugMode) {
