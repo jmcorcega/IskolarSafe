@@ -108,7 +108,9 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
                             "${entry.userInfo.firstName} ${entry.userInfo.lastName}",
                             style:
                                 Theme.of(context).textTheme.labelLarge!.apply(
-                                      color: Colors.white,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inversePrimary,
                                       fontSizeDelta: 4,
                                     ),
                           ),
