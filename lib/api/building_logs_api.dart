@@ -10,10 +10,17 @@ class BuildingLogsAPI {
 
   // Get all entries from the database
   Stream<QuerySnapshot> getAllEntries(IskolarInfo userInfo) {
+    if (userInfo.type == IskolarType.admin) {
+      return store
+        .collection(_storeName)
+        .orderBy('entryDate', descending: true)
+        .snapshots();
+    }
+    
     return store
         .collection(_storeName)
-        .where('monitorId', isEqualTo: userInfo.id)
-        .orderBy('dateGenerated', descending: true)
+        .where('monitorId', isEqualTo: userInfo.id!)
+        .orderBy('entryDate', descending: true)
         .snapshots();
   }
 

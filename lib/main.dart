@@ -11,6 +11,8 @@ import 'package:provider/provider.dart';
 import 'package:relative_time/relative_time.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// import 'package:flutter/rendering.dart';
+
 void main() async {
   // Ensure widgets have been initialized
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +22,8 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // debugPaintSizeEnabled = true;
+
   // Run the application
   runApp(
     MultiProvider(
@@ -28,6 +32,7 @@ void main() async {
             create: ((context) =>
                 PreferencesProvider(SharedPreferences.getInstance()))),
         ChangeNotifierProvider(create: ((context) => AccountsProvider())),
+        ChangeNotifierProvider(create: ((context) => BuildingLogsProvider(context))),
         ChangeNotifierProvider(
             create: ((context) => HealthEntryProvider(context))),
         ChangeNotifierProvider(
