@@ -39,13 +39,14 @@ class AccountsProvider with ChangeNotifier {
       _authStatus = AccountsStatus.userNotLoggedIn;
       _userInfoAvailable = false;
     }
+    notifyListeners();
   }
 
   _fetchUserInfo() async {
     _userInfo = await _accounts.getUserInfo(_user);
     if (_userInfo != null) {
       _authStatus = AccountsStatus.success;
-    } else {
+    } else if (_user != null && _userInfo != null) {
       _authStatus = AccountsStatus.noInternetConnection;
     }
     notifyListeners();
@@ -65,6 +66,7 @@ class AccountsProvider with ChangeNotifier {
       _authStatus = AccountsStatus.userNotLoggedIn;
       _userInfoAvailable = false;
     }
+    notifyListeners();
   }
 
   Future<void> signUp(BuildContext context, bool isGoogle,
