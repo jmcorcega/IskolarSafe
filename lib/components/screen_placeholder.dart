@@ -4,14 +4,21 @@ import 'package:flutter_svg/svg.dart';
 class ScreenPlaceholder extends StatelessWidget {
   final String asset;
   final String text;
+  final String? title;
   final Widget? button;
   const ScreenPlaceholder(
-      {Key? key, required this.asset, required this.text, this.button})
+      {Key? key,
+      required this.asset,
+      required this.text,
+      this.title,
+      this.button})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 18.0),
       // Show a message where the user can add an entry if list is empty
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -22,8 +29,22 @@ class ScreenPlaceholder extends StatelessWidget {
             fit: BoxFit.cover,
           ),
           const SizedBox(height: 12.0),
+          (title != null)
+              ? Text(
+                  title!,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleLarge!.apply(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onBackground
+                            .withOpacity(0.75),
+                      ),
+                )
+              : const SizedBox(),
+          (title != null) ? const SizedBox(height: 8.0) : const SizedBox(),
           Text(
             text,
+            textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleMedium!.apply(
                   color: Theme.of(context)
                       .colorScheme
