@@ -4,12 +4,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scroll_shadow/flutter_scroll_shadow.dart';
 import 'package:iskolarsafe/components/app_options.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/health_badge.dart';
 import 'package:iskolarsafe/components/log_details.dart';
 import 'package:iskolarsafe/components/requests_button.dart';
-import 'package:iskolarsafe/components/user_details.dart';
 import 'package:iskolarsafe/extensions.dart';
 import 'package:iskolarsafe/models/building_log_model.dart';
 import 'package:iskolarsafe/models/entry_model.dart';
@@ -34,9 +34,10 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
   @override
   bool wantKeepAlive = true;
 
+  ScrollController horizontalController = ScrollController();
   String _search = "";
-  String _currentSearchFilter = "";
-  List<String> _searchFilters = [
+  String _currentSearchFilter = "Date";
+  final List<String> _searchFilters = [
     "Date",
     "Name",
     "Course",
@@ -156,10 +157,8 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
                 switch (_currentSearchFilter) {
                   case "Date":
                     if ((a.data() as Map<String, dynamic>)["entryDate"]
-                            .toLowerCase()
-                            .compareTo(
-                                (b.data() as Map<String, dynamic>)["entryDate"]
-                                    .toLowerCase()) >
+                            .compareTo((b.data()
+                                as Map<String, dynamic>)["entryDate"]) <
                         0) {
                       return 1;
                     } else {
@@ -225,39 +224,71 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
                     hasAction: false,
                   ),
                   bottom: PreferredSize(
-                    preferredSize: const Size.fromHeight(80),
+                    preferredSize: const Size.fromHeight(120),
                     child: AppBar(
-                      toolbarHeight: 80,
-                      title: Container(
+                      titleSpacing: 0,
+                      toolbarHeight: 120,
+                      title: SizedBox(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Center(
-                          child: TextField(
-                            onChanged: (value) => innerSetState(() {
-                              _search = value.replaceAll(" ", "");
-                            }),
-                            decoration: InputDecoration(
-                                prefixIcon: Icon(Symbols.search_rounded),
-                                border: OutlineInputBorder(),
-                                contentPadding:
-                                    EdgeInsets.symmetric(vertical: 16.0),
-                                hintText: "Search for logs",
-                                suffixIcon: PopupMenuButton(
-                                  icon: Icon(Icons.sort),
-                                  onSelected: (value) {
-                                    innerSetState(() {
-                                      _currentSearchFilter = value;
-                                    });
-                                  },
-                                  itemBuilder: (context) {
-                                    return _searchFilters.map((String choice) {
-                                      return PopupMenuItem<String>(
-                                        value: choice,
-                                        child: Text(choice),
+                        child: SizedBox(
+                          height: 120,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const SizedBox(height: 6.0),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 24),
+                                child: TextField(
+                                  onChanged: (value) => innerSetState(() {
+                                    _search = value.replaceAll(" ", "");
+                                  }),
+                                  decoration: const InputDecoration(
+                                    prefixIcon: Icon(Symbols.search_rounded),
+                                    border: OutlineInputBorder(),
+                                    contentPadding:
+                                        EdgeInsets.symmetric(vertical: 16.0),
+                                    hintText: "Search for logs",
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: ScrollShadow(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant
+                                      .withAlpha((255 * 0.25).toInt()),
+                                  scrollDirection: Axis.horizontal,
+                                  controller: horizontalController,
+                                  child: ListView.builder(
+                                    controller: horizontalController,
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: _searchFilters.length,
+                                    itemBuilder: (context, index) {
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                            left: index == 0 ? 24 : 4,
+                                            right: index ==
+                                                    _searchFilters.length - 1
+                                                ? 24
+                                                : 4),
+                                        child: ChoiceChip(
+                                          label: Text(_searchFilters[index]),
+                                          selected: _currentSearchFilter ==
+                                              _searchFilters[index],
+                                          onSelected: (value) {
+                                            innerSetState(() {
+                                              _currentSearchFilter =
+                                                  _searchFilters[index];
+                                            });
+                                          },
+                                        ),
                                       );
-                                    }).toList();
-                                  },
-                                )),
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
