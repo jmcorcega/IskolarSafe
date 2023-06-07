@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/components/user_details.dart';
+import 'package:iskolarsafe/models/entry_model.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:iskolarsafe/screens/home/logs.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -100,32 +102,50 @@ class _QRScannerState extends State<QRScanner> {
   }
 
   void _onQRViewCreated(QRViewController controller) {
+    DateTime? lastScan;
     setState(() {
       this.controller = controller;
     });
 
     controller.scannedDataStream.listen((barcode) {
+      final currentScan = DateTime.now();
+
       if (!isScanning) {
         return;
       }
+
+      if (lastScan == null ||
+          currentScan.difference(lastScan!) > const Duration(seconds: 3)) {
+        lastScan = currentScan;
+      } else {
+        return;
+      }
+
       setState(() {
         this.barcode = barcode;
       });
 
       if (barcode.code != null && barcode.code is String) {
         isScanning = false;
+        HealthEntry entry;
+
+        try {
+          Map<String, dynamic>? qrData =
+              jsonDecode(barcode.code!) as Map<String, dynamic>;
+          entry = HealthEntry.fromJson(qrData);
+        } catch (e) {
+          Fluttertoast.showToast(msg: "Invalid entry QR code.");
+          isScanning = true;
+          return;
+        }
+
         controller.pauseCamera();
 
-        Map<String, dynamic>? qrData;
-        Map<String, dynamic> userInfo;
-
-        qrData = jsonDecode(barcode.code!) as Map<String, dynamic>;
-
-        userInfo = qrData['userInfo'];
         showDialog(
           context: context,
           barrierDismissible: false,
-          builder: (BuildContext context) => buildResult(context, userInfo),
+          builder: (BuildContext context) =>
+              buildResult(context, IskolarInfo.toJson(entry.userInfo)),
         ).then((_) {
           isScanning = true;
           controller.resumeCamera();
