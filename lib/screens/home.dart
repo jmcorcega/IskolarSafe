@@ -1,11 +1,8 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/api/accounts_api.dart';
 import 'package:iskolarsafe/components/screen_placeholder.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
-import 'package:iskolarsafe/providers/preferences_provider.dart';
 import 'package:iskolarsafe/screens/home/entries.dart';
 import 'package:iskolarsafe/screens/home/monitor.dart';
 import 'package:iskolarsafe/screens/home/logs.dart';
@@ -59,7 +56,7 @@ class _HomeState extends State<Home> {
 
     if (status != AccountsStatus.success) {
       _selectedTabIndex = 0;
-      return Scaffold(
+      return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
         ),
@@ -72,39 +69,39 @@ class _HomeState extends State<Home> {
 
   Scaffold _buildHomeScreen(BuildContext context) {
     IskolarType userType = context.read<AccountsProvider>().userInfo!.type;
-    List<Widget> screens = [Entries()];
+    List<Widget> screens = [const Entries()];
     List<NavigationDestination> destinations = [
-      NavigationDestination(
+      const NavigationDestination(
         icon: Icon(Symbols.home_rounded),
         label: 'My Entries',
       ),
     ];
 
     if (userType != IskolarType.student) {
-      screens.add(Logs());
+      screens.add(const Logs());
       destinations.add(
-        NavigationDestination(
+        const NavigationDestination(
           icon: Icon(Symbols.quick_reference_all_rounded),
           label: 'Logs',
         ),
       );
 
       if (userType == IskolarType.admin) {
-        screens.add(Search());
-        screens.add(Quarantine());
-        screens.add(Monitor());
+        screens.add(const Search());
+        screens.add(const Quarantine());
+        screens.add(const Monitor());
 
         destinations.addAll(
           [
-            NavigationDestination(
+            const NavigationDestination(
               icon: Icon(Symbols.face_rounded),
               label: 'Users',
             ),
-            NavigationDestination(
+            const NavigationDestination(
               icon: Icon(Symbols.medical_mask_rounded),
               label: 'Quarantine',
             ),
-            NavigationDestination(
+            const NavigationDestination(
               icon: Icon(Symbols.coronavirus_rounded),
               label: 'Monitor',
             ),

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iskolarsafe/models/entry_model.dart';
-import 'package:iskolarsafe/models/user_model.dart';
-import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/providers/entries_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';

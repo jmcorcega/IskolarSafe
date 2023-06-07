@@ -1,5 +1,3 @@
-// ignore_for_file: unused_catch_clause
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:iskolarsafe/models/user_model.dart';
@@ -12,11 +10,11 @@ class BuildingLogsAPI {
   Stream<QuerySnapshot> getAllEntries(IskolarInfo userInfo) {
     if (userInfo.type == IskolarType.admin) {
       return store
-        .collection(_storeName)
-        .orderBy('entryDate', descending: true)
-        .snapshots();
+          .collection(_storeName)
+          .orderBy('entryDate', descending: true)
+          .snapshots();
     }
-    
+
     return store
         .collection(_storeName)
         .where('monitorId', isEqualTo: userInfo.id!)

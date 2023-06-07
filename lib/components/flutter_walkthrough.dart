@@ -50,10 +50,10 @@ class OnbordingData extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          SizedBox(height: 18.0),
+          const SizedBox(height: 18.0),
           Padding(
               padding: titlePadding == null
-                  ? EdgeInsets.symmetric(horizontal: 8.0)
+                  ? const EdgeInsets.symmetric(horizontal: 8.0)
                   : titlePadding!,
               child: Wrap(
                 children: [
@@ -61,18 +61,14 @@ class OnbordingData extends StatelessWidget {
                 ],
               )),
           Image(
-            fit: fit == null ? BoxFit.cover : fit,
-            width: imageWidth == null
-                ? MediaQuery.of(context).size.width
-                : imageWidth,
-            height: imageHeight == null
-                ? MediaQuery.of(context).size.height * 0.5
-                : imageHeight,
+            fit: fit ?? BoxFit.cover,
+            width: imageWidth ?? MediaQuery.of(context).size.width,
+            height: imageHeight ?? MediaQuery.of(context).size.height * 0.5,
             image: image,
           ),
           Padding(
               padding: descPadding == null
-                  ? EdgeInsets.symmetric(horizontal: 8.0)
+                  ? const EdgeInsets.symmetric(horizontal: 8.0)
                   : descPadding!,
               child: Wrap(
                 children: [
@@ -157,7 +153,7 @@ class IntroScreen extends StatefulWidget {
   ///
   final Gradient? gradient;
 
-  IntroScreen(
+  const IntroScreen(
       {required this.onbordingDataList,
       this.pageRoute,
       required this.colors,
@@ -175,12 +171,12 @@ class IntroScreen extends StatefulWidget {
 
   @override
   IntroScreenState createState() {
-    return new IntroScreenState();
+    return IntroScreenState();
   }
 }
 
 class IntroScreenState extends State<IntroScreen> {
-  final PageController controller = new PageController();
+  final PageController controller = PageController();
   int currentPage = 0;
   bool lastPage = false;
 
@@ -197,17 +193,13 @@ class IntroScreenState extends State<IntroScreen> {
 
   Widget _buildPageIndicator(int page) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4.0),
+      margin: const EdgeInsets.symmetric(horizontal: 4.0),
       height: page == currentPage ? 8.0 : 4.0,
       width: page == currentPage ? 8.0 : 4.0,
       decoration: BoxDecoration(
         color: page == currentPage
-            ? (widget.selectedDotColor == null
-                ? Colors.blue
-                : widget.selectedDotColor)
-            : (widget.unSelectdDotColor == null
-                ? Colors.grey
-                : widget.unSelectdDotColor),
+            ? (widget.selectedDotColor ?? Colors.blue)
+            : (widget.unSelectdDotColor ?? Colors.grey),
         borderRadius: BorderRadius.circular(12),
       ),
     );
@@ -223,10 +215,10 @@ class IntroScreenState extends State<IntroScreen> {
           children: <Widget>[
             Expanded(
               flex: 15,
-              child: new PageView(
-                children: widget.onbordingDataList,
+              child: PageView(
                 controller: controller,
                 onPageChanged: _onPageChanged,
+                children: widget.onbordingDataList,
               ),
             ),
             Expanded(
@@ -236,7 +228,7 @@ class IntroScreenState extends State<IntroScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   TextButton(
-                    child: lastPage ? Text("") : widget.skipButton,
+                    child: lastPage ? const Text("") : widget.skipButton,
                     onPressed: () => lastPage
                         ? null
                         : widget.onEnd(
@@ -245,25 +237,22 @@ class IntroScreenState extends State<IntroScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: Container(
-                      child: Row(
-                          children: List.generate(
-                              widget.onbordingDataList.length,
-                              (index) => _buildPageIndicator(index))),
-                    ),
+                    child: Row(
+                        children: List.generate(widget.onbordingDataList.length,
+                            (index) => _buildPageIndicator(index))),
                   ),
                   TextButton(
                     child: lastPage ? widget.lastButton : widget.nextButton,
                     onPressed: () => lastPage
                         ? widget.onEnd(context)
                         : controller.nextPage(
-                            duration: Duration(milliseconds: 300),
+                            duration: const Duration(milliseconds: 300),
                             curve: Curves.easeIn),
                   ),
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 8.0,
             ),
           ],

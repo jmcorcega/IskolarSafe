@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/components/flutter_walkthrough.dart';
 import 'package:iskolarsafe/providers/preferences_provider.dart';
@@ -17,12 +15,12 @@ class Intro extends StatelessWidget {
       future: context.watch<PreferencesProvider>().getBool("is_shown_intro"),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
+          return const Scaffold(
             body: Center(),
           );
         }
 
-        if (snapshot.data == true) return Home();
+        if (snapshot.data == true) return const Home();
         return _buildIntroScreen(context);
       },
     );
@@ -33,14 +31,14 @@ class Intro extends StatelessWidget {
       onEnd: (context) {
         context.read<PreferencesProvider>().setBool("is_shown_intro", true);
       },
-      colors: [
+      colors: const [
         //list of colors for per pages
         Colors.white,
-        Colors.red,
+        Color.fromARGB(255, 81, 74, 73),
       ],
       onbordingDataList: [
         OnbordingData(
-          image: Svg('assets/images/illust_welcome_1.svg'),
+          image: const Svg('assets/images/illust_welcome_1.svg'),
           titleText: Column(
             children: [
               Text(
@@ -58,16 +56,16 @@ class Intro extends StatelessWidget {
             ],
           ),
           descText: Container(
-            padding: EdgeInsets.symmetric(horizontal: 32.0),
+            padding: const EdgeInsets.symmetric(horizontal: 32.0),
             alignment: Alignment.center,
-            child: Text(
+            child: const Text(
               "Welcome to the health tracing app by the Isko/Iska, for the Isko/Iska.",
               textAlign: TextAlign.center,
             ),
           ),
         ),
         OnbordingData(
-          image: Svg('assets/images/illust_welcome_2.svg'),
+          image: const Svg('assets/images/illust_welcome_2.svg'),
           titleText: Column(
             children: [
               Text(
@@ -85,16 +83,16 @@ class Intro extends StatelessWidget {
             ],
           ),
           descText: Container(
-            padding: EdgeInsets.symmetric(horizontal: 28.0),
+            padding: const EdgeInsets.symmetric(horizontal: 28.0),
             alignment: Alignment.center,
-            child: Text(
+            child: const Text(
               "Simply make your entry for today, and you can use it to enter premises around the university.",
               textAlign: TextAlign.center,
             ),
           ),
         ),
         OnbordingData(
-          image: Svg('assets/images/illust_welcome_3.svg'),
+          image: const Svg('assets/images/illust_welcome_3.svg'),
           titleText: Column(
             children: [
               Text(
@@ -112,16 +110,16 @@ class Intro extends StatelessWidget {
             ],
           ),
           descText: Container(
-            padding: EdgeInsets.symmetric(horizontal: 28.0),
+            padding: const EdgeInsets.symmetric(horizontal: 28.0),
             alignment: Alignment.center,
-            child: Text(
+            child: const Text(
               "It's now easier to manage your users and their health status.",
               textAlign: TextAlign.center,
             ),
           ),
         ),
         OnbordingData(
-          image: Svg('assets/images/illust_welcome_4.svg'),
+          image: const Svg('assets/images/illust_welcome_4.svg'),
           titleText: Column(
             children: [
               Text(
@@ -139,9 +137,9 @@ class Intro extends StatelessWidget {
             ],
           ),
           descText: Container(
-            padding: EdgeInsets.symmetric(horizontal: 32.0),
+            padding: const EdgeInsets.symmetric(horizontal: 32.0),
             alignment: Alignment.center,
-            child: Text(
+            child: const Text(
               "Sign up and experience IskolarSafe today.\n",
               textAlign: TextAlign.center,
             ),

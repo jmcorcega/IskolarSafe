@@ -3,10 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
-import 'package:iskolarsafe/components/user_details.dart';
 import 'package:iskolarsafe/models/entry_model.dart';
-import 'package:iskolarsafe/models/user_model.dart';
-import 'package:iskolarsafe/screens/home/logs.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 

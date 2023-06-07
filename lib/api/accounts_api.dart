@@ -102,7 +102,9 @@ class AccountsAPI {
       });
       return true;
     } on FirebaseException catch (e) {
-      // print("${e.code} : ${e.message} ");
+      if (kDebugMode) {
+        print("${e.code} : ${e.message} ");
+      }
       return false;
     }
   }

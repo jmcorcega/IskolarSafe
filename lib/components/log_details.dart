@@ -1,12 +1,6 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iskolarsafe/components/health_badge.dart';
-import 'package:iskolarsafe/components/health_confirm_dialog.dart';
 import 'package:iskolarsafe/components/screen_placeholder.dart';
 import 'package:iskolarsafe/extensions.dart';
 import 'package:iskolarsafe/models/building_log_model.dart';
@@ -16,14 +10,11 @@ import 'package:iskolarsafe/providers/entries_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 import 'package:relative_time/relative_time.dart';
-import '../providers/accounts_provider.dart';
 
 class _LogDetails extends StatelessWidget {
   final IskolarInfo userInfo;
   final BuildingLog log;
   const _LogDetails({required this.userInfo, required this.log});
-
-  static const Size _buttonSize = Size(225.0, 47.5);
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +23,13 @@ class _LogDetails extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
           child: AppBar(
             backgroundColor: Colors.transparent,
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 32.0),
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -99,7 +90,7 @@ class _LogDetails extends StatelessWidget {
           future: context.read<HealthEntryProvider>().getEntry(log.entryId),
           builder: ((context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(),
               );
             }
@@ -107,7 +98,7 @@ class _LogDetails extends StatelessWidget {
             if (!snapshot.hasData ||
                 snapshot.hasError ||
                 snapshot.data == null) {
-              return Center(
+              return const Center(
                 child: ScreenPlaceholder(
                   asset: "assets/images/illust_no_connection.svg",
                   text:

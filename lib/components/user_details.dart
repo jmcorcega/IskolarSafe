@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -25,13 +23,13 @@ class _UserDetails extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
           child: AppBar(
             backgroundColor: Colors.transparent,
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 32.0),
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -79,7 +77,7 @@ class _UserDetails extends StatelessWidget {
         const SizedBox(height: 4.0),
         (userInfo.status != IskolarHealthStatus.healthy)
             ? Padding(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: 56.0,
                 ),
                 child: _getBottomButtons(context, userInfo.status),
@@ -88,13 +86,13 @@ class _UserDetails extends StatelessWidget {
         (userInfo.status != IskolarHealthStatus.healthy)
             ? const SizedBox(height: 20.0)
             : Container(),
-        Divider(height: 1.0),
+        const Divider(height: 1.0),
         ListTile(
-          contentPadding: EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             horizontal: 32.0,
             vertical: 4.0,
           ),
-          leading: Icon(Symbols.account_circle_rounded),
+          leading: const Icon(Symbols.account_circle_rounded),
           title: Text(userInfo.userName),
           subtitle: Text(
             "Username",
@@ -109,13 +107,13 @@ class _UserDetails extends StatelessWidget {
             }
           },
         ),
-        Divider(height: 1.0),
+        const Divider(height: 1.0),
         ListTile(
-          contentPadding: EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             horizontal: 32.0,
             vertical: 4.0,
           ),
-          leading: Icon(Symbols.badge_rounded),
+          leading: const Icon(Symbols.badge_rounded),
           title: Text(userInfo.studentNumber),
           subtitle: Text(
             "ID number",
@@ -140,13 +138,13 @@ class _UserDetails extends StatelessWidget {
             return Container();
           }),
         ),
-        Divider(height: 1.0),
+        const Divider(height: 1.0),
         ListTile(
-          contentPadding: EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             horizontal: 32.0,
             vertical: 4.0,
           ),
-          leading: Icon(Symbols.school_rounded),
+          leading: const Icon(Symbols.school_rounded),
           title: Text(userInfo.course),
           subtitle: Text(
             "Course",
@@ -161,13 +159,13 @@ class _UserDetails extends StatelessWidget {
             }
           },
         ),
-        Divider(height: 1.0),
+        const Divider(height: 1.0),
         ListTile(
-          contentPadding: EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             horizontal: 32.0,
             vertical: 4.0,
           ),
-          leading: Icon(Symbols.domain_rounded),
+          leading: const Icon(Symbols.domain_rounded),
           title: Text(userInfo.college),
           subtitle: Text(
             "College",
@@ -182,14 +180,16 @@ class _UserDetails extends StatelessWidget {
             }
           },
         ),
-        userInfo.condition.isNotEmpty ? Divider(height: 1.0) : Container(),
+        userInfo.condition.isNotEmpty
+            ? const Divider(height: 1.0)
+            : Container(),
         userInfo.condition.isNotEmpty
             ? ListTile(
-                contentPadding: EdgeInsets.symmetric(
+                contentPadding: const EdgeInsets.symmetric(
                   horizontal: 32.0,
                   vertical: 4.0,
                 ),
-                leading: Icon(Symbols.monitor_heart_rounded),
+                leading: const Icon(Symbols.monitor_heart_rounded),
                 title: Wrap(
                   spacing: 5.0,
                   children: userInfo.condition.map((String condition) {
@@ -204,14 +204,14 @@ class _UserDetails extends StatelessWidget {
                 ),
               )
             : Container(),
-        Divider(height: 1.0),
+        const Divider(height: 1.0),
         userInfo.allergies.isNotEmpty
             ? ListTile(
-                contentPadding: EdgeInsets.symmetric(
+                contentPadding: const EdgeInsets.symmetric(
                   horizontal: 32.0,
                   vertical: 4.0,
                 ),
-                leading: Icon(Symbols.masks_rounded),
+                leading: const Icon(Symbols.masks_rounded),
                 title: Wrap(
                   spacing: 5.0,
                   children: userInfo.allergies.map((String allergy) {
@@ -226,7 +226,9 @@ class _UserDetails extends StatelessWidget {
                 ),
               )
             : Container(),
-        userInfo.allergies.isNotEmpty ? Divider(height: 1.0) : Container(),
+        userInfo.allergies.isNotEmpty
+            ? const Divider(height: 1.0)
+            : Container(),
       ],
     );
   }
@@ -239,13 +241,13 @@ class _UserDetails extends StatelessWidget {
       if (cond!.type == IskolarType.admin && currentUser!.uid != info.id) {
         return Column(
           children: [
-            Divider(height: 1.0),
+            const Divider(height: 1.0),
             ListTile(
-              contentPadding: EdgeInsets.symmetric(
+              contentPadding: const EdgeInsets.symmetric(
                 horizontal: 32.0,
                 vertical: 4.0,
               ),
-              leading: Icon(Symbols.key_rounded),
+              leading: const Icon(Symbols.key_rounded),
               title: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.3,
                 child: DropdownButtonFormField<IskolarType>(
@@ -256,7 +258,7 @@ class _UserDetails extends StatelessWidget {
                         .updateType(info, value!);
                     value = value;
                   },
-                  decoration: InputDecoration.collapsed(hintText: ''),
+                  decoration: const InputDecoration.collapsed(hintText: ''),
                   items: IskolarType.values
                       .map<DropdownMenuItem<IskolarType>>((IskolarType type) {
                     return DropdownMenuItem<IskolarType>(
