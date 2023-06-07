@@ -234,12 +234,12 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       const SizedBox(height: 14.0),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                            minimumSize: const Size(280.0, 20.0)),
-                        onPressed: () {},
-                        child: const Text("Forgot your password?"),
-                      ),
+                      // TextButton(
+                      //   style: TextButton.styleFrom(
+                      //       minimumSize: const Size(280.0, 20.0)),
+                      //   onPressed: () {},
+                      //   child: const Text("Forgot your password?"),
+                      // ),
                       const SizedBox(height: 14.0),
                       OutlinedButton.icon(
                         style:
