@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iskolarsafe/components/appbar_header.dart';
 import 'package:iskolarsafe/models/entry_model.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QRScanner extends StatefulWidget {
@@ -18,6 +19,7 @@ class QRScanner extends StatefulWidget {
 
 class _QRScannerState extends State<QRScanner> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  var permission = Permission.camera.status;
   QRViewController? controller;
   Barcode? barcode;
   bool isScanning = true;
@@ -56,41 +58,60 @@ class _QRScannerState extends State<QRScanner> {
           hasAction: false,
         ),
       ),
-      body: Center(
-        child: Stack(
-          children: [
-            QRView(
-              key: qrKey,
-              onQRViewCreated: _onQRViewCreated,
-              overlay: QrScannerOverlayShape(
-                  cutOutSize: MediaQuery.of(context).size.width * 0.75,
-                  borderLength: 40,
-                  borderWidth: 10,
-                  borderRadius: 18,
-                  cutOutBottomOffset:
-                      MediaQuery.of(context).size.height * 0.075,
-                  borderColor: Theme.of(context).colorScheme.inversePrimary),
-            ),
-            Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.3,
-              ),
-              child: Text(
-                "Point your device to a valid entry QR code.",
-                style: Theme.of(context).textTheme.labelLarge!.apply(
-                  shadows: [
-                    Shadow(
-                      blurRadius: 1.0,
-                      color: Colors.black.withAlpha((255 * 0.5).toInt()),
-                    ),
-                  ],
-                  color: Colors.white,
+      body: FutureBuilder(
+        future: permission,
+        builder: ((context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (snapshot.data == PermissionStatus.denied) {
+            Fluttertoast.showToast(
+                msg:
+                    "Camera permissions denied. Please allow camera access to scan entries.");
+            Navigator.pop(context, null);
+          }
+
+          return Center(
+            child: Stack(
+              children: [
+                QRView(
+                  key: qrKey,
+                  onQRViewCreated: _onQRViewCreated,
+                  overlay: QrScannerOverlayShape(
+                      cutOutSize: MediaQuery.of(context).size.width * 0.75,
+                      borderLength: 40,
+                      borderWidth: 10,
+                      borderRadius: 18,
+                      cutOutBottomOffset:
+                          MediaQuery.of(context).size.height * 0.075,
+                      borderColor:
+                          Theme.of(context).colorScheme.inversePrimary),
                 ),
-              ),
+                Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.3,
+                  ),
+                  child: Text(
+                    "Point your device to a valid entry QR code.",
+                    style: Theme.of(context).textTheme.labelLarge!.apply(
+                      shadows: [
+                        Shadow(
+                          blurRadius: 1.0,
+                          color: Colors.black.withAlpha((255 * 0.5).toInt()),
+                        ),
+                      ],
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        }),
       ),
     );
   }
