@@ -61,22 +61,44 @@ class _QRScannerState extends State<QRScanner> {
           hasAction: false,
         ),
       ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            flex: 5,
-            child: QRView(
-              key: qrKey,
-              onQRViewCreated: _onQRViewCreated,
-              overlay: QrScannerOverlayShape(
-                  cutOutSize: MediaQuery.of(context).size.width * 0.8,
-                  borderLength: 20,
-                  borderWidth: 10,
-                  borderRadius: 10,
-                  borderColor: Theme.of(context).colorScheme.primary),
-            ),
+      body: Center(
+        child: Expanded(
+          flex: 5,
+          child: Stack(
+            children: [
+              QRView(
+                key: qrKey,
+                onQRViewCreated: _onQRViewCreated,
+                overlay: QrScannerOverlayShape(
+                    cutOutSize: MediaQuery.of(context).size.width * 0.75,
+                    borderLength: 40,
+                    borderWidth: 10,
+                    borderRadius: 18,
+                    cutOutBottomOffset:
+                        MediaQuery.of(context).size.height * 0.075,
+                    borderColor: Theme.of(context).colorScheme.inversePrimary),
+              ),
+              Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.3,
+                ),
+                child: Text(
+                  "Point your device to a valid entry QR code.",
+                  style: Theme.of(context).textTheme.labelLarge!.apply(
+                    shadows: [
+                      Shadow(
+                        blurRadius: 1.0,
+                        color: Colors.black.withAlpha((255 * 0.5).toInt()),
+                      ),
+                    ],
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
