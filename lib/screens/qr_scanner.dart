@@ -47,10 +47,6 @@ class _QRScannerState extends State<QRScanner> {
           icon: const Icon(Symbols.arrow_back_rounded),
           onPressed: () {
             Navigator.pop(context);
-            Navigator.pushNamed(
-              context,
-              Logs.routeName,
-            );
           },
         ),
         centerTitle: true,

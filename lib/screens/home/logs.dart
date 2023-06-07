@@ -235,7 +235,6 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
                 ),
                 floatingActionButton: FloatingActionButton.extended(
                   onPressed: () {
-                    Navigator.pop(context);
                     Navigator.pushNamed(context, QRScanner.routeName);
                   },
                   label: const Text("Scan user's entry"),
