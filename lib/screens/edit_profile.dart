@@ -267,10 +267,14 @@ class _EditProfileState extends State<EditProfile> {
                                     Theme.of(context).colorScheme.primary,
                                 child: Text(
                                   user.displayName!.substring(0, 1),
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineLarge!
+                                      .apply(
+                                          fontSizeDelta: 12,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary),
                                 ),
                               )),
                     onPressed: _deferEditing ? null : _updateProfilePhoto,
