@@ -185,406 +185,8 @@ class _EntryEditorState extends State<EntryEditor> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: _buildHeader(),
-      ),
-      body: (BuildContext context) {
-        var entry = widget.entry;
-        if (entry != null) {
-          fluSymptoms = entry.fluSymptoms!;
-          respiratorySymptoms = entry.respiratorySymptoms!;
-          otherSymptoms = entry.otherSymptoms!;
-          isExposed = isExposed || entry.exposed;
-          isWaitingForRtPcr = isWaitingForRtPcr || entry.waitingForRtPcr;
-          isWaitingForRapidAntigen =
-              isWaitingForRapidAntigen || entry.waitingForRapidAntigen;
-        }
-
-        return Form(
-          key: _entryFormState,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 28.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Flu-like symptoms
-                const SizedBox(height: 12.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(Symbols.sick_rounded),
-                        const SizedBox(width: 12.0),
-                        Text(
-                          "Flu-like Symptoms",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .apply(fontWeightDelta: 1),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4.0),
-                    Text(
-                      "Feeling sick today? Tick all those that apply.",
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12.0),
-                Wrap(
-                  spacing: 5.0,
-                  children: FluSymptom.values.map((FluSymptom symptom) {
-                    String name = FluSymptom.getName(symptom);
-                    return FilterChip(
-                      label: Text(name),
-                      selected: fluSymptoms.contains(symptom),
-                      onSelected: chipEnabled(symptom)
-                          ? (bool selected) {
-                              setState(() {
-                                if (selected) {
-                                  if (symptom == FluSymptom.none) {
-                                    fluSymptoms.clear();
-                                  }
-
-                                  fluSymptoms.add(symptom);
-                                } else {
-                                  fluSymptoms.remove(symptom);
-                                }
-                              });
-                            }
-                          : null,
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 20.0),
-
-                // Respiratory symptoms
-                const SizedBox(height: 12.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(Symbols.pulmonology_rounded),
-                        const SizedBox(width: 12.0),
-                        Text(
-                          "Respiratory Symptoms",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .apply(fontWeightDelta: 1),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4.0),
-                    Text(
-                      "Hard to breathe? Coughing? Tick all those that apply.",
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12.0),
-                Wrap(
-                  spacing: 5.0,
-                  children: RespiratorySymptom.values
-                      .map((RespiratorySymptom symptom) {
-                    String name = RespiratorySymptom.getName(symptom);
-                    return FilterChip(
-                      label: Text(name),
-                      selected: respiratorySymptoms.contains(symptom),
-                      onSelected: chipEnabled(symptom)
-                          ? (bool selected) {
-                              setState(() {
-                                if (selected) {
-                                  if (symptom == RespiratorySymptom.none) {
-                                    respiratorySymptoms.clear();
-                                  }
-                                  respiratorySymptoms.add(symptom);
-                                } else {
-                                  respiratorySymptoms.remove(symptom);
-                                }
-                              });
-                            }
-                          : null,
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 20.0),
-
-                // Other symptoms
-                const SizedBox(height: 12.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(Symbols.help_clinic_rounded),
-                        const SizedBox(width: 12.0),
-                        Text(
-                          "Other Symptoms",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .apply(fontWeightDelta: 1),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4.0),
-                    Text(
-                      "Are you currently experiencing any of the following? Tick all those that apply.",
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12.0),
-                Wrap(
-                  spacing: 5.0,
-                  children: OtherSymptom.values.map((OtherSymptom symptom) {
-                    String name = OtherSymptom.getName(symptom);
-                    return FilterChip(
-                      label: Text(name),
-                      selected: otherSymptoms.contains(symptom),
-                      onSelected: chipEnabled(symptom)
-                          ? (bool selected) {
-                              setState(() {
-                                if (symptom == OtherSymptom.none) {
-                                  otherSymptoms.clear();
-                                }
-                                if (selected) {
-                                  otherSymptoms.add(symptom);
-                                } else {
-                                  otherSymptoms.remove(symptom);
-                                }
-                              });
-                            }
-                          : null,
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 20.0),
-
-                // Exposure Report
-                const Divider(),
-                const SizedBox(height: 20.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(Symbols.coronavirus_rounded),
-                        const SizedBox(width: 12.0),
-                        Text(
-                          "Exposure Report",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .apply(fontWeightDelta: 1),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4.0),
-                    Text(
-                      "Did you have a face-to-face encounter or contact with a confirmed COVID-19 case within 1 meter and for more than 15 minutes; or direct care for a patient with a probable or confirmed COVID-19 case?",
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12.0),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: ListTile(
-                        title: const Text('No'),
-                        leading: Radio<bool>(
-                          value: false,
-                          groupValue: isExposed,
-                          onChanged: _deferEditing
-                              ? null
-                              : (bool? value) {
-                                  setState(() {
-                                    isExposed = value!;
-                                  });
-                                },
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: ListTile(
-                        title: const Text('Yes'),
-                        leading: Radio<bool>(
-                          value: true,
-                          groupValue: isExposed,
-                          onChanged: _deferEditing
-                              ? null
-                              : (bool? value) {
-                                  setState(() {
-                                    isExposed = value!;
-                                  });
-                                },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                // RT-PCR test
-                const SizedBox(height: 12.0),
-                const Divider(),
-                const SizedBox(height: 20.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(Symbols.ent_rounded),
-                        const SizedBox(width: 12.0),
-                        Text(
-                          "RT-PCR Test",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .apply(fontWeightDelta: 1),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4.0),
-                    Text(
-                      "Are you waiting for an RT-PCR result?",
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12.0),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: ListTile(
-                        title: const Text('No'),
-                        leading: Radio<bool>(
-                          value: false,
-                          groupValue: isWaitingForRtPcr,
-                          onChanged: _deferEditing
-                              ? null
-                              : (bool? value) {
-                                  setState(() {
-                                    isWaitingForRtPcr = value!;
-                                  });
-                                },
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: ListTile(
-                        title: const Text('Yes'),
-                        leading: Radio<bool>(
-                          value: true,
-                          groupValue: isWaitingForRtPcr,
-                          onChanged: _deferEditing
-                              ? null
-                              : (bool? value) {
-                                  setState(() {
-                                    isWaitingForRtPcr = value!;
-                                  });
-                                },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                // Rapid Antigen Test
-                const SizedBox(height: 12.0),
-                const Divider(),
-                const SizedBox(height: 20.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(Symbols.labs_rounded),
-                        const SizedBox(width: 12.0),
-                        Expanded(
-                            child: Text(
-                          "Rapid Antigen Test",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .apply(fontWeightDelta: 1),
-                        )),
-                      ],
-                    ),
-                    const SizedBox(height: 4.0),
-                    Text(
-                      "Did you undergo a Rapid Antigen Test for COVID-19?",
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12.0),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: ListTile(
-                        title: const Text('No'),
-                        leading: Radio<bool>(
-                          value: false,
-                          groupValue: isWaitingForRapidAntigen,
-                          onChanged: _deferEditing
-                              ? null
-                              : (bool? value) {
-                                  setState(() {
-                                    isWaitingForRapidAntigen = value!;
-                                  });
-                                },
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: ListTile(
-                        title: const Text('Yes'),
-                        leading: Radio<bool>(
-                          value: true,
-                          groupValue: isWaitingForRapidAntigen,
-                          onChanged: _deferEditing
-                              ? null
-                              : (bool? value) {
-                                  setState(() {
-                                    isWaitingForRapidAntigen = value!;
-                                  });
-                                },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 72.0),
-              ],
-            ),
-          ),
-        );
-      }(context),
-      floatingActionButton: _buildFloatingActionButton(context),
-    );
-  }
-
-  Widget _buildForm(BuildContext context) {
+  initState() {
+    super.initState();
     var entry = widget.entry;
     if (entry != null) {
       fluSymptoms = entry.fluSymptoms!;
@@ -595,382 +197,392 @@ class _EntryEditorState extends State<EntryEditor> {
       isWaitingForRapidAntigen =
           isWaitingForRapidAntigen || entry.waitingForRapidAntigen;
     }
+  }
 
-    return Form(
-      key: _entryFormState,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 28.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Flu-like symptoms
-            const SizedBox(height: 12.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(Symbols.sick_rounded),
-                    const SizedBox(width: 12.0),
-                    Text(
-                      "Flu-like Symptoms",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .apply(fontWeightDelta: 1),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4.0),
-                Text(
-                  "Feeling sick today? Tick all those that apply.",
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-              ],
-            ),
-            const SizedBox(height: 12.0),
-            Wrap(
-              spacing: 5.0,
-              children: FluSymptom.values.map((FluSymptom symptom) {
-                String name = FluSymptom.getName(symptom);
-                return FilterChip(
-                  label: Text(name),
-                  selected: fluSymptoms.contains(symptom),
-                  onSelected: chipEnabled(symptom)
-                      ? (bool selected) {
-                          setState(() {
-                            if (selected) {
-                              if (symptom == FluSymptom.none) {
-                                fluSymptoms.clear();
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: _buildHeader(),
+      ),
+      body: Form(
+        key: _entryFormState,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 28.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Flu-like symptoms
+              const SizedBox(height: 12.0),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(Symbols.sick_rounded),
+                      const SizedBox(width: 12.0),
+                      Text(
+                        "Flu-like Symptoms",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .apply(fontWeightDelta: 1),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    "Feeling sick today? Tick all those that apply.",
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12.0),
+              Wrap(
+                spacing: 5.0,
+                children: FluSymptom.values.map((FluSymptom symptom) {
+                  String name = FluSymptom.getName(symptom);
+                  return FilterChip(
+                    label: Text(name),
+                    selected: fluSymptoms.contains(symptom),
+                    onSelected: chipEnabled(symptom)
+                        ? (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                if (symptom == FluSymptom.none) {
+                                  fluSymptoms.clear();
+                                }
+
+                                fluSymptoms.add(symptom);
+                              } else {
+                                fluSymptoms.remove(symptom);
                               }
+                            });
+                          }
+                        : null,
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 20.0),
 
-                              fluSymptoms.add(symptom);
-                            } else {
-                              fluSymptoms.remove(symptom);
-                            }
-                          });
-                        }
-                      : null,
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 20.0),
-
-            // Respiratory symptoms
-            const SizedBox(height: 12.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(Symbols.pulmonology_rounded),
-                    const SizedBox(width: 12.0),
-                    Text(
-                      "Respiratory Symptoms",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .apply(fontWeightDelta: 1),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4.0),
-                Text(
-                  "Hard to breathe? Coughing? Tick all those that apply.",
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-              ],
-            ),
-            const SizedBox(height: 12.0),
-            Wrap(
-              spacing: 5.0,
-              children:
-                  RespiratorySymptom.values.map((RespiratorySymptom symptom) {
-                String name = RespiratorySymptom.getName(symptom);
-                return FilterChip(
-                  label: Text(name),
-                  selected: respiratorySymptoms.contains(symptom),
-                  onSelected: chipEnabled(symptom)
-                      ? (bool selected) {
-                          setState(() {
-                            if (selected) {
-                              if (symptom == RespiratorySymptom.none) {
-                                respiratorySymptoms.clear();
+              // Respiratory symptoms
+              const SizedBox(height: 12.0),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(Symbols.pulmonology_rounded),
+                      const SizedBox(width: 12.0),
+                      Text(
+                        "Respiratory Symptoms",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .apply(fontWeightDelta: 1),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    "Hard to breathe? Coughing? Tick all those that apply.",
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12.0),
+              Wrap(
+                spacing: 5.0,
+                children:
+                    RespiratorySymptom.values.map((RespiratorySymptom symptom) {
+                  String name = RespiratorySymptom.getName(symptom);
+                  return FilterChip(
+                    label: Text(name),
+                    selected: respiratorySymptoms.contains(symptom),
+                    onSelected: chipEnabled(symptom)
+                        ? (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                if (symptom == RespiratorySymptom.none) {
+                                  respiratorySymptoms.clear();
+                                }
+                                respiratorySymptoms.add(symptom);
+                              } else {
+                                respiratorySymptoms.remove(symptom);
                               }
-                              respiratorySymptoms.add(symptom);
-                            } else {
-                              respiratorySymptoms.remove(symptom);
-                            }
-                          });
-                        }
-                      : null,
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 20.0),
+                            });
+                          }
+                        : null,
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 20.0),
 
-            // Other symptoms
-            const SizedBox(height: 12.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(Symbols.help_clinic_rounded),
-                    const SizedBox(width: 12.0),
-                    Text(
-                      "Other Symptoms",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .apply(fontWeightDelta: 1),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4.0),
-                Text(
-                  "Are you currently experiencing any of the following? Tick all those that apply.",
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-              ],
-            ),
-            const SizedBox(height: 12.0),
-            Wrap(
-              spacing: 5.0,
-              children: OtherSymptom.values.map((OtherSymptom symptom) {
-                String name = OtherSymptom.getName(symptom);
-                return FilterChip(
-                  label: Text(name),
-                  selected: otherSymptoms.contains(symptom),
-                  onSelected: chipEnabled(symptom)
-                      ? (bool selected) {
-                          setState(() {
-                            if (symptom == OtherSymptom.none) {
-                              otherSymptoms.clear();
-                            }
-                            if (selected) {
-                              otherSymptoms.add(symptom);
-                            } else {
-                              otherSymptoms.remove(symptom);
-                            }
-                          });
-                        }
-                      : null,
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 20.0),
+              // Other symptoms
+              const SizedBox(height: 12.0),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(Symbols.help_clinic_rounded),
+                      const SizedBox(width: 12.0),
+                      Text(
+                        "Other Symptoms",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .apply(fontWeightDelta: 1),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    "Are you currently experiencing any of the following? Tick all those that apply.",
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12.0),
+              Wrap(
+                spacing: 5.0,
+                children: OtherSymptom.values.map((OtherSymptom symptom) {
+                  String name = OtherSymptom.getName(symptom);
+                  return FilterChip(
+                    label: Text(name),
+                    selected: otherSymptoms.contains(symptom),
+                    onSelected: chipEnabled(symptom)
+                        ? (bool selected) {
+                            setState(() {
+                              if (symptom == OtherSymptom.none) {
+                                otherSymptoms.clear();
+                              }
+                              if (selected) {
+                                otherSymptoms.add(symptom);
+                              } else {
+                                otherSymptoms.remove(symptom);
+                              }
+                            });
+                          }
+                        : null,
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 20.0),
 
-            // Exposure Report
-            const Divider(),
-            const SizedBox(height: 20.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(Symbols.coronavirus_rounded),
-                    const SizedBox(width: 12.0),
-                    Text(
-                      "Exposure Report",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .apply(fontWeightDelta: 1),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4.0),
-                Text(
-                  "Did you have a face-to-face encounter or contact with a confirmed COVID-19 case within 1 meter and for more than 15 minutes; or direct care for a patient with a probable or confirmed COVID-19 case?",
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-              ],
-            ),
-            const SizedBox(height: 12.0),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: ListTile(
-                    title: const Text('No'),
-                    leading: Radio<bool>(
-                      value: false,
-                      groupValue: isExposed,
-                      onChanged: _deferEditing
-                          ? null
-                          : (bool? value) {
-                              setState(() {
-                                isExposed = value!;
-                              });
-                            },
+              // Exposure Report
+              const Divider(),
+              const SizedBox(height: 20.0),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(Symbols.coronavirus_rounded),
+                      const SizedBox(width: 12.0),
+                      Text(
+                        "Exposure Report",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .apply(fontWeightDelta: 1),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    "Did you have a face-to-face encounter or contact with a confirmed COVID-19 case within 1 meter and for more than 15 minutes; or direct care for a patient with a probable or confirmed COVID-19 case?",
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12.0),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: ListTile(
+                      title: const Text('No'),
+                      leading: Radio<bool>(
+                        value: false,
+                        groupValue: isExposed,
+                        onChanged: _deferEditing
+                            ? null
+                            : (bool? value) {
+                                setState(() {
+                                  isExposed = value!;
+                                });
+                              },
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: ListTile(
-                    title: const Text('Yes'),
-                    leading: Radio<bool>(
-                      value: true,
-                      groupValue: isExposed,
-                      onChanged: _deferEditing
-                          ? null
-                          : (bool? value) {
-                              setState(() {
-                                isExposed = value!;
-                              });
-                            },
+                  Expanded(
+                    child: ListTile(
+                      title: const Text('Yes'),
+                      leading: Radio<bool>(
+                        value: true,
+                        groupValue: isExposed,
+                        onChanged: _deferEditing
+                            ? null
+                            : (bool? value) {
+                                setState(() {
+                                  isExposed = value!;
+                                });
+                              },
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
 
-            // RT-PCR test
-            const SizedBox(height: 12.0),
-            const Divider(),
-            const SizedBox(height: 20.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(Symbols.ent_rounded),
-                    const SizedBox(width: 12.0),
-                    Text(
-                      "RT-PCR Test",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .apply(fontWeightDelta: 1),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4.0),
-                Text(
-                  "Are you waiting for an RT-PCR result?",
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-              ],
-            ),
-            const SizedBox(height: 12.0),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: ListTile(
-                    title: const Text('No'),
-                    leading: Radio<bool>(
-                      value: false,
-                      groupValue: isWaitingForRtPcr,
-                      onChanged: _deferEditing
-                          ? null
-                          : (bool? value) {
-                              setState(() {
-                                isWaitingForRtPcr = value!;
-                              });
-                            },
+              // RT-PCR test
+              const SizedBox(height: 12.0),
+              const Divider(),
+              const SizedBox(height: 20.0),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(Symbols.ent_rounded),
+                      const SizedBox(width: 12.0),
+                      Text(
+                        "RT-PCR Test",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .apply(fontWeightDelta: 1),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    "Are you waiting for an RT-PCR result?",
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12.0),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: ListTile(
+                      title: const Text('No'),
+                      leading: Radio<bool>(
+                        value: false,
+                        groupValue: isWaitingForRtPcr,
+                        onChanged: _deferEditing
+                            ? null
+                            : (bool? value) {
+                                setState(() {
+                                  isWaitingForRtPcr = value!;
+                                });
+                              },
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: ListTile(
-                    title: const Text('Yes'),
-                    leading: Radio<bool>(
-                      value: true,
-                      groupValue: isWaitingForRtPcr,
-                      onChanged: _deferEditing
-                          ? null
-                          : (bool? value) {
-                              setState(() {
-                                isWaitingForRtPcr = value!;
-                              });
-                            },
+                  Expanded(
+                    child: ListTile(
+                      title: const Text('Yes'),
+                      leading: Radio<bool>(
+                        value: true,
+                        groupValue: isWaitingForRtPcr,
+                        onChanged: _deferEditing
+                            ? null
+                            : (bool? value) {
+                                setState(() {
+                                  isWaitingForRtPcr = value!;
+                                });
+                              },
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
 
-            // Rapid Antigen Test
-            const SizedBox(height: 12.0),
-            const Divider(),
-            const SizedBox(height: 20.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(Symbols.labs_rounded),
-                    const SizedBox(width: 12.0),
-                    Expanded(
-                        child: Text(
-                      "Rapid Antigen Test",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .apply(fontWeightDelta: 1),
-                    )),
-                  ],
-                ),
-                const SizedBox(height: 4.0),
-                Text(
-                  "Did you undergo a Rapid Antigen Test for COVID-19?",
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-              ],
-            ),
-            const SizedBox(height: 12.0),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: ListTile(
-                    title: const Text('No'),
-                    leading: Radio<bool>(
-                      value: false,
-                      groupValue: isWaitingForRapidAntigen,
-                      onChanged: _deferEditing
-                          ? null
-                          : (bool? value) {
-                              setState(() {
-                                isWaitingForRapidAntigen = value!;
-                              });
-                            },
+              // Rapid Antigen Test
+              const SizedBox(height: 12.0),
+              const Divider(),
+              const SizedBox(height: 20.0),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(Symbols.labs_rounded),
+                      const SizedBox(width: 12.0),
+                      Expanded(
+                          child: Text(
+                        "Rapid Antigen Test",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .apply(fontWeightDelta: 1),
+                      )),
+                    ],
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    "Did you undergo a Rapid Antigen Test for COVID-19?",
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12.0),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: ListTile(
+                      title: const Text('No'),
+                      leading: Radio<bool>(
+                        value: false,
+                        groupValue: isWaitingForRapidAntigen,
+                        onChanged: _deferEditing
+                            ? null
+                            : (bool? value) {
+                                setState(() {
+                                  isWaitingForRapidAntigen = value!;
+                                });
+                              },
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: ListTile(
-                    title: const Text('Yes'),
-                    leading: Radio<bool>(
-                      value: true,
-                      groupValue: isWaitingForRapidAntigen,
-                      onChanged: _deferEditing
-                          ? null
-                          : (bool? value) {
-                              setState(() {
-                                isWaitingForRapidAntigen = value!;
-                              });
-                            },
+                  Expanded(
+                    child: ListTile(
+                      title: const Text('Yes'),
+                      leading: Radio<bool>(
+                        value: true,
+                        groupValue: isWaitingForRapidAntigen,
+                        onChanged: _deferEditing
+                            ? null
+                            : (bool? value) {
+                                setState(() {
+                                  isWaitingForRapidAntigen = value!;
+                                });
+                              },
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 72.0),
-          ],
+                ],
+              ),
+              const SizedBox(height: 72.0),
+            ],
+          ),
         ),
       ),
+      floatingActionButton: _buildFloatingActionButton(context),
     );
   }
 }
