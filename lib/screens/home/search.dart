@@ -209,12 +209,16 @@ class _SearchState extends State<Search> with AutomaticKeepAliveClientMixin {
                                   user.userName
                                       .toLowerCase()
                                       .contains(_search.toLowerCase()) ||
-                                  user.course
+                                  user.course.toLowerCase()
+                                      .replaceAll(" ", "")
+                                      .contains(_search
                                       .toLowerCase()
-                                      .contains(_search.toLowerCase()) ||
-                                  user.college
+                                      .replaceAll(" ", "")) ||
+                                  user.college.toLowerCase()
+                                      .replaceAll(" ", "")
+                                      .contains(_search
                                       .toLowerCase()
-                                      .contains(_search.toLowerCase()) ||
+                                      .replaceAll(" ", "")) ||
                                   user.studentNumber
                                       .replaceAll("-", "")
                                       .contains(_search.toLowerCase()))) {

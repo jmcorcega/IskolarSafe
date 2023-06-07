@@ -325,10 +325,16 @@ class _LogsState extends State<Logs> with AutomaticKeepAliveClientMixin {
                                   .contains(_search.toLowerCase()) ||
                               user.course
                                   .toLowerCase()
-                                  .contains(_search.toLowerCase()) ||
+                                  .replaceAll(" ", "")
+                                  .contains(_search
+                                      .toLowerCase()
+                                      .replaceAll(" ", "")) ||
                               user.college
                                   .toLowerCase()
-                                  .contains(_search.toLowerCase()) ||
+                                  .replaceAll(" ", "")
+                                  .contains(_search
+                                      .toLowerCase()
+                                      .replaceAll(" ", "")) ||
                               user.studentNumber
                                   .replaceAll("-", "")
                                   .contains(_search.toLowerCase()))) {
