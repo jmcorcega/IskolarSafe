@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:iskolarsafe/api/accounts_api.dart';
+import 'package:iskolarsafe/components/screen_placeholder.dart';
 import 'package:iskolarsafe/models/user_model.dart';
 import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/providers/preferences_provider.dart';
@@ -34,6 +35,27 @@ class _HomeState extends State<Home> {
     if (status == AccountsStatus.userNotLoggedIn) {
       _selectedTabIndex = 0;
       return const Login();
+    }
+
+    if (status == AccountsStatus.noInternetConnection) {
+      _selectedTabIndex = 0;
+      return Scaffold(
+        body: Center(
+          child: ScreenPlaceholder(
+            asset: "assets/images/illust_no_connection.svg",
+            title: "No internet connection",
+            text:
+                "IskolarSafe requires an internet connection. Connect to the internet to continue.",
+            button: TextButton.icon(
+              onPressed: () {
+                context.read<AccountsProvider>().fetchInfo();
+              },
+              icon: const Icon(Symbols.refresh_rounded),
+              label: const Text("Try again"),
+            ),
+          ),
+        ),
+      );
     }
 
     if (status != AccountsStatus.success) {
