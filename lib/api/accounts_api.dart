@@ -251,6 +251,14 @@ class AccountsAPI {
       _userInfo = await getUserInfo(_user);
       await Future.delayed(const Duration(seconds: 2));
 
+      // Update photoURL in database if there is none
+      if (_userInfo!.photoUrl == null) {
+        await _db
+            .collection(_storeName)
+            .doc(_user?.uid)
+            .update({"photoUrl": _user?.photoURL});
+      }
+
       // Return success
       return AccountsStatus.success;
     } on FirebaseAuthException catch (e) {
