@@ -6,6 +6,7 @@ import 'package:iskolarsafe/extensions.dart';
 import 'package:iskolarsafe/models/building_log_model.dart';
 import 'package:iskolarsafe/models/entry_model.dart';
 import 'package:iskolarsafe/models/user_model.dart';
+import 'package:iskolarsafe/providers/accounts_provider.dart';
 import 'package:iskolarsafe/providers/entries_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
@@ -74,6 +75,119 @@ class _LogDetails extends StatelessWidget {
           ),
         ),
         HealthBadge(userInfo.status),
+        const SizedBox(height: 16.0),
+        FutureBuilder(
+          future: context.read<AccountsProvider>().getUser(log.monitorId),
+          builder: ((context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const CircleAvatar(
+                    backgroundColor: Colors.transparent,
+                    child: CircularProgressIndicator(),
+                  ),
+                  const SizedBox(width: 16.0),
+                  Wrap(
+                    direction: Axis.vertical,
+                    children: [
+                      Text(
+                        "Getting monitor data",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelLarge!
+                            .apply(fontSizeDelta: 2),
+                      ),
+                      Text("Please wait",
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium!
+                              .apply(fontWeightDelta: -1)),
+                    ],
+                  ),
+                ],
+              );
+            }
+
+            if (!snapshot.hasData ||
+                snapshot.hasError ||
+                snapshot.data == null) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    child: Text(
+                      "U",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary),
+                    ),
+                  ),
+                  const SizedBox(width: 16.0),
+                  Wrap(
+                    direction: Axis.vertical,
+                    children: [
+                      Text(
+                        "Unknown monitor",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelLarge!
+                            .apply(fontSizeDelta: 2),
+                      ),
+                      Text("The user may have been deleted",
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium!
+                              .apply(fontWeightDelta: -1)),
+                    ],
+                  ),
+                ],
+              );
+            }
+
+            IskolarInfo user = snapshot.data!;
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                user.photoUrl != null
+                    ? CircleAvatar(
+                        foregroundImage:
+                            CachedNetworkImageProvider(user.photoUrl!),
+                      )
+                    : CircleAvatar(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        child: Text(
+                          user.firstName.substring(0, 1),
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary),
+                        ),
+                      ),
+                const SizedBox(width: 16.0),
+                Wrap(
+                  direction: Axis.vertical,
+                  children: [
+                    Text(
+                      "${user.firstName} ${user.lastName}",
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelLarge!
+                          .apply(fontSizeDelta: 2),
+                    ),
+                    Text(user.studentNumber,
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium!
+                            .apply(fontWeightDelta: -1)),
+                  ],
+                ),
+              ],
+            );
+          }),
+        ),
+        const SizedBox(height: 16.0),
         Text(
           "Scanned ${log.entryDate.relativeTime(context).capitalizeFirstLetter()}",
           textAlign: TextAlign.center,
