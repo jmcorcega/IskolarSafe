@@ -36,6 +36,22 @@ class AccountsAPI {
     return _auth.authStateChanges();
   }
 
+  Future<IskolarInfo?> getUser(String userId) async {
+    if (user == null) return null;
+
+    try {
+      var info = await _db.collection(_storeName).doc(userId).get();
+
+      Map<String, dynamic>? data = info.data();
+      return IskolarInfo.fromJson(data!);
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return null;
+    }
+  }
+
   Future<IskolarInfo?> getUserInfo(User? user) async {
     if (user == null) return null;
 

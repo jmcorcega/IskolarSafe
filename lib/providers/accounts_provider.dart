@@ -22,6 +22,7 @@ class AccountsProvider with ChangeNotifier {
   Stream<QuerySnapshot> get students => _accounts.getAllUsers();
   Stream<QuerySnapshot> get quarantined => _accounts.getUsersUnderQuarantine();
   Stream<QuerySnapshot> get monitored => _accounts.getUsersUnderMonitoring();
+  Future<IskolarInfo?> getUser(String userId) => _accounts.getUser(userId);
   User? get user => _user;
   IskolarInfo? get userInfo => _userInfo;
   AccountsStatus get status => _authStatus;
