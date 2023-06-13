@@ -52,9 +52,25 @@ class _HomeState extends State<Home> {
     if (status == AccountsStatus.loggingOut ||
         status == AccountsStatus.unknown) {
       _selectedTabIndex = 0;
-      return const Scaffold(
+      return Scaffold(
         body: Center(
-          child: CircularProgressIndicator(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 24.0),
+              Text(
+                "Welcome to IskolarSafe",
+                style: Theme.of(context).textTheme.labelLarge!.apply(
+                      fontSizeDelta: 5,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withAlpha((255 * 0.75).toInt()),
+                    ),
+              )
+            ],
+          ),
         ),
       );
     }
